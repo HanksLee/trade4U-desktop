@@ -39,7 +39,7 @@ const basePlugins = [
 const devPlugins = [
   new FriendlyErrorsPlugin(),
   new HtmlWebpackPlugin({
-    title: 'Fitness Admin',
+    title: 'WeTrader 桌面端',
     template: resolve('build/index.html'),
     filename: resolve(`dist/${config.mode}/index.html`),    inject: true,
     alwaysWriteToDisk: true,

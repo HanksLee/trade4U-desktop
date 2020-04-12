@@ -70,18 +70,19 @@ img {
 }
 
 .ant-layout {
-  background-color: #1D1F23;
+  background-color: #1d1f23;
 }
 
 .ant-layout-sider-children {
   background-color: $sidebar-color;
 
-  .ant-menu  {
+  .ant-menu {
     background-color: $sidebar-color;
 
-    &.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
-      background-color: $sidebar-color;
+    &.ant-menu-dark .ant-menu-item-selected,
+    .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
       color: $active-color;
+      background-color: $sidebar-color;
     }
   }
 }

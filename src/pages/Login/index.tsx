@@ -22,7 +22,6 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
 
 
   render() {
-
     return (
       <div className='login'>
         <div className='form-wrapper'>

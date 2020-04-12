@@ -7,7 +7,7 @@ import loadable from '@loadable/component';
 const routes: any[] = [
   {
     component: loadable(() => import(/* webpackChunkName: "symbol" */ './pages/Symbol')),
-  },
+  }
 ];
 
 export default function AppRouter(props) {

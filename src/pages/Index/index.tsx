@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
 import AppRouter from '../../router';
-import { Layout, Menu, Icon, Tag, Input } from 'antd';
-import UserDropdown from 'components/UserDropdown';
+import { Layout, Menu, Icon, Input } from 'antd';
 import { PAGE_ROUTES, SUBMENU_ROUTES } from 'constant';
 import { withRouter } from "react-router-dom";
 import './index.scss';
@@ -182,7 +181,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
         {
           showContainer && (
             <Header className='header'>
-              <Input placeholder={'输入交易品种进行搜索'} style={{width: 200, marginLeft: 30}}/>
+              <Input placeholder={'输入交易品种进行搜索'} style={{ width: 200, marginLeft: 30, }}/>
               <h2>MetaTrader 4</h2>
               <p className='header-right'>
                 <span>消息</span>
@@ -222,7 +221,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               </Sider>
             )
           }
-          <Layout style={{ padding: '0 24px 24px' }}>
+          <Layout style={{ padding: '0 24px 24px', }}>
             <Content
               className='content'
             >
