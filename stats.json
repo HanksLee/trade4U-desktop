@@ -1,0 +1,5 @@
+Installing 'webpack-cli' (running 'npm install -D webpack-cli')...
++ webpack-cli@3.3.9
+updated 1 package and audited 25182 packages in 24.061s
+found 177 vulnerabilities (2 low, 1 moderate, 172 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details

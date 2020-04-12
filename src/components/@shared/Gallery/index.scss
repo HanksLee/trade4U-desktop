@@ -1,0 +1,29 @@
+
+
+.gallery {
+  .gallery-carousel {
+    margin-bottom: 26px;
+  }
+
+  .gallery-pagination {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+
+  .ant-carousel .slick-slide {
+    text-align: center;
+    height: 400px;
+    line-height: 160px;
+    background: #FFF;
+    overflow: hidden;
+  }
+
+  .ant-carousel .slick-slide .gallery-item-img {
+    color: #fff;
+    background-size: contain;
+    height: 400px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+

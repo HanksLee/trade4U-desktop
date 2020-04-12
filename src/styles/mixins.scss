@@ -1,0 +1,51 @@
+@mixin bg($name, $width: 100%, $height: 100%, $contain: contain) {
+  background-image: url('#{$assetsPath}#{$name}');
+  background-repeat: no-repeat;
+  background-size: $width $height;
+  background-size: $contain;
+}
+
+// fix for 1px problem
+@mixin b-b-1($color) {
+  box-shadow: 0 0 1px 0 $color inset;
+}
+
+@mixin clearfix() {
+  &::before,
+  &::after {
+    display: table;
+    content: " ";
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+@mixin no-scrollbar() {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+  }
+
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+  -webkit-overflow-scrolling: touch;
+}
+
+@mixin ellipse-1($width: 200px) {
+  max-width: $width;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin ellipse($line: 2) {
+  & {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $line;
+    -webkit-box-orient: vertical;
+  }
+}

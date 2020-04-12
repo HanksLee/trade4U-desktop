@@ -1,0 +1,179 @@
+.common-list {
+  background-color: #fff;
+  margin: 24px;
+  padding: 32px;
+  border-radius: 2px;
+  overflow-x: auto;
+
+  .common-list-search {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    position: relative;
+    min-width: 973px;
+    .common-list-search-left {
+    }
+
+    .common-list-search-right {
+      display: flex;
+      .ant-btn {
+        margin-left: 8px;
+      }
+
+      .common-list-serach-more {
+        color: $primary-color;
+        font-size: 14px;
+        margin-left: 14px;
+      }
+    }
+
+    .common-list-search-row {
+      display: flex;
+      margin-bottom: 16px;
+      align-items: center;
+
+      &.other-opts {
+        align-items: baseline;
+      }
+
+      .common-list-search-col {
+        margin-right: 16px;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .common-list-search-batch {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  .common-list-addbtn {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .common-list-table {
+    .common-list-table-operation {
+      display: flex;
+      align-items: center;
+
+      > span {
+        color: $primary-color;
+        font-size: 14px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .common-list-table-operation-spliter {
+        width: 2px;
+        display: inline-block;
+        height: 16px;
+        background-color: #e5e5e5;
+        margin: 0 5px;
+      }
+    }
+  }
+
+  .common-list-cards-wrapper {
+    .common-list-cards {
+      overflow: hidden;
+      margin-left: -20px;
+
+      .common-list-card {
+        width: 25%;
+        // min-width: 200px;
+        height: 300px;
+        min-height: 260px;
+        float: left;
+        padding-left: 20px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        cursor: pointer;
+
+        .common-list-card-item {
+          border: 1px solid #e8e8e8;
+          border-radius: 8px;
+          height: 100%;
+          box-shadow: none;
+          padding: 20px;
+
+          &:hover {
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+            border-color: #eee;
+            transition: all 0.2s ease-in-out;
+          }
+
+          .ant-row {
+            margin-bottom: 6px;
+          }
+        }
+
+        &.add-btn {
+          .common-list-card-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            .anticon {
+              margin-bottom: 10px;
+              svg {
+                width: 40px;
+                height: 40px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .common-list-cards-loading {
+      // background: #f2f2f2;
+      height: 200px;
+      text-align: center;
+      line-height: 200px;
+      margin-bottom: 20px;
+    }
+
+    .common-list-cards-pagination {
+      position: relative;
+      text-align: center;
+    }
+  }
+
+  .common-list-label {
+    margin-right: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .common-list-control {
+    min-width: 120px;
+
+    .common-list-control-date-alias {
+      margin-left: 16px;
+
+      .ant-btn {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1580px) {
+  // .common-list-search-row {
+  //   display: flex;
+  //   flex-direction: column;
+  //   align-items: flex-start !important;
+
+  //   .common-list-search-col {
+  //     margin-bottom: 16px;
+  //   }
+  // }
+}

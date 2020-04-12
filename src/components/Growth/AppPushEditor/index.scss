@@ -1,0 +1,19 @@
+.app-push-editor {
+  .form-upload label {
+    justify-content: flex-end;
+  }
+
+  .editor-content {
+    position: relative;
+
+    .editor-del-btn {
+      position: absolute;
+      right: 32px;
+      top: 32px;
+
+      .anticon {
+        margin-right: 10px;
+      }
+    }
+  }
+}

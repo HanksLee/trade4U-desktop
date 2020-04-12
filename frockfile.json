@@ -1,0 +1,35 @@
+{
+  "servers": [
+    {
+      "port": 9999,
+      "routes": [
+        {
+          "path": "/api/userinfo",
+          "methods": ["GET"],
+          "handler": "frock-static",
+          "options": {
+            "file": "fixtures/static/userinfo.json",
+            "contentType": "application/json"
+          }
+        },
+        {
+          "path": "/api/remote",
+          "methods": ["GET"],
+          "handler": "frock-static",
+          "options": {
+            "url": "http://raw.githubusercontent.com/somewhere/something.json",
+            "contentType": "application/json"
+          }
+        },
+        {
+          "path": "*",
+          "methods": "any",
+          "handler": "frock-proxy",
+          "options": {
+            "url": "http://0.0.0.0:8052"
+          }
+        }
+      ]
+    }
+  ]
+}

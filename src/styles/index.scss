@@ -1,0 +1,7 @@
+/*
+ * @description  vars/mixins/func 内的变量、混合以及函数已经通过
+ * sass-resources-loader 动态注入每一个组件中的样式中
+ */
+
+@import "./reset", "./font", "./base", "./common";
+@import "~video-react/styles/scss/video-react"; // or import scss

@@ -1,0 +1,44 @@
+.status-tag {
+  width: 20px;
+  height: 20px;
+  border-radius:3px;
+  line-height: 16px;
+  text-align: center;
+  border:2px solid $primary-color;
+  display: inline-block;
+  color: $primary-color;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.active.normal {
+    background-color: $primary-color;
+    color: #FFF;
+    border: none;
+    line-height: 20px;
+  }
+
+  &.active.hot {
+    background-color: $hot;
+    color: #FFF;
+    border: none;
+    line-height: 20px;
+  }
+
+
+  &.active.wait {
+    background-color: $wait;
+    color: #FFF;
+    border: none;
+    line-height: 20px;
+  }
+
+
+  &.active.block {
+    background-color: $block;
+    color: #FFF;
+    border: none;
+    line-height: 20px;
+  }
+}

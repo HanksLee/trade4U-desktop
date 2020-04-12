@@ -1,0 +1,47 @@
+.common-header {
+  background-color: #FFF;
+  padding: 16px 32px;
+  margin-bottom: 24px;
+  position: relative;
+
+  .common-header-breadcrumb {
+    margin-bottom: 16px;
+  }
+
+  .common-header-title {
+    color:rgba(0,0,0,0.85);
+    font-style: 20px;
+    margin-bottom: 0px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .common-header-links {
+    // display: flex;
+    // justify-content: flex-end;
+    color:rgba(0,0,0,0.65);
+    font-size: 14px;
+    a {
+      margin-left: 38px;
+    }
+  }
+  .common-header-tabs {
+    position: absolute;
+    bottom: 0;
+    margin-top: 20px;
+
+    a {
+      color:rgba(0,0,0,0.65);
+      font-size: 14px;
+      padding: 12px 26px;
+      display: inline-block;
+
+      &.tab-active {
+        color: #1890FF;
+        border-bottom: 2px solid #1890FF;
+      }
+    }
+  }
+}

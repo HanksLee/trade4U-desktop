@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "FZJinL-B-GB";
+  src: url("fzjin.eot"); /* IE9 */
+  src:
+    url("fzjin.eot?#iefix") format("embedded-opentype"),
+    url("fzjin.woff") format("woff"),
+    url("fzji    .ttf") format("truetype"),
+    url("fzjin.svg#FZJinL-B-GB") fo mat("svg"); /* iOS 4.1- */
+
+  font-style: normal;
+  font-weight: normal;
+}

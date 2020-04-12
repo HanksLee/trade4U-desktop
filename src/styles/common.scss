@@ -1,0 +1,146 @@
+.panel {
+  padding: 16px 32px;
+  background-color: #fff;
+}
+
+.panel-block {
+  padding: 32px;
+  margin: 24px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.form-title {
+  padding: 12px 20px;
+  font-size: 14px;
+  line-height: 22px;
+  color: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.09);
+}
+
+.form-field {
+  .form-label {
+    margin-right: 8px;
+    font-size: 14px;
+  }
+}
+
+// .form-upload {
+//   label {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//   }
+
+//   .form-upload-tip {
+//     font-size: 12px;
+//     color: #999;
+//   }
+// }
+
+.form-upload {
+  .upload-wrapper {
+    display: flex;
+    align-items: center;
+
+    .upload-tip {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+}
+
+.form-tip {
+  font-size: 12px;
+  color: #999;
+}
+
+.form-group {
+  > * {
+    margin-right: 8px;
+  }
+}
+
+.d-f {
+  display: flex;
+}
+
+.f-l {
+  float: left;
+}
+
+.f-r {
+  float: right;
+}
+
+.tip {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #999;
+}
+
+img.emoji {
+  width: 16px;
+  height: 16px;
+}
+
+.transparent-bg {
+  @include bg("img/transparent.png");
+
+  display: inline-block;
+  background-size: cover;
+}
+
+// @media screen and (max-width: 1580px) {
+//   .ant-col {
+//     &.ant-form-item-label {
+//       width: 12% !important;
+//     }
+//   }
+// }
+
+// form label自适应
+@media screen and (max-width: 600px) {
+  // .ant-form-item-label {
+  //   display: block !important;
+  //   flex-basis: 100% !important;
+  //   padding: 0 0 8px !important;
+  //   margin: 0 !important;
+  //   line-height: 1.5715 !important;
+  //   text-align: left !important;
+  //   white-space: normal !important;
+  // }
+
+  .ant-form-item-label {
+    display: block !important;
+    width: 100% !important;
+  }
+}
+
+// 上传组件图片背景色
+.ant-upload-list-item-info {
+  background-color: #8e8e93;
+}
+
+.p-color {
+  color: #1890ff;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.avatar {
+  width: 20px;
+  height: 20px;
+}
+
+// .ant-form-item-label {
+//   display: inline-block;
+//   overflow: hidden;
+//   line-height: 39.9999px;
+//   white-space: nowrap;
+//   text-align: right;
+//   vertical-align: middle;
+// }

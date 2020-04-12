@@ -1,0 +1,32 @@
+.user-dropdown {
+  margin-right: 16px;
+  &:hover {
+    cursor: pointer;
+  }
+
+  .profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .profile-info {
+    line-height: 1.5;
+    padding: 0 10px;
+
+    h3 {
+      font-size: 16px;
+      color: #333;
+    }
+
+    p {
+      font-size: 12px;
+      color: #999;
+    }
+  }
+}
