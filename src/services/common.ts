@@ -1,15 +1,18 @@
-import { AxiosRequestConfig } from 'axios';
-import { downloadRgbAPI, uploadAPI } from 'utils/request';
+import {
+  moonAPI
+} from "utils/request";
 
+const uploadFile = async (config) => moonAPI.post('/upload-file', config);
 
-const downloadRgb = (config: AxiosRequestConfig): Promise<any> => 
-  downloadRgbAPI.get('', config);
+const getCodeImg = async (config) => moonAPI.get('/captcha', config);
 
-const uploadFile = async (config, url = '/uploadFile') => {
-  return await uploadAPI.post(url, config, { headers: { 'Content-Type': 'multipart/form-data', }, });
-};
+const login = async (config) => moonAPI.post('/trader/login', config);
+
+const getConstantByKey = async (key) => moonAPI.get(`/constant/${key}`);
 
 export default {
-  downloadRgb,
   uploadFile,
+  getCodeImg,
+  login,
+  getConstantByKey,
 };

@@ -86,3 +86,17 @@ img {
     }
   }
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    box-shadow: 0 0 0 30px black inset !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+div {
+  &:focus {
+    outline: none !important;
+  }
+}

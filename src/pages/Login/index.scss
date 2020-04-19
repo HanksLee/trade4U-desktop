@@ -1,46 +1,79 @@
 .login {
   position: relative;
-  @include bg('img/login-bg.jpg');
   width: 100vw;
   height: 100vh;
-  background-size: cover;
 
   .form-wrapper {
-    // border: 1px solid red;
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
 
-    .brand {
-      // margin: 0 auto;
-      img {
-        width: 180px;
-      }
+    img {
+      width: 177px;
+    }
+
+    h1 {
+      font-size: 72px;
+      margin-top: 32px;
+      margin-bottom: 70px;
     }
 
     .form {
-      h2 {
-        color: #FF0039;
-        margin: 10px 0;
-        font-size: 20px;
+      height: 400px;
+      width: 500px;
+
+      input, .ant-input-affix-wrapper {
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+        box-shadow: none;
+
+        &:hover, &:focus {
+          border-bottom-color: $active-color;
+        }
       }
 
-      p {
-        color: #fff;
-        font-size: 12px;
-        margin-bottom: 20px;
+      .login-btn {
+        margin-top: 36px;
+        width: 146px;
+        height: 57px;
+        color: $active-color;
+        border: 2px solid $active-color;
       }
 
-      .qrcode {
-        margin-bottom: 20px;
+      .ant-form-item-explain {
+        text-align: left;
+      }
+
+      .login-code-img {
+        display: inline-flex;
+        align-items: center;
+
+        img {
+          width: 100px;
+          padding-right: 20px;
+        }
       }
     }
 
-    .copyright {
-      font-size: 10px;
-      color: #fff;
+    .broker-selector .ant-select-selector {
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      padding-left: 0;
+      padding-right: 0;
+      box-shadow: none;
+      border-bottom-color: $active-color;
+      text-align: left;
+
+      &:hover, &:focus {
+        border-bottom-color: $active-color;
+        outline: none;
+      }
     }
   }
 }

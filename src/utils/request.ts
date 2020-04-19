@@ -3,15 +3,10 @@ import axios, {
   AxiosInstance,
   AxiosResponse,
   AxiosError
-} from 'axios';
-import { message } from 'antd';
-import NProgress from 'nprogress';
-
-const baseURL = {
-  dev: '/api/post', // webpack 代理
-  qa: '/api/post',
-  prod: '/api/post',
-};
+} from "axios";
+import { message } from "antd";
+import NProgress from "nprogress";
+import utils from "utils";
 
 export interface IAPI {
   getInstance(): AxiosInstance;
@@ -25,28 +20,52 @@ export default class API implements IAPI {
   }
 
   private handleInterceptors() {
-    this.api.interceptors.request.use((res: AxiosResponse) => {
-      NProgress.start();
-      return res;
-    }, (err: AxiosError) => {
-      NProgress.done();
-      return Promise.reject(err);
-    });
+    this.api.interceptors.request.use(
+      (config: AxiosRequestConfig) => {
+        const token = utils.getLStorage("MOON_DESKTOP_TOKEN");
+        if (token) {
+          config["headers"]["Authorization"] = `Token ${token}`;
+        }
 
-    this.api.interceptors.response.use(async (res: AxiosResponse) => {
-      const { data: { ret, msg, }, } = res;
-      if (Number(ret) >= 400) {
-        message.error(msg);
+        NProgress.start();
+        return config;
+      },
+      (err: AxiosError) => {
+        const { response: { data, status, }, } = err;
+        if (status == 400) {
+          message.error(data.message);
+        } else if (status == 401) {
+          localStorage.removeItem('MOON_DESKTOP_TOKEN');
+          window.location.href = '/login';
+        }
+
         NProgress.done();
-        return Promise.reject(msg);
-      } else {
+        return Promise.reject(err);
+      }
+    );
+
+    this.api.interceptors.response.use(
+      async (res: AxiosResponse) => {
         NProgress.done();
         return res;
+      },
+      (err: AxiosError) => {
+        const {
+          response: { data, status, },
+        } = err;
+        message.error(data.message);
+        if (status == 401) {
+          localStorage.removeItem("MOON_ADMIN_BROKER_TOKEN");
+
+          window.location.href =
+            process.env.NODE_ENV === "production"
+              ? "/login"
+              : window.location.origin + "/#/login";
+        }
+        NProgress.done();
+        return Promise.reject(err);
       }
-    }, (err: AxiosError) => {
-      NProgress.done();
-      return Promise.reject(err);
-    });
+    );
   }
 
   constructor(config: AxiosRequestConfig) {
@@ -59,36 +78,12 @@ export default class API implements IAPI {
   }
 }
 
-export const feedAPI = new API({
-  baseURL: `${baseURL[process.env.MODE]}`,
-}).getInstance();
+const apiMap = {
+  dev: "/api/moon/api",
+  qa: "http://api.cangshu360.com/api",
+  prod: "http://api.cangshu360.com/api",
+};
 
-// http://live-test-dubbox.onfirefit.cn
-export const fitnessAPI = new API({
-  baseURL: '/api/fitness',
-}).getInstance();
-
-// https://agora-testdata.oss-cn-beijing.aliyuncs.com/agora/auditImg/
-export const downloadRgbAPI = new API({
-  baseURL: '/download/rgb',
-}).getInstance();
-
-export const adAPI = new API({
-  baseURL: '/api/ad',
-}).getInstance();
-
-export const uploadAPI = new API({
-  baseURL: `/api/upload`,
-}).getInstance();
-
-export const coachAPI = new API({
-  baseURL: `/api/coach`,
-}).getInstance();
-
-export const courseAPI = new API({
-  baseURL: `/api/course`,
-}).getInstance();
-
-export const orderAPI = new API({
-  baseURL: `/api/order`,
+export const moonAPI = new API({
+  baseURL: apiMap[process.env.MODE],
 }).getInstance();
