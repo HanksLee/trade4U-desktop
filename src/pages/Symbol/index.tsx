@@ -10,6 +10,7 @@ import {
   Modal
 } from "antd";
 import { symbolMarkets } from "constant";
+import WithRoute from 'components/@shared/WithRoute';
 import InfiniteScroll from "react-infinite-scroller";
 import "./index.scss";
 
@@ -26,7 +27,8 @@ const orderTabs = [
   }
 ];
 
-
+/* eslint new-cap: "off" */
+@WithRoute('/dashboard/symbol')
 export default class extends BaseReact {
   timer = 0;
   delay = 200;
