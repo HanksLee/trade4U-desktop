@@ -41,8 +41,6 @@
         margin-top: 36px;
         width: 146px;
         height: 57px;
-        color: $active-color;
-        border: 2px solid $active-color;
       }
 
       .ant-form-item-explain {
@@ -57,22 +55,6 @@
           width: 100px;
           padding-right: 20px;
         }
-      }
-    }
-
-    .broker-selector .ant-select-selector {
-      border-left: 0;
-      border-right: 0;
-      border-top: 0;
-      padding-left: 0;
-      padding-right: 0;
-      box-shadow: none;
-      border-bottom-color: $active-color;
-      text-align: left;
-
-      &:hover, &:focus {
-        border-bottom-color: $active-color;
-        outline: none;
       }
     }
   }

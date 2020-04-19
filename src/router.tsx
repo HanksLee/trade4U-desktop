@@ -7,6 +7,9 @@ import loadable from '@loadable/component';
 const routes: any[] = [
   {
     component: loadable(() => import(/* webpackChunkName: "symbol" */ './pages/Symbol')),
+  },
+  {
+    component: loadable(() => import(/* webpackChunkName: "captial" */ './pages/Captial')),
   }
 ];
 
