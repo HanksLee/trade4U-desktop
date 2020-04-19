@@ -32,6 +32,23 @@ img {
 }
 
 .ant-table-wrapper {
+  .ant-table-thead > tr {
+    background-color: $primary-color;
+
+    th {
+      color: #fff;
+    }
+  }
+
+  .ant-table-placeholder {
+    background-color: $primary-color;
+    border: none;
+
+    .ant-empty-description {
+      color: #fff;
+    }
+  }
+
   .ant-pagination {
     float: unset;
     width: 100%;
@@ -98,5 +115,25 @@ input:-webkit-autofill:active {
 div {
   &:focus {
     outline: none !important;
+  }
+}
+
+.ant-tabs {
+  .ant-tabs-nav {
+    .ant-tabs-tab {
+      color: #fff;
+
+      &:hover {
+        color: $active-color;
+      }
+    }
+
+    .ant-tabs-tab-active {
+      color: $active-color;
+    }
+  }
+
+  .ant-tabs-ink-bar {
+    background-color: $active-color;
   }
 }

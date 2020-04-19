@@ -221,7 +221,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               </Sider>
             )
           }
-          <Layout style={{ padding: '0 24px 24px', }}>
+          <Layout>
             <Content
               className='content'
             >

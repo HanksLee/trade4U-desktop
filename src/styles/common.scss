@@ -136,11 +136,41 @@ img.emoji {
   height: 20px;
 }
 
-// .ant-form-item-label {
-//   display: inline-block;
-//   overflow: hidden;
-//   line-height: 39.9999px;
-//   white-space: nowrap;
-//   text-align: right;
-//   vertical-align: middle;
-// }
+.custom-table {
+  .custom-table-title {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(151, 151, 151, 1);
+  }
+
+  .custom-table-body {
+    .custom-table-item {
+      padding: 10px 0;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(151, 151, 151, 1);
+    }
+  }
+
+  .custom-table-loadmore {
+    margin-top: 10px;
+  }
+}
+
+.p-up {
+  color: $up;
+}
+
+.p-down {
+  color: $down;
+}
+
+.p-grey {
+  color: $grey;
+}
+
+.bg-up {
+  background-color: $up;
+}
+
+.bg-down {
+  background-color: $down;
+}

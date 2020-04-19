@@ -23,6 +23,20 @@ export const SUBMENU_ROUTES = [
   '/dashboard/activity'
 ];
 
+export const symbolMarkets = [{
+  id: 0,
+  title: '全部',
+}, {
+  id: 1,
+  title: '港股',
+}, {
+  id: 2,
+  title: '美股',
+}, {
+  id: 3,
+  title: '沪深',
+}];
+
 export const COMPONENT_ROUTES = {
 
 };

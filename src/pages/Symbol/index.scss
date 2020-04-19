@@ -1,0 +1,96 @@
+.symbol-page {
+  color: white;
+  background-color: #1D1F23;
+  padding: 10px;
+
+  .symbol-left {
+    height: 100vh;
+    background-color: $primary-color;
+    //margin: 0 10px;
+    //border: 1px solid white;
+
+    .symbol-filter {
+      display: flex;
+      //justify-content: space-around;
+      color: white;
+      padding-left: 10px;
+
+      .symbol-filter-item {
+        margin-right: 30px;
+        cursor: pointer;
+        &.active {
+          color: $active-color;
+        }
+      }
+    }
+
+    .symbol-sidebar {
+      color: white;
+      text-align: center;
+
+      .symbol-sidebar-info {
+        //padding-top: 10px;
+        height: 0;
+        overflow: hidden;
+        transition: height .3s;
+
+        &.active {
+          height: 200px;
+
+        }
+
+        .symbol-item-info {
+          display: flex;
+          justify-content: space-between;
+          margin: 10px;
+        }
+      }
+    }
+  }
+
+  .symbol-right {
+    height: 100vh;
+
+    .symbol-chart {
+      margin-left: 10px;
+      background-color: $primary-color;
+      border-bottom: 1px solid #333;
+
+      .symbol-chart-title {
+        padding: 10px;
+
+        span {
+          margin-right: 10px;
+        }
+
+        .symbol-chart-title-status {
+          border: 1px solid $active-color;
+          border-radius: 2px;
+          padding: 2px 6px;
+          font-size: 12px;
+          color: $active-color;
+        }
+      }
+    }
+
+    .symbol-order {
+      //height: 300px;
+      //border: 1px solid white;
+      margin-left: 10px;
+      margin-top: 10px;
+      background-color: $primary-color;
+    }
+  }
+}
+
+.symbol-modal {
+  padding-bottom: 0;
+
+  .symbol-modal-chart {
+    border: 1px solid white;
+  }
+
+  .symbol-modal-form {
+    border: 1px solid white;
+  }
+}
