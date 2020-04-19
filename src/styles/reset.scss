@@ -37,12 +37,29 @@ img {
 
     th {
       color: #fff;
+      background-color: $primary-color;
+    }
+  }
+
+  .ant-table-tbody {
+    tr {
+      td {
+        border-bottom: unset;
+      }
     }
   }
 
   .ant-table-placeholder {
     background-color: $primary-color;
     border: none;
+
+    &:hover {
+      background-color: $primary-color;
+
+      td {
+        background-color: $primary-color !important;
+      }
+    }
 
     .ant-empty-description {
       color: #fff;
