@@ -122,14 +122,15 @@ img {
 }
 
 .line-input {
-  border-left: 0;
-  border-right: 0;
-  border-top: 0;
-  padding-left: 0;
   padding-right: 0;
+  padding-left: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
   box-shadow: none;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     border: 0;
     border-bottom: 1px solid $active-color;
   }
@@ -137,16 +138,17 @@ img {
 
 .line-selector {
   .ant-select-selector {
-    border-left: 0 !important;
-    border-right: 0 !important;
-    border-top: 0 !important;
-    padding-left: 0 !important;
     padding-right: 0 !important;
-    box-shadow: none !important;
-    border-bottom-color: $active-color !important;
+    padding-left: 0 !important;
     text-align: left !important;
+    border-top: 0 !important;
+    border-right: 0 !important;
+    border-bottom-color: $active-color !important;
+    border-left: 0 !important;
+    box-shadow: none !important;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       border-bottom-color: $active-color !important;
       outline: none !important;
     }
