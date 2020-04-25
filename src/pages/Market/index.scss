@@ -1,0 +1,57 @@
+.market-page {
+  background-color: $layout-bg-color;
+  margin: 10px;
+  padding: 10px;
+
+  .trend-graph-panel {
+    display: flex;
+    justify-content: space-between;
+
+    .trend-graph {
+      width: 390px;
+      height: 400px;
+      background: $primary-color;
+    
+      .trend-graph-title {
+        font-size: 14px;
+        line-height: 14px;
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, .1);
+      }
+    
+      .trend-graph-detail {
+        border-bottom: 1px solid rgba(255, 255, 255, .1);
+        padding: 10px 0;
+
+        span {
+          padding: 0 10px;
+        }
+
+        .data-up {
+          color: $up;
+        }
+
+        .data-down {
+          color: $down;
+        }
+      }
+    }
+  }
+
+  .symbol-type-list {
+    display: block;
+    margin-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    padding: 10px 0;
+  
+    li {
+      display: inline-block;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+  
+    .selected-symbol-type {
+      color: $active-color;
+    }
+  }
+}

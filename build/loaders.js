@@ -134,8 +134,7 @@ const scriptLoaders = [
           getCustomTransformers: () => ({
             before: [tsImportPluginFactory({
               libraryName: 'antd',
-              libraryDirectory: 'lib',
-              style: 'css'
+              libraryDirectory: 'lib'
             })]
           }),
           compilerOptions: {

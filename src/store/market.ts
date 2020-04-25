@@ -1,9 +1,6 @@
 import api from 'services';
 import { action, observable, computed } from "mobx";
 import BaseStore from "store/base";
-import utils from 'utils';
-import cloneDeep from 'lodash/cloneDeep';
-import moment from 'moment';
 
 class MarketStore extends BaseStore {
   @observable
@@ -136,11 +133,19 @@ class MarketStore extends BaseStore {
     const res = await this.$api.trade.getCurrentTrade(id);
     this.setCurrentTrade(res.data);
   }
+
   @action
   setCurrentTrade = (trade) => {
     this.currentTrade = trade;
   }
 
+  @observable
+  sorter = 'change_rise';
+
+  @action
+  setSorter = (sorter) => {
+    this.sorter = sorter;
+  }
 }
 
 export default new MarketStore();

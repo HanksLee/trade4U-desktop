@@ -31,6 +31,12 @@ const updateTrade = async (id, config) => API.patch(`/trader/order/${id}`, confi
 const closeTrade = async (id, config) => API.put(`/trader/order/${id}/close`, config);
 const deleteTrade = async (id, config) => API.delete(`/trader/order/${id}/delete`, config);
 
+const getProductTrend = (prodcut_code: string, config: AxiosRequestConfig): Promise<any> =>
+  API.get(`/trader/symbol/${prodcut_code}/trend`, config);
+
+const getSymbolTypeRank = (code: string, config: AxiosRequestConfig): Promise<any> =>
+  API.get(`/trader/symbol/${code}/rank`, config);
+
 
 export default {
   getSelfSelectSymbolList,
@@ -48,4 +54,6 @@ export default {
   updateTrade,
   closeTrade,
   deleteTrade,
+  getProductTrend,
+  getSymbolTypeRank,
 };
