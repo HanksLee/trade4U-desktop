@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
 import AppRouter from '../../router';
-import { Layout, Menu, Icon, Input } from 'antd';
+import { Layout, Menu, Icon, Input, Select } from 'antd';
 import { PAGE_ROUTES, SUBMENU_ROUTES } from 'constant';
 import { withRouter } from "react-router-dom";
 import './index.scss';
 import { inject, observer } from 'mobx-react';
+import debounce from 'lodash/debounce';
 
 
 const { Header, Sider, Content, } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
+const Option = Select.Option;
+const OptGroup = Select.OptGroup;
 
 export interface IIndexProps {
 
@@ -58,7 +61,7 @@ function exactFromSidebarPath(pathlist) {
 /* eslint new-cap: "off" */
 // @ts-ignore
 @withRouter
-@inject('common')
+@inject('common', 'market')
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
   // 保存折叠前展开的subMenu
@@ -68,7 +71,13 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     openKeys: [],
     selectedKeys: [],
     showContainer: true,
+    symbolOptions: [],
   };
+
+  constructor(props) {
+    super(props);
+    this.searchSymbol = debounce(this.searchSymbol, 500);
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
@@ -172,8 +181,20 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     );
   }
 
+  onSearch = (evt) => {
+    this.searchSymbol(evt.target.value);
+  }
+
+  searchSymbol = async (val) => {
+    this.props.market.searchSymbol({
+      params: {
+        search: val,
+      },
+    });
+  }
+
   render() {
-    const { showContainer, } = this.state;
+    const { showContainer, symbolOptions, } = this.state;
     const { location, } = this.props;
 
     return (
@@ -181,7 +202,58 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
         {
           showContainer && (
             <Header className='header'>
-              <Input placeholder={'输入交易品种进行搜索'} style={{ width: 200, marginLeft: 30, }}/>
+              {/*<Input placeholder={'输入交易品种进行搜索'} style={{ width: 200, marginLeft: 30, }} onChange={this.onSearch}/>*/}
+
+              <Select
+                showSearch
+                allowClear
+                style={{
+                  width: 200,
+                  marginLeft: 30,
+                }}
+                // value={this.state.searchValue}
+                placeholder={'输入交易品种进行搜索'}
+                filterOption={false}
+                onFocus={async () => {
+                  // const res = await this.$api.market.searchSymbol({});
+                  // if (res.status == 200) {
+                  //   this.setState({
+                  //     symbolOptions: res.data,
+                  //   })
+                  // }
+                }}
+                onSearch={debounce(async (value) => {
+                  const res = await this.$api.market.searchSymbol({
+                    params: {
+                      search: value,
+                    },
+                  });
+
+                  if (res.status == 200) {
+                    this.setState({
+                      symbolOptions: res.data,
+                    });
+                  }
+                }, 500)}
+                onChange={(value, elem) => {
+                  this.props.market.getCurrentSymbol(value);
+                }}
+                notFoundContent={null}
+              >
+                {
+                  symbolOptions.map(item => (
+                    <OptGroup label={item.name}>
+                      {
+                        item.data.map(subItem => (
+                          <Option key={subItem.id}>
+                            {subItem.name}
+                          </Option>
+                        ))
+                      }
+                    </OptGroup>
+                  ))
+                }
+              </Select>
               <h2>MetaTrader 4</h2>
               <p className='header-right'>
                 <span>消息</span>

@@ -155,6 +155,14 @@ img.emoji {
   }
 }
 
+.custom-btn {
+  padding: 4px 0;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+}
+
 .p-up {
   color: $up;
 }
@@ -173,4 +181,12 @@ img.emoji {
 
 .bg-down {
   background-color: $down;
+}
+
+.bg-orange {
+  background-color: $orange;
+}
+
+.p-orange {
+  color: $orange;
 }

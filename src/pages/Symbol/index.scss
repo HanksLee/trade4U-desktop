@@ -35,7 +35,7 @@
         transition: height .3s;
 
         &.active {
-          height: 200px;
+          height: 140px;
 
         }
 
@@ -80,6 +80,8 @@
       margin-top: 10px;
       background-color: $primary-color;
     }
+
+
   }
 }
 
