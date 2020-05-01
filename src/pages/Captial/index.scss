@@ -8,6 +8,7 @@
 
   .ant-tabs {
     height: 100%;
+    overflow: scroll;
   }
 }
 
@@ -35,8 +36,8 @@
   transform: translateX(-50%);
 
   .ant-btn {
-    width: 146px;
-    height: 57px;
+    width: 90px;
+    height: 40px;
   }
 }
 
@@ -48,6 +49,9 @@
     padding: 42px 90px;
 
     > div {
+      font-size: 16px;
+      font-weight: 500;
+
       span {
         display: block;
         color: #fff;

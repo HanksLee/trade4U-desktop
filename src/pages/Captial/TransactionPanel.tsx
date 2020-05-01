@@ -1,7 +1,10 @@
 import * as React from 'react';
+import moment from 'moment';
 import { BaseReact } from 'components/@shared/BaseReact';
-import { Table } from 'antd';
+import { DatePicker, Row, Table } from 'antd';
 import './index.scss';
+
+const { RangePicker, } = DatePicker;
 
 export default class TransactionPanel extends BaseReact {
   state = {
@@ -13,8 +16,10 @@ export default class TransactionPanel extends BaseReact {
     this.getTransactionList();
   }
 
-  getTransactionList = async () => {
-    const res = await this.$api.captial.getTransactionList();
+  getTransactionList = async (params = {}) => {
+    const res = await this.$api.captial.getTransactionList({
+      params,
+    });
     this.setState({
       transactionList: res.data.results,
       totalData: res.data.total_data,
@@ -27,11 +32,14 @@ export default class TransactionPanel extends BaseReact {
         title: '时间',
         dataIndex: 'create_time',
         key: 'create_time',
+        align: 'center',
+        render: (text, record) => moment(text * 1000).format('YYYY.MM.DD HH:mm:ss'),
       },
       {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
+        align: 'center',
         render: (text) => {
           switch (text) {
             case 'recharge_success':
@@ -51,19 +59,31 @@ export default class TransactionPanel extends BaseReact {
         title: '金额',
         dataIndex: 'amount',
         key: 'amount',
+        align: 'center',
       },
       {
         title: '备注',
         dataIndex: 'remarks',
         key: 'remarks',
+        align: 'center',
       }
     ];
+  }
+
+  handleDateChange = (value) => {
+    this.getTransactionList({
+      create_time_start: value && value[0] ? value[0].unix() : undefined,
+      create_time_end: value && value[1] ? value[1].unix() : undefined,
+    });
   }
   
   render() {
     const { totalData, transactionList, } = this.state;
     return (
       <div className="transaction-panel">
+        <Row justify="end">
+          <RangePicker onChange={this.handleDateChange} />
+        </Row>
         <div className="transaction-summary">
           <div>
             <span>净资产</span>
