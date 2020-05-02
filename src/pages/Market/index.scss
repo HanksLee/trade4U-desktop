@@ -6,10 +6,9 @@
   .trend-graph-panel {
     display: flex;
     justify-content: space-between;
+    width: 100%;
 
     .trend-graph {
-      width: 390px;
-      height: 400px;
       background: $primary-color;
     
       .trend-graph-title {

@@ -9,6 +9,8 @@ interface Trend {
 
 interface TrendGraphProps {
   productCode: string;
+  width: number;
+  height: number;
 }
 
 interface TrendGraphState {
@@ -35,9 +37,17 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
   }
 
   async componentDidMount() {
+    this.initChart(this.props.width, this.props.height);
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.initChart(nextProps.width, nextProps.height);
+  }
+
+  initChart = (width: number, height: number) => {
     this.chart = createChart(this.container.current, {
-      width: 390,
-      height: 300,
+      width: width,
+      height: height - 100,
       layout: {
         backgroundColor: 'transparent',
         textColor: '#d1d4dc',
@@ -119,8 +129,9 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
   
   render () {
     const { detail, } = this.state;
+    const { width, height, } = this.props;
     return (
-      <div className="trend-graph">
+      <div className="trend-graph" style={{ width: `${width}px`, height: `${height}px`, }}>
         <div className="trend-graph-title">大盘指数</div>
         {
           !detail
