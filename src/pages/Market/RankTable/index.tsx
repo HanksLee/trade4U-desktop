@@ -83,6 +83,11 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         dataIndex: "buy",
         sorter: true,
         sortOrder: this.getSortOrderValue('buy_rise', 'buy_drop'),
+        render: (text, record) => (
+          record.chg >= 0
+            ? <span className="data-up">{text}</span>
+            : <span className="data-down">{text}</span>
+        ),
       },
 
       {
@@ -90,18 +95,33 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         dataIndex: "sell",
         sorter: true,
         sortOrder: this.getSortOrderValue('sell_rise', 'sell_drop'),
+        render: (text, record) => (
+          record.chg >= 0
+            ? <span className="data-up">{text}</span>
+            : <span className="data-down">{text}</span>
+        ),
       },
       {
-        title: "涨幅",
+        title: "涨跌额",
         dataIndex: "change",
         sorter: true,
         sortOrder: this.getSortOrderValue('change_rise', 'change_drop'),
+        render: (text, record) => (
+          record.chg >= 0
+            ? <span className="data-up">{`+${text}`}</span>
+            : <span className="data-down">{`-${text}`}</span>
+        ),
       },
       {
         title: "涨跌幅",
         dataIndex: "chg",
         sorter: true,
         sortOrder: this.getSortOrderValue('chg_rise', 'chg_drop'),
+        render: (text) => (
+          text >= 0
+            ? <span className="data-up">{`+${text}`}</span>
+            : <span className="data-down">{`-${text}`}</span>
+        ),
       },
       {
         title: "开盘价",
