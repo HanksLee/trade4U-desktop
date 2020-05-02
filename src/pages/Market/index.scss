@@ -7,6 +7,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-bottom: 40px;
 
     .trend-graph {
       background: $primary-color;
@@ -39,18 +40,16 @@
 
   .symbol-type-list {
     display: block;
-    margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, .1);
-    padding: 10px 0;
+    margin-bottom: 10px;
   
     li {
       display: inline-block;
       cursor: pointer;
-      padding: 0 10px;
     }
   
     .selected-symbol-type {
       color: $active-color;
+      border-bottom: 2px solid $active-color;
     }
   }
 }

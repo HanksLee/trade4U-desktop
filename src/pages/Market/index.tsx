@@ -12,6 +12,10 @@ interface MarketState {
   height: number;
 }
 
+const symbolTypeMap = {
+  HK: ['IXIXHSI', 'IXIXHSCEI', 'HSCCI'],
+};
+
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/market")
 export default class Market extends BaseReact<any, MarketState> {
@@ -27,8 +31,15 @@ export default class Market extends BaseReact<any, MarketState> {
   }
 
   componentDidMount() {
+    this.computeTrendGraphStyle();
+    setTimeout(() => {
+      this.computeTrendGraphStyle();
+    }, 2000);
+  }
+
+  computeTrendGraphStyle = () => {
     const containerWidth = this.container.current.offsetWidth;
-    const width = Math.floor((containerWidth - 20) / 3);
+    const width = Math.floor((containerWidth - 20) / symbolTypeMap[this.state.currentSymbolTypeCode].length);
     const height = width;
     this.setState({
       width,
@@ -36,35 +47,26 @@ export default class Market extends BaseReact<any, MarketState> {
     });
   }
   
-  
   render() {
     const { currentSymbolTypeCode, width, height, } = this.state;
 
     return (
       <div className="market-page">
+        <ul className="symbol-type-list">
+          <li className={ currentSymbolTypeCode === 'HK' ? 'selected-symbol-type' : ''}>港股</li>
+        </ul>
         <div className="trend-graph-panel" ref={this.container}>
-          <TrendGraph
-            productCode="IXIXHSI"
-            width={width}
-            height={height}
-          />
-          <TrendGraph
-            productCode="IXIXHSCEI"
-            width={width}
-            height={height}
-          />
-          <TrendGraph
-            productCode="HSCCI"
-            width={width}
-            height={height}
-          />
+          {
+            symbolTypeMap[currentSymbolTypeCode].map(item => (
+              <TrendGraph
+                productCode={item}
+                width={width}
+                height={height}
+              />
+            ))
+          }
         </div>
-        <div>
-          <ul className="symbol-type-list">
-            <li className={ currentSymbolTypeCode === 'HK' ? 'selected-symbol-type' : ''}>港股</li>
-          </ul>
-          <RankTable symbolTypeCode={currentSymbolTypeCode} />
-        </div>
+        <RankTable symbolTypeCode={currentSymbolTypeCode} />
       </div>
     );
   }

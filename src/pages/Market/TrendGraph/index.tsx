@@ -45,6 +45,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
   }
 
   initChart = (width: number, height: number) => {
+    this.container.current.innerHTML = "";
     this.chart = createChart(this.container.current, {
       width: width,
       height: height - 100,
