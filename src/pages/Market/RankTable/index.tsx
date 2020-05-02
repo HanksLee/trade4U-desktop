@@ -68,6 +68,26 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
     return false;
   }
 
+  compareStyle = (orign, target) => {
+    if (orign < target) {
+      return <span className="data-down">{orign}</span>;
+    } else if (orign > target) {
+      return <span className="data-up">{orign}</span>;
+    } else {
+      return <span>{orign}</span>;
+    }
+  }
+
+  compareToChg = (orign, chg) => {
+    if (orign < chg) {
+      return <span className="data-down">{orign}</span>;
+    } else if (orign > chg) {
+      return <span className="data-up">{orign}</span>;
+    } else {
+      return <span>{orign}</span>;
+    }
+  }
+
   getColumns = () => {
     return [
       {
@@ -83,11 +103,7 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         dataIndex: "buy",
         sorter: true,
         sortOrder: this.getSortOrderValue('buy_rise', 'buy_drop'),
-        render: (text, record) => (
-          record.chg >= 0
-            ? <span className="data-up">{text}</span>
-            : <span className="data-down">{text}</span>
-        ),
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
 
       {
@@ -95,39 +111,44 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         dataIndex: "sell",
         sorter: true,
         sortOrder: this.getSortOrderValue('sell_rise', 'sell_drop'),
-        render: (text, record) => (
-          record.chg >= 0
-            ? <span className="data-up">{text}</span>
-            : <span className="data-down">{text}</span>
-        ),
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
       {
         title: "涨跌额",
         dataIndex: "change",
         sorter: true,
         sortOrder: this.getSortOrderValue('change_rise', 'change_drop'),
-        render: (text, record) => (
-          record.chg >= 0
-            ? <span className="data-up">{`+${text}`}</span>
-            : <span className="data-down">{`-${text}`}</span>
-        ),
+        render: (text) => {
+          if (text > 0) {
+            return <span className="data-up">{`+${text}`}</span>;
+          } else if (text < 0) {
+            return <span className="data-down">{`-${text}`}</span>;
+          } else {
+            return <span>{text}</span>;
+          }
+        },
       },
       {
         title: "涨跌幅",
         dataIndex: "chg",
         sorter: true,
         sortOrder: this.getSortOrderValue('chg_rise', 'chg_drop'),
-        render: (text) => (
-          text >= 0
-            ? <span className="data-up">{`+${text}`}</span>
-            : <span className="data-down">{`-${text}`}</span>
-        ),
+        render: (text) => {
+          if (text > 0) {
+            return <span className="data-up">{`+${text}`}</span>;
+          } else if (text < 0) {
+            return <span className="data-down">{`-${text}`}</span>;
+          } else {
+            return <span>{text}</span>;
+          }
+        },
       },
       {
         title: "开盘价",
         dataIndex: "open",
         sorter: true,
         sortOrder: this.getSortOrderValue('open_rise', 'open_drop'),
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "收盘价",
@@ -140,12 +161,14 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         dataIndex: "high",
         sorter: true,
         sortOrder: this.getSortOrderValue('high_rise', 'high_drop'),
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "最低价",
         dataIndex: "low",
         sorter: true,
         sortOrder: this.getSortOrderValue('low_rise', 'low_drop'),
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "成交价",
