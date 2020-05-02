@@ -94,7 +94,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
     if (res.data && res.data.trend) {
       data = res.data.trend.map(item => {
         return {
-          time: Number(item[0]),
+          time: Number(item[0]) + 8 * 60 * 60, // trading view 的 bug ，临时手动增加八个时区
           value: item[3],
         };
       });
@@ -111,7 +111,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
       return i;
     }
 
-    const date = new Date(timestamp * 1000);
+    const date = new Date((timestamp - 8 * 60 * 60) * 1000);
     const hour = addZero(date.getHours());
     const minutes = addZero(date.getMinutes());
     return hour + ':' + minutes;
