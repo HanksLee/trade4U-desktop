@@ -23,6 +23,11 @@ export const SUBMENU_ROUTES = [
   '/dashboard/activity'
 ];
 
+export const traderStatusMap = {
+  in_transaction: '交易中',
+  closed: '休市中',
+};
+
 export const symbolMarkets = [{
   id: 0,
   title: '全部',
@@ -56,33 +61,64 @@ export const actionsType = [
   }
 ];
 
+// export const tradeTypeOptions = [
+//   {
+//     id: '1',
+//     name: '立即执行',
+//     color: '',
+//   },
+//   {
+//     id: '2',
+//     name: 'Buy Limit',
+//     color: 'p-up',
+//   },
+//   {
+//     id: '3',
+//     name: 'Sell Limit',
+//     color: 'p-down',
+//   },
+//   {
+//     id: '4',
+//     name: 'Buy Stop',
+//     color: 'p-up',
+//   },
+//   {
+//     id: '5',
+//     name: 'Sell Stop',
+//     color: 'p-down',
+//   }
+// ];
+
 export const tradeTypeOptions = [
   {
-    id: '1',
+    id: 'instance',
     name: '立即执行',
     color: '',
   },
   {
+    id: 'future',
+    name: '挂单',
+    color: '',
+  }
+];
+
+export const tradeFutureTypeOptions = [
+  {
     id: '2',
     name: 'Buy Limit',
-    color: 'p-up',
   },
   {
     id: '3',
     name: 'Sell Limit',
-    color: 'p-down',
   },
   {
     id: '4',
     name: 'Buy Stop',
-    color: 'p-up',
   },
   {
     id: '5',
     name: 'Sell Stop',
-    color: 'p-down',
-  }
-];
+  }];
 
 export const tradeActionMap = {
   0: 'buy',

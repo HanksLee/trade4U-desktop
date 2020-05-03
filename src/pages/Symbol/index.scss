@@ -6,6 +6,7 @@
   .symbol-left {
     height: 100vh;
     background-color: $primary-color;
+
     //margin: 0 10px;
     //border: 1px solid white;
 
@@ -52,9 +53,12 @@
     height: 100vh;
 
     .symbol-chart {
-      margin-left: 10px;
       background-color: $primary-color;
       border-bottom: 1px solid #333;
+
+      .symbol-chart-info {
+        padding: 0 10px;
+      }
 
       .symbol-chart-title {
         padding: 10px;
@@ -79,9 +83,35 @@
       margin-left: 10px;
       margin-top: 10px;
       background-color: $primary-color;
+
+      .symbol-order-info {
+        color: $text-color;
+        text-align: center;
+
+        strong {
+          color: white;
+          font-size: 16px;
+          margin-bottom: 10px;
+          display: block;
+        }
+      }
+
+      .symbol-order-table-row {
+        cursor: pointer;
+      }
     }
 
-
+    .symbol-order-favorite {
+      .symbol-order-btn {
+        background-color: $active-color;
+        color: #232C37;
+        font-size: 16px;
+        padding: 2px 16px;
+        display: inline-block;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+    }
   }
 }
 

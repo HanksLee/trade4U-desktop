@@ -42,7 +42,7 @@ img {
   }
 
   .ant-table-tbody {
-    color: white;
+    color: $text-color;
     background-color: $primary-color;
 
     tr {
@@ -95,6 +95,10 @@ img {
       a {
         color: white;
       }
+    }
+
+    .ant-pagination-item-active a {
+      color: $active-color;
     }
   }
 }

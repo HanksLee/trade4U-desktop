@@ -1,4 +1,7 @@
 import { moonAPI as API } from "utils/request";
+import {
+  AxiosRequestConfig,
+} from 'axios';
 
 const getSelfSelectSymbolList = (config) =>
   API.get("/trader/self_select_symbol", config);
@@ -25,12 +28,16 @@ const searchSymbol = (config) => API.get('/trader/search', config);
 const getTradeInfo = async config => API.get('/trader/meta-fund', config);
 
 const getTradeList = async config => API.get('/trader/order', config);
-const getCurrentTrade = async (id, config) => API.get(`/trader/order/${id}`, config);
-const createTrade = async config => API.post('/trader/order', config);
-const updateTrade = async (id, config) => API.patch(`/trader/order/${id}`, config);
-const closeTrade = async (id, config) => API.put(`/trader/order/${id}/close`, config);
-const deleteTrade = async (id, config) => API.delete(`/trader/order/${id}/delete`, config);
 
+const getTradeHistoryList = async config => API.get('/trader/finish-order', config);
+
+const getCurrentTrade = async (id, config) => API.get(`/trader/order/${id}`, config);
+
+// 订单接口
+const createOrder = config => API.post('/trader/order', config);
+const updateOrder = (id, config) => API.patch(`/trader/order/${id}`, config);
+const closeOrder = (id, config) => API.put(`/trader/order/${id}/close`, config);
+const deleteOrder = async (id, config) => API.delete(`/trader/order/${id}/delete`, config);
 const getProductTrend = (prodcut_code: string, config: AxiosRequestConfig): Promise<any> =>
   API.get(`/trader/symbol/${prodcut_code}/trend`, config);
 
@@ -49,11 +56,12 @@ export default {
   searchSymbol,
   getTradeInfo,
   getTradeList,
+  getTradeHistoryList,
   getCurrentTrade,
-  createTrade,
-  updateTrade,
-  closeTrade,
-  deleteTrade,
+  createOrder,
+  updateOrder,
+  closeOrder,
+  deleteOrder,
   getProductTrend,
   getSymbolTypeRank,
 };

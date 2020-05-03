@@ -111,18 +111,41 @@ class MarketStore extends BaseStore {
 
   @observable
   tradeList = []; // 持仓订单
+  @observable
+  futureTradeList = []; // 挂单订单
   @action
-  getTradeList = async (config) => {
+  getTradeList = async (config, type = 'in_transaction') => {
     const res = await this.$api.market.getTradeList(config);
-    this.setTradeList(res.data);
+    this.setTradeList(res.data, type);
   }
 
   @action
-  setTradeList = (list, type = 'order') => {
-    if (type == 'order') {
+  setTradeList = (list, type = 'in_transaction') => {
+    if (type == 'in_transaction') {
       this.tradeList = list;
     } else {
+      this.futureTradeList = list;
     }
+  }
+
+  @observable
+  tradeHistoryList = []
+  @observable
+  tradeHistoryListMeta = {}
+  @action
+  getTradeHistoryList = async config => {
+    const res = await this.$api.market.getTradeHistoryList(config);
+    this.setTradeHistoryList(res.data);
+  }
+  @action
+  setTradeHistoryList = data => {
+    this.tradeHistoryList = data.results;
+    this.tradeHistoryListMeta = {
+      total: data.count,
+      page: data.page,
+      page_size: data.page_size,
+      data: data.total_data,
+    };
   }
 
   @observable
@@ -139,6 +162,35 @@ class MarketStore extends BaseStore {
     this.currentTrade = trade;
   }
 
+  @observable
+  currentOrder: any = {}
+  @computed
+  get currentShowOrder() {
+    let obj: any = {};
+
+    // 如果订单的交易类型不存在，或等于 0/1，则 actionMode 设置为立即执行
+    if (!this.currentOrder?.action || this.currentOrder?.action == 0 || this.currentOrder?.action == 1) {
+      obj.actionMode = 'instance';
+    } else {
+      obj.actionMode = 'future';
+    }
+
+    return {
+      ...this.currentOrder,
+      ...obj,
+    };
+  }
+  @action
+  setCurrentOrder = (order, overwrite = false) => {
+    if (overwrite) {
+      this.currentOrder = order;
+    } else {
+      this.currentOrder = {
+        ...this.currentOrder,
+        ...order,
+      };
+    }
+  }
   @observable
   sorter = 'change_rise';
 
