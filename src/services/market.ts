@@ -1,6 +1,6 @@
 import { moonAPI as API } from "utils/request";
 import {
-  AxiosRequestConfig,
+  AxiosRequestConfig
 } from 'axios';
 
 const getSelfSelectSymbolList = (config) =>
