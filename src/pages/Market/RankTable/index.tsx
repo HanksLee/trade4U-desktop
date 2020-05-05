@@ -122,7 +122,7 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
           if (text > 0) {
             return <span className="data-up">{`+${text}`}</span>;
           } else if (text < 0) {
-            return <span className="data-down">{`-${text}`}</span>;
+            return <span className="data-down">{text}</span>;
           } else {
             return <span>{text}</span>;
           }
@@ -137,7 +137,7 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
           if (text > 0) {
             return <span className="data-up">{`+${text}`}</span>;
           } else if (text < 0) {
-            return <span className="data-down">{`-${text}`}</span>;
+            return <span className="data-down">{text}</span>;
           } else {
             return <span>{text}</span>;
           }
