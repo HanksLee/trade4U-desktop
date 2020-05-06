@@ -13,7 +13,9 @@ const withdraw = (config: AxiosRequestConfig): Promise<any> =>
   API.post('/trader/withdraw', config);
 
 const getTransactionList = (config): Promise<any> =>
-  API.get(`/trader/transaction`, config);
+  API.get(`/trader/transaction`, {
+    ...config,
+  });
 
 export default {
   getPaymentMethods,

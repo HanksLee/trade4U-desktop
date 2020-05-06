@@ -223,8 +223,8 @@ div {
     background-color: $active-color;
   }
 }
-//.ant-btn:hover, .ant-btn:focus {
-//  color: unset;
-//  background-color: unset;
-//  border-color: unset;
-//}
+
+.ant-table-column-sorter-up.active,
+.ant-table-column-sorter-down.active {
+  color: $active-color;
+}

@@ -18,7 +18,10 @@ export default class TransactionPanel extends BaseReact {
 
   getTransactionList = async (params = {}) => {
     const res = await this.$api.captial.getTransactionList({
-      params,
+      params: {
+        type: 'deposit_and_withdraw',
+        ...params,
+      },
     });
     this.setState({
       transactionList: res.data.results,
@@ -60,6 +63,13 @@ export default class TransactionPanel extends BaseReact {
         dataIndex: 'amount',
         key: 'amount',
         align: 'center',
+        render: (text, record) => {
+          return text == 0
+            ? 0
+            : (record.in_or_out === -1
+              ? <span style={{ color: 'red', }}>{`-${text}`}</span>
+              : <span style={{ color: 'green', }}>{`+${text}`}</span>);
+        },
       },
       {
         title: '备注',
