@@ -65,7 +65,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
       timeScale: {
         visible: true,
         timeVisible: true,
-        rightOffset: 100,
+        rightOffset: 10,
       },
       grid: {
         horzLines: {
