@@ -35,6 +35,10 @@ export default class Market extends BaseReact<any, MarketState> {
     setTimeout(() => {
       this.computeTrendGraphStyle();
     }, 2000);
+
+    window.onresize = () => {
+      this.computeTrendGraphStyle();
+    };
   }
 
   computeTrendGraphStyle = () => {

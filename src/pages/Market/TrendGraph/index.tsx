@@ -65,6 +65,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
       timeScale: {
         visible: true,
         timeVisible: true,
+        rightOffset: 100,
       },
       grid: {
         horzLines: {
@@ -140,6 +141,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
             : (
               <div className="trend-graph-detail">
                 <span>{detail.name}</span>
+                <span className={detail.change >= 0 ? 'data-up' : 'data-down'}>{detail.new_price}</span>
                 <span className={detail.change >= 0 ? 'data-up' : 'data-down'}>{detail.change}</span>
                 <span className={detail.chg >= 0 ? 'data-up' : 'data-down'}>{detail.chg === 0 ? 0 : detail.chg + '%'}</span>
               </div>
