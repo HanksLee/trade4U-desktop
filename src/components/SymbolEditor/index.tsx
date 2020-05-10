@@ -70,6 +70,7 @@ export default class SymbolEditor extends BaseReact {
                 this.$msg.success(`订单修改成功~`);
                 // 修改成功后，重新拉取列表接口
                 this.props.getTradeList();
+                this.props.market.toggleOrderModalVisible();
               }
             } catch (err) {
               this.$msg.error(err?.response?.data?.message);
@@ -173,9 +174,9 @@ export default class SymbolEditor extends BaseReact {
       },
     } = this.props;
 
-    const payload = {
+    const payload: any = {
       trading_volume: currentOrder?.lots * currentSymbol?.symbol_display?.contract_size,
-      lots: currentOrder.lots,
+      lots: currentOrder.lots || currentSymbol?.symbol_display?.min_lots,
       symbol: currentSymbol.id,
       take_profit: currentOrder?.take_profit,
       stop_loss: currentOrder?.stop_loss,
@@ -184,22 +185,29 @@ export default class SymbolEditor extends BaseReact {
 
     try {
       if (orderMode == "add") {
+        if (currentOrder.action == 0) {
+          payload.open_price = currentSymbol?.product_details?.buy;
+        } else if (currentOrder.action == 1) {
+          payload.open_price = currentSymbol?.product_details?.sell;
+        } else {
+          payload.open_price = currentOrder?.open_price;
+        }
+
         const res = await this.$api.market.createOrder(payload);
-        debugger;
+
         if (res.status == 201) {
           const modal = Modal.info({
+            icon: <CheckCircleFilled/>,
             content: <div>
               <h2>
                 买入完成
               </h2>
-              <p>
-                <CheckCircleFilled/>
-              </p>
             </div>,
           });
 
           setTimeout(() => {
             modal.destroy();
+            this.props.market.toggleOrderModalVisible();
           }, 1000);
         }
       } else {
@@ -360,12 +368,15 @@ export default class SymbolEditor extends BaseReact {
                 }
                 <Col span={11}>
                   <FormItem label={"数量"}>
-                    <Input value={currentShowOrder?.lots} step={currentSymbol?.symbol_display?.lots_step}
-                      min={currentSymbol?.symbol_display?.min_lots || 0} type={"number"} onChange={evt => {
-                        setCurrentOrder({
-                          lots: +evt.target.value,
-                        });
-                      }}/>
+                    <Input value={
+                      currentShowOrder?.lots ||
+                      currentSymbol?.symbol_display?.min_lots}
+                    step={currentSymbol?.symbol_display?.lots_step}
+                    min={currentSymbol?.symbol_display?.min_lots || 0} type={"number"} onChange={evt => {
+                      setCurrentOrder({
+                        lots: +evt.target.value,
+                      });
+                    }}/>
                   </FormItem>
                 </Col>
               </Row>

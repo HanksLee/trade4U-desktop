@@ -198,6 +198,13 @@ class MarketStore extends BaseStore {
   setSorter = (sorter) => {
     this.sorter = sorter;
   }
+
+  @observable
+  orderModalVisible = false;
+  @action
+  toggleOrderModalVisible = () => {
+    this.orderModalVisible = !this.orderModalVisible;
+  }
 }
 
 export default new MarketStore();

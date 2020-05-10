@@ -32,6 +32,7 @@ export default class API implements IAPI {
       },
       (err: AxiosError) => {
         const { response: { data, status, }, } = err;
+
         if (status == 400) {
           message.error(data.message);
         } else if (status == 401) {
@@ -55,7 +56,7 @@ export default class API implements IAPI {
         } = err;
         message.error(data.message);
         if (status == 401) {
-          localStorage.removeItem("MOON_ADMIN_BROKER_TOKEN");
+          localStorage.removeItem("MOON_DESKTOP_TOKEN");
 
           window.location.href =
             process.env.NODE_ENV === "production"

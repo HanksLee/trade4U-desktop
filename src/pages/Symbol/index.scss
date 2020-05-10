@@ -1,10 +1,12 @@
 .symbol-page {
   color: white;
-  background-color: #1D1F23;
-  padding: 10px;
+  height: calc(100vh - 56px);
+  display: flex;
 
   .symbol-left {
-    height: 100vh;
+    //height: 100vh;
+    //width: 370px;
+    flex-basis: 370px;
     background-color: $primary-color;
 
     //margin: 0 10px;
@@ -50,11 +52,17 @@
   }
 
   .symbol-right {
-    height: 100vh;
+    //height: 100vh;
+    flex: 1;
+
+    >.ant-row {
+      padding-left: 10px;
+    }
 
     .symbol-chart {
       background-color: $primary-color;
       border-bottom: 1px solid #333;
+      //margin-left: 10px;
 
       .symbol-chart-info {
         padding: 0 10px;
@@ -80,7 +88,7 @@
     .symbol-order {
       //height: 300px;
       //border: 1px solid white;
-      margin-left: 10px;
+      //margin-left: 10px;
       margin-top: 10px;
       background-color: $primary-color;
 

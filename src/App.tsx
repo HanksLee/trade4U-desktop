@@ -25,12 +25,13 @@ class App extends BaseReact {
   }
 
   render() {
+    const key = localStorage.getItem('MOON_DESKTOP_TOKEN');
     return (
       <Provider {...store}>
         <Router>
           <Switch>
             <Route exact path="/">
-              {true ? (
+              {key ? (
                 <Redirect to="/dashboard" />
               ) : (
                 <Redirect to="/login" />
