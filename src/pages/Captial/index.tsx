@@ -15,7 +15,7 @@ export default class Captial extends BaseReact {
   render() {
     return (
       <div className="captial-page">
-        <Tabs defaultActiveKey="deposit">
+        <Tabs defaultActiveKey="deposit" destroyInactiveTabPane>
           <TabPane tab="入金" key="deposit">
             <DepositPanel />
           </TabPane>

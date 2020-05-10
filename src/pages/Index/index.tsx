@@ -297,12 +297,6 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             <Content
               className='content'
             >
-              {
-                (location.pathname === '/dashboard' || location.pathname === '/dashboard/')
-                  ? (
-                    <p style={{ fontSize: 30, fontWeight: 500, margin: 20, }}>Welcome to WeTrade 桌面端</p>
-                  ) : null
-              }
               <AppRouter />
             </Content>
           </Layout>

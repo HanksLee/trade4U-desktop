@@ -4,13 +4,15 @@ import { Form, Input, Select, Button, message } from 'antd';
 import './index.scss';
 
 export default class DepositPanel extends BaseReact {
-  paymentWindow: any = null;
   timer: any = null;
   formRef = React.createRef();
 
   state = {
     withdrawableBalance: 0,
     paymentMethods: [],
+    isPaying: false,
+    paymentUrl: '',
+    orderNumber: '',
   }
 
   componentDidMount() {
@@ -33,26 +35,38 @@ export default class DepositPanel extends BaseReact {
   }
 
   deposit = async (values) => {
-    if (!this.paymentWindow) {
+    if (!this.state.isPaying) {
       const res = await this.$api.captial.deposit({
         payment: values.payment,
         expect_amount: Number(values.expect_amount),
       });
-      this.paymentWindow = window.open(res.data.gopayurl); 
+      this.setState({
+        isPaying: true,
+        paymentUrl: res.data.gopayurl,
+        orderNumber: res.data.order_number,
+      });
       this.checkDepositStatus();
     } else {
       message.warning('请完成支付');
     }
   }
 
-  checkDepositStatus = () => {
-    this.timer = setInterval(() => {
-      // TODO: 获取状态
+  checkDepositStatus = async () => {
+    const res = await this.$api.captial.checkDepositStatus({
+      params: { order_number: this.state.orderNumber, },
+    });
+    if (res.status === 200) {
       this.getWithdrawableBalance();
-      this.paymentWindow.close();
-      clearInterval(this.timer);
       message.success('充值成功');
-    }, 2000);
+      this.setState({
+        isPaying: false,
+        paymentUrl: '',
+        orderNumber: '',
+      });
+      this.resetForm();
+    } else {
+      this.checkDepositStatus();
+    }
   }
 
   resetForm = () => {
@@ -60,7 +74,7 @@ export default class DepositPanel extends BaseReact {
   }
   
   render() {
-    const { withdrawableBalance, paymentMethods, } = this.state;
+    const { withdrawableBalance, paymentMethods, isPaying, paymentUrl, } = this.state;
 
     return (
       <div className="deposit-panel">
@@ -89,6 +103,9 @@ export default class DepositPanel extends BaseReact {
             <Button htmlType="submit">充值</Button>
           </div>
         </Form>
+        {
+          isPaying && <iframe title="支付" className="payment-iframe" src={paymentUrl} />
+        }
       </div>
     );
   }
