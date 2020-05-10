@@ -374,8 +374,11 @@ export default class extends BaseReact {
 
     const {
       selfSelectSymbolList,
+      currentSymbol,
     } = this.props.market;
     const itemWidth = Math.floor(24 / columns.length);
+
+
 
 
     return (
@@ -402,7 +405,12 @@ export default class extends BaseReact {
         >
           {
             selfSelectSymbolList.map(item => {
-              return <Row className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
+              // console.log('item', item);
+              // console.log('currentSymbol', currentSymbol);
+
+              return <Row style={{
+                backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
+              }} className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
                 onClick={(e) => {
                   this.onSingleClick(item);
                 }}
@@ -923,8 +931,6 @@ export default class extends BaseReact {
                 </div>
               </Col>
             </Row>
-
-
           </Col>
           <Col span={24} className={"symbol-order"}>
             <Tabs
