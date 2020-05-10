@@ -411,12 +411,12 @@ export default class extends BaseReact {
               return <Row style={{
                 backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
               }} className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
-                onClick={(e) => {
-                  this.onSingleClick(item);
-                }}
-                onDoubleClick={(e) => {
-                  this.onDoubleClick(item);
-                }}
+              onClick={(e) => {
+                this.onSingleClick(item);
+              }}
+              onDoubleClick={(e) => {
+                this.onDoubleClick(item);
+              }}
               >
                 <Col span={24}>
                   <Row type={"flex"} justify={"space-between"}>
