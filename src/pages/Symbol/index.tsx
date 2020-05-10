@@ -702,7 +702,7 @@ export default class extends BaseReact {
         >
 
         </Table>
-      </div>;
+      </div>
     }
 
     const columns = [
@@ -849,7 +849,7 @@ export default class extends BaseReact {
             ? tradeList
             : futureTradeList
         }
-      />;
+      />
     </div>;
   };
 
