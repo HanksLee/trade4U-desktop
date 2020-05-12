@@ -4,10 +4,12 @@ import AppRouter from "../../router";
 import { Layout, Menu, Icon, Input, Select } from "antd";
 import { PAGE_ROUTES, SUBMENU_ROUTES } from "constant";
 import { withRouter } from "react-router-dom";
-import messageIcon from "assets/img/message-icon.svg";
-import settingsIcon from "assets/img/settings-icon.svg";
 import MessageModal from "components/MessageModal";
 import SettingsModal from "components/SettingsModal";
+// import messageIcon from "assets/img/message-icon.svg";
+// import settingsIcon from "assets/img/settings-icon.svg";
+// import MessageModal from "components/MessageModal";
+// import SettingsModal from "components/SettingsModal";
 import logoSVG from "assets/img/logo.svg";
 import messageSVG from "assets/img/message.svg";
 import settingsSVG from "assets/img/settings.svg";
@@ -132,9 +134,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   }
 
   hideModal = () => {
-    this.setState({
-      messageModalStatus: false,
-      settingsModalStatus: false
+    this.setState({}, () => {
+      this.setState({ messageModalStatus: false, settingsModalStatus: false });
     });
   };
 
@@ -252,6 +253,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             >
               <img src={messageSVG} alt="" />
               消息
+              {messageModalStatus && (
+                <MessageModal onCancel={this.hideModal}></MessageModal>
+              )}
             </span>
             <span
               onClick={() => {
@@ -260,6 +264,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             >
               <img src={settingsSVG} alt="" />
               设定
+              {settingsModalStatus && (
+                <SettingsModal onCancel={this.hideModal}></SettingsModal>
+              )}
             </span>
             <span
               onClick={() => {

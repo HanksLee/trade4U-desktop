@@ -26,8 +26,8 @@ interface IMessageModalState {
 // @ts-ignore
 
 export default class EditMessageModal extends BaseReact<
-IMessageModalProps,
-IMessageModalState
+  IMessageModalProps,
+  IMessageModalState
 > {
   state = {
     messageList: [],
@@ -35,7 +35,7 @@ IMessageModalState
     total: 0,
     page: 1,
     page_size: 5,
-    detailContent: null,
+    detailContent: null
   };
 
   componentDidMount() {
@@ -43,28 +43,28 @@ IMessageModalState
   }
 
   goBack = () => {
-    this.setState({ detailContent: null, });
+    this.setState({ detailContent: null });
   };
 
   onDetailChange = (item: any) => {
-    this.setState({ detailContent: item, });
+    this.setState({ detailContent: item });
   };
 
   onPageChange = page => {
     this.setState(
       {
-        page: page,
+        page: page
       },
       this.getList
     );
   };
 
   changeMessageType = (type: string) => {
-    this.setState({ messageType: type, page: 1, }, this.getList);
+    this.setState({ messageType: type, page: 1 }, this.getList);
   };
 
   getList = async () => {
-    const { messageType, page, page_size, } = this.state;
+    const { messageType, page, page_size } = this.state;
     let res: any;
     if (messageType == "notify") {
       res = await api.message.getNotificationmessage(
@@ -80,7 +80,7 @@ IMessageModalState
     }
 
     if (res.status === 200) {
-      this.setState({ messageList: res.data.results, total: res.data.count, });
+      this.setState({ messageList: res.data.results, total: res.data.count });
     }
   };
 
@@ -91,7 +91,7 @@ IMessageModalState
       total: 0,
       page: 1,
       page_size: 5,
-      detailContent: null,
+      detailContent: null
     });
   };
 
@@ -101,9 +101,9 @@ IMessageModalState
       messageType,
       page_size,
       total,
-      detailContent,
+      detailContent
     } = this.state;
-    const { onCancel, } = this.props;
+    const { onCancel } = this.props;
     return (
       <Modal
         visible={true}
@@ -150,7 +150,7 @@ IMessageModalState
                           __html:
                             item.content.length > 100
                               ? `${item.content.substring(0, 100)}...`
-                              : item.content,
+                              : item.content
                         }}
                         className="content"
                       ></p>
@@ -184,7 +184,7 @@ IMessageModalState
                   </p>
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: detailContent.content,
+                      __html: detailContent.content
                     }}
                     className="content"
                   ></p>
