@@ -28,13 +28,13 @@ interface ISettingsModalProps {
 
 interface ISettingsModalState {
   userInfo: any[];
-  id_card_front: String;
-  id_card_back: String;
-  currentTab: String;
-  phone: String;
-  phoneDisplay: String;
+  id_card_front: string;
+  id_card_back: string;
+  currentTab: string;
+  phone: string;
+  phoneDisplay: string;
   currentItem: any;
-  modelTitle: String;
+  modelTitle: string;
   smsKey: any;
   verifyPass: boolean;
 }
@@ -42,23 +42,23 @@ interface ISettingsModalState {
 const country = [
   {
     label: "HongKong",
-    value: "hk"
+    value: "hk",
   },
   {
     label: "China",
-    value: "china"
+    value: "china",
   }
 ];
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 }
+  labelCol: { span: 8, },
+  wrapperCol: { span: 16, },
 };
 // @ts-ignore
 
 export default class EditSettingsModal extends BaseReact<
-  ISettingsModalProps,
-  ISettingsModalState
+ISettingsModalProps,
+ISettingsModalState
 > {
   state = {
     userInfo: [],
@@ -70,7 +70,7 @@ export default class EditSettingsModal extends BaseReact<
     currentItem: null,
     modelTitle: "設定",
     smsKey: null,
-    verifyPass: false
+    verifyPass: false,
   };
 
   formRef = React.createRef<HTMLInputElement>();
@@ -85,7 +85,7 @@ export default class EditSettingsModal extends BaseReact<
       currentItem: null,
       modelTitle: "設定",
       smsKey: null,
-      verifyPass: false
+      verifyPass: false,
     });
   };
 
@@ -112,7 +112,7 @@ export default class EditSettingsModal extends BaseReact<
           id_card_front: res.data.id_card_front,
           id_card_back: res.data.id_card_back,
           phone: res.data.phone,
-          phoneDisplay: phoneDisplay
+          phoneDisplay: phoneDisplay,
         },
         () => {
           this.formRef.current.setFieldsValue({
@@ -134,7 +134,7 @@ export default class EditSettingsModal extends BaseReact<
             street: this.state.userInfo["street"] || "",
             city: this.state.userInfo["city"] || "",
             postal: this.state.userInfo["postal"] || "",
-            email: this.state.userInfo["email"] || ""
+            email: this.state.userInfo["email"] || "",
           });
         }
       );
@@ -142,14 +142,14 @@ export default class EditSettingsModal extends BaseReact<
   };
 
   switchItem = (ItemIndex: any) => {
-    this.setState({ currentItem: ItemIndex });
+    this.setState({ currentItem: ItemIndex, });
     if (ItemIndex === "reset-pwd") {
-      this.setState({ modelTitle: "重设密码" });
+      this.setState({ modelTitle: "重设密码", });
     }
   };
 
   switchTab = (tabIndex: any) => {
-    this.setState({ currentTab: tabIndex });
+    this.setState({ currentTab: tabIndex, });
   };
 
   goBack = () => {
@@ -175,11 +175,11 @@ export default class EditSettingsModal extends BaseReact<
     const formData = new FormData();
     formData.append("file", file);
     const res = await api.common.uploadFile(formData);
-    this.setState({ [name]: res.data.file_path });
+    this.setState({ [name]: res.data.file_path, });
   };
 
   handleAccountSubmit = async (values: any) => {
-    const { userInfo, id_card_back, id_card_front } = this.state;
+    const { userInfo, id_card_back, id_card_front, } = this.state;
     if (userInfo["inspect_status"] === 1) {
       return false;
     }
@@ -203,7 +203,7 @@ export default class EditSettingsModal extends BaseReact<
       email: values.email,
       id_card_back,
       id_card_front,
-      inspect_status: 1
+      inspect_status: 1,
     };
 
     const res = await api.settings.updateAccountInfo(payload);
@@ -216,41 +216,41 @@ export default class EditSettingsModal extends BaseReact<
 
   sendSMS = async () => {
     let payload = {
-      type: "reset_pwd_sms"
+      type: "reset_pwd_sms",
     };
     const res = await api.settings.sendSMS(payload);
 
     if (res.status === 201) {
-      this.setState({ smsKey: res.data.key });
+      this.setState({ smsKey: res.data.key, });
     }
   };
 
   handleVerifySubmit = async (values: any) => {
-    const { smsKey } = this.state;
+    const { smsKey, } = this.state;
 
     let payload = {
       ...values,
-      key: smsKey
+      key: smsKey,
     };
 
     const res = await api.settings.verifySMS(payload);
 
     if (res.status === 201) {
-      this.setState({ verifyPass: true, smsKey: res.data.key });
+      this.setState({ verifyPass: true, smsKey: res.data.key, });
     }
   };
 
   handleResetPwdSubmit = async (values: any) => {
-    const { onCancel } = this.props;
+    const { onCancel, } = this.props;
     if (values["password"] !== values["check-password"]) {
       this.$msg.error("两次密码不一样");
       return false;
     }
-    const { smsKey } = this.state;
+    const { smsKey, } = this.state;
 
     let payload = {
       key: smsKey,
-      password: values["password"]
+      password: values["password"],
     };
 
     const res = await api.settings.resetPassword(payload);
@@ -264,7 +264,7 @@ export default class EditSettingsModal extends BaseReact<
   };
 
   renderStatus = () => {
-    const { userInfo } = this.state;
+    const { userInfo, } = this.state;
     return (
       <div className="info-status-wrap">
         <div className="info-status-line"></div>
@@ -277,7 +277,7 @@ export default class EditSettingsModal extends BaseReact<
         {userInfo["inspect_status"] !== 0 && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4" }}>
+            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
               {"待填写信息"}
             </p>
           </div>
@@ -291,7 +291,7 @@ export default class EditSettingsModal extends BaseReact<
         {userInfo["inspect_status"] === 1 && (
           <div className="info-status">
             <img src={finishedIcon} alt="finished-icon" />
-            <p className="ant-upload-text" style={{ color: "#6dd400" }}>
+            <p className="ant-upload-text" style={{ color: "#6dd400", }}>
               {"信息审核中"}
             </p>
           </div>
@@ -300,7 +300,7 @@ export default class EditSettingsModal extends BaseReact<
           userInfo["inspect_status"] === 3) && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4" }}>
+            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
               {"信息审核中"}
             </p>
           </div>
@@ -315,7 +315,7 @@ export default class EditSettingsModal extends BaseReact<
         {userInfo["inspect_status"] === 2 && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4" }}>
+            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
               {"信息已通过"}
             </p>
           </div>
@@ -323,7 +323,7 @@ export default class EditSettingsModal extends BaseReact<
         {userInfo["inspect_status"] === 3 && (
           <div className="info-status">
             <img src={rejectIcon} alt="reject-icon" />
-            <p className="ant-upload-text" style={{ color: "#ff3b30" }}>
+            <p className="ant-upload-text" style={{ color: "#ff3b30", }}>
               {"信息未通过"}
             </p>
           </div>
@@ -333,15 +333,15 @@ export default class EditSettingsModal extends BaseReact<
   };
 
   renderAccount = () => {
-    const { id_card_front, id_card_back, userInfo } = this.state;
+    const { id_card_front, id_card_back, userInfo, } = this.state;
 
     return (
       <>
         {this.renderStatus()}
         {!utils.isEmpty(userInfo["reason"]) &&
           userInfo["inspect_status"] === 3 && (
-            <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
-          )}
+          <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
+        )}
         <Form
           name="basic"
           {...layout}
@@ -360,7 +360,7 @@ export default class EditSettingsModal extends BaseReact<
           <Form.Item name="birth" label="出生日期">
             <DatePicker
               placeholder="请选择出生日期"
-              style={{ width: "100%" }}
+              style={{ width: "100%", }}
               disabledDate={this.disabledDate}
             />
           </Form.Item>
@@ -374,7 +374,7 @@ export default class EditSettingsModal extends BaseReact<
                 message: "身分证号只能有数字",
                 transform(value) {
                   return Number(value) ? Number(value) : 0;
-                }
+                },
               }
             ]}
           >
@@ -394,7 +394,7 @@ export default class EditSettingsModal extends BaseReact<
                   <img
                     src={id_card_front}
                     alt="id-card-front"
-                    style={{ height: "100%" }}
+                    style={{ height: "100%", }}
                   />
                 </div>
               ) : (
@@ -417,7 +417,7 @@ export default class EditSettingsModal extends BaseReact<
                   <img
                     src={id_card_back}
                     alt="id-card-back"
-                    style={{ height: "100%" }}
+                    style={{ height: "100%", }}
                   />
                 </div>
               ) : (
@@ -440,7 +440,7 @@ export default class EditSettingsModal extends BaseReact<
                 message: "手机号只能有数字",
                 transform(value) {
                   return Number(value) ? Number(value) : 0;
-                }
+                },
               }
             ]}
           >
@@ -472,7 +472,7 @@ export default class EditSettingsModal extends BaseReact<
                 message: "邮递区号只能有数字",
                 transform(value) {
                   return Number(value) ? Number(value) : 0;
-                }
+                },
               }
             ]}
           >
@@ -486,7 +486,7 @@ export default class EditSettingsModal extends BaseReact<
             rules={[
               {
                 type: "email",
-                message: "信箱格式有误"
+                message: "信箱格式有误",
               }
             ]}
           >
@@ -500,7 +500,7 @@ export default class EditSettingsModal extends BaseReact<
                 <Button htmlType="submit">{"送出"}</Button>
               )}
               {userInfo["inspect_status"] === 1 && (
-                <Button htmlType="submit" style={{ cursor: "default" }}>
+                <Button htmlType="submit" style={{ cursor: "default", }}>
                   {"审核中"}
                 </Button>
               )}
@@ -512,7 +512,7 @@ export default class EditSettingsModal extends BaseReact<
   };
 
   renderSettings = () => {
-    const { currentItem, phoneDisplay, verifyPass } = this.state;
+    const { currentItem, phoneDisplay, verifyPass, } = this.state;
     return (
       <>
         {!currentItem && (
@@ -553,7 +553,7 @@ export default class EditSettingsModal extends BaseReact<
                       {
                         required: true,
                         whitespace: true,
-                        message: "验证码不得为空"
+                        message: "验证码不得为空",
                       }
                     ]}
                   >
@@ -566,7 +566,7 @@ export default class EditSettingsModal extends BaseReact<
                 <Form.Item>
                   <Button
                     htmlType="submit"
-                    style={{ cursor: "default", width: "100%" }}
+                    style={{ cursor: "default", width: "100%", }}
                   >
                     {"手机验证"}
                   </Button>
@@ -582,11 +582,11 @@ export default class EditSettingsModal extends BaseReact<
                     rules={[
                       {
                         required: true,
-                        message: "新密码不得为空"
+                        message: "新密码不得为空",
                       },
                       {
                         whitespace: true,
-                        message: "新密码不得为空"
+                        message: "新密码不得为空",
                       }
                     ]}
                   >
@@ -599,11 +599,11 @@ export default class EditSettingsModal extends BaseReact<
                     rules={[
                       {
                         required: true,
-                        message: "确认密码不得为空"
+                        message: "确认密码不得为空",
                       },
                       {
                         whitespace: true,
-                        message: "确认密码不得为空"
+                        message: "确认密码不得为空",
                       }
                     ]}
                   >
@@ -612,7 +612,7 @@ export default class EditSettingsModal extends BaseReact<
                 </div>
 
                 <Form.Item>
-                  <Button htmlType="submit" style={{ cursor: "default" }}>
+                  <Button htmlType="submit" style={{ cursor: "default", }}>
                     {"确认"}
                   </Button>
                 </Form.Item>
@@ -624,8 +624,8 @@ export default class EditSettingsModal extends BaseReact<
   };
 
   render() {
-    const { currentTab, modelTitle, currentItem } = this.state;
-    const { onCancel } = this.props;
+    const { currentTab, modelTitle, currentItem, } = this.state;
+    const { onCancel, } = this.props;
     return (
       <Modal
         visible={true}

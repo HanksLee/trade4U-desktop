@@ -12,7 +12,7 @@ import settingsIcon from "assets/img/settings-icon.svg";
 import MessageModal from "components/MessageModal";
 import SettingsModal from "components/SettingsModal";
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
 const Option = Select.Option;
@@ -75,7 +75,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     showContainer: true,
     symbolOptions: [],
     messageModalStatus: false,
-    settingsModalStatus: false
+    settingsModalStatus: false,
   };
 
   constructor(props) {
@@ -85,7 +85,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      location: { pathname }
+      location: { pathname, },
     } = nextProps;
 
     const pathlist = exactFromSidebarPath(PAGE_ROUTES);
@@ -103,50 +103,50 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     });
 
     return {
-      selectedKeys
+      selectedKeys,
     };
   }
 
   async componentDidMount() {
     const {
-      location: { pathname }
+      location: { pathname, },
     } = this.props;
     // openKeys初始化
     const allPaths = computedPathLevel(pathname);
     const openKeys = SUBMENU_ROUTES.filter(item => allPaths.includes(item));
 
-    this.setState({ openKeys });
+    this.setState({ openKeys, });
   }
 
   hideModal = () => {
     this.setState({
       messageModalStatus: false,
-      settingsModalStatus: false
+      settingsModalStatus: false,
     });
   };
 
   showMessageModal = () => {
-    this.setState({ messageModalStatus: true });
+    this.setState({ messageModalStatus: true, });
   };
 
   showSettingsModal = () => {
-    this.setState({ settingsModalStatus: true });
+    this.setState({ settingsModalStatus: true, });
   };
 
   toggle = () => {
     // 收起菜单时openKeys置空，保存之前展开的子项，展开菜单时，恢复子项
-    const { collapsed, openKeys } = this.state;
+    const { collapsed, openKeys, } = this.state;
     this.setState({
-      collapsed: !collapsed
+      collapsed: !collapsed,
     });
     if (!collapsed) {
       this.preOpenKeys = openKeys;
       this.setState({
-        openKeys: []
+        openKeys: [],
       });
     } else {
       this.setState({
-        openKeys: this.preOpenKeys
+        openKeys: this.preOpenKeys,
       });
     }
   };
@@ -155,19 +155,19 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     // 选中菜单子项后收起其他展开的所有菜单
     if (item.keyPath.length > 1) {
       this.setState({
-        openKeys: [item.keyPath[1]]
+        openKeys: [item.keyPath[1]],
       });
     }
     this.props.history.push(item.key);
   };
 
   onOpenChange = openKeys => {
-    this.setState({ openKeys });
+    this.setState({ openKeys, });
   };
 
   renderMenu = (): JSX.Element => {
-    const { selectedKeys, openKeys } = this.state;
-    const { computedSidebar } = this.props.common;
+    const { selectedKeys, openKeys, } = this.state;
+    const { computedSidebar, } = this.props.common;
 
     return (
       <Menu
@@ -215,8 +215,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   searchSymbol = async val => {
     this.props.market.searchSymbol({
       params: {
-        search: val
-      }
+        search: val,
+      },
     });
   };
 
@@ -225,9 +225,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
       showContainer,
       symbolOptions,
       messageModalStatus,
-      settingsModalStatus
+      settingsModalStatus,
     } = this.state;
-    const { location } = this.props;
+    const { location, } = this.props;
 
     return (
       <Layout className="layout">
@@ -240,7 +240,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               allowClear
               style={{
                 width: 200,
-                marginLeft: 30
+                marginLeft: 30,
               }}
               // value={this.state.searchValue}
               placeholder={"输入交易品种进行搜索"}
@@ -256,13 +256,13 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               onSearch={debounce(async value => {
                 const res = await this.$api.market.searchSymbol({
                   params: {
-                    search: value
-                  }
+                    search: value,
+                  },
                 });
 
                 if (res.status == 200) {
                   this.setState({
-                    symbolOptions: res.data
+                    symbolOptions: res.data,
                   });
                 }
               }, 500)}
@@ -301,40 +301,40 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
         <Layout>
           {// 响应式布局
-          showContainer && (
-            <Sider
-              breakpoint="sm"
-              onBreakpoint={broken => {
-                if (broken) {
-                  this.setState({ collapsed: true });
-                }
-              }}
-              onCollapse={(collapsed, type) => {
-                if (type === "responsive" && collapsed === false) {
-                  this.setState({ collapsed: false });
-                }
-                if (type === "clickTrigger") {
-                  if (collapsed === false) {
-                    this.setState({ collapsed: false });
-                  } else {
-                    this.setState({ collapsed: true });
+            showContainer && (
+              <Sider
+                breakpoint="sm"
+                onBreakpoint={broken => {
+                  if (broken) {
+                    this.setState({ collapsed: true, });
                   }
-                }
-              }}
+                }}
+                onCollapse={(collapsed, type) => {
+                  if (type === "responsive" && collapsed === false) {
+                    this.setState({ collapsed: false, });
+                  }
+                  if (type === "clickTrigger") {
+                    if (collapsed === false) {
+                      this.setState({ collapsed: false, });
+                    } else {
+                      this.setState({ collapsed: true, });
+                    }
+                  }
+                }}
               // collapsible
-              collapsed={this.state.collapsed}
-            >
-              {this.renderMenu()}
-            </Sider>
-          )}
+                collapsed={this.state.collapsed}
+              >
+                {this.renderMenu()}
+              </Sider>
+            )}
           <Layout>
             <Content className="content">
               {location.pathname === "/dashboard" ||
               location.pathname === "/dashboard/" ? (
-                <p style={{ fontSize: 30, fontWeight: 500, margin: 20 }}>
+                  <p style={{ fontSize: 30, fontWeight: 500, margin: 20, }}>
                   Welcome to WeTrade 桌面端
-                </p>
-              ) : null}
+                  </p>
+                ) : null}
               <AppRouter />
             </Content>
           </Layout>

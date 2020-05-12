@@ -11,5 +11,5 @@ const getNotificationmessage = (
 
 export default {
   getMessage,
-  getNotificationmessage
+  getNotificationmessage,
 };

@@ -9,5 +9,5 @@ export default {
   common,
   market,
   message,
-  settings
+  settings,
 };

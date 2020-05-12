@@ -18,5 +18,5 @@ export default {
   updateAccountInfo,
   resetPassword,
   sendSMS,
-  verifySMS
+  verifySMS,
 };
