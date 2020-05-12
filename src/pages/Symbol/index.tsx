@@ -342,8 +342,9 @@ export default class extends BaseReact {
     clearTimeout(this.timer);
 
     this.prevent = true;
+    this.props.market.toggleOrderModalVisible();
     this.setState({
-      modalVisible: true,
+      // modalVisible: true,
       orderMode: "add",
     }, () => {
       setTimeout(() => {
@@ -373,8 +374,11 @@ export default class extends BaseReact {
 
     const {
       selfSelectSymbolList,
+      currentSymbol,
     } = this.props.market;
     const itemWidth = Math.floor(24 / columns.length);
+
+
 
 
     return (
@@ -401,13 +405,18 @@ export default class extends BaseReact {
         >
           {
             selfSelectSymbolList.map(item => {
-              return <Row className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
-                onClick={(e) => {
-                  this.onSingleClick(item);
-                }}
-                onDoubleClick={(e) => {
-                  this.onDoubleClick(item);
-                }}
+              // console.log('item', item);
+              // console.log('currentSymbol', currentSymbol);
+
+              return <Row style={{
+                backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
+              }} className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
+              onClick={(e) => {
+                this.onSingleClick(item);
+              }}
+              onDoubleClick={(e) => {
+                this.onDoubleClick(item);
+              }}
               >
                 <Col span={24}>
                   <Row type={"flex"} justify={"space-between"}>
@@ -451,8 +460,8 @@ export default class extends BaseReact {
                       </div>
 
                       <div className={"symbol-item-info"}>
-                        <span>最大交易量</span>
-                        <span>{item?.symbol_display?.max_trading_volume}</span>
+                        <span>最大交易手数</span>
+                        <span>{item?.symbol_display?.max_lots}</span>
                       </div>
                     </Col>
                     <Col span={12}>
@@ -465,8 +474,8 @@ export default class extends BaseReact {
                         <span>{item?.symbol_display?.margin_currency_display}</span>
                       </div>
                       <div className={"symbol-item-info"}>
-                        <span>最小交易量</span>
-                        <span>{item?.symbol_display?.min_trading_volume}</span>
+                        <span>最小交易手数</span>
+                        <span>{item?.symbol_display?.min_lots}</span>
                       </div>
 
                       <div className={"symbol-item-info"}>
@@ -826,9 +835,10 @@ export default class extends BaseReact {
               // console.log("currentOrder", toJS(record));
 
               await this.props.market.getCurrentSymbol(record?.symbol);
+              this.props.market.toggleOrderModalVisible();
 
               this.setState({
-                modalVisible: true,
+                // modalVisible: true,
                 orderMode: "update",
               });
             },
@@ -847,7 +857,7 @@ export default class extends BaseReact {
             ? tradeList
             : futureTradeList
         }
-      />;
+      />
     </div>;
   };
 
@@ -864,106 +874,102 @@ export default class extends BaseReact {
     const chg = currentSymbol?.product_details?.chg;
 
     return <div className={"symbol-page"}>
-      <Row>
-        <Col className={"symbol-left"} span={10}>
-          <Tabs
-            tabBarStyle={{
-              padding: "0 10px",
-            }}
-            defaultActiveKey={"1"}>
-            <TabPane tab={"自选"} key={"1"}>
-              {this.renderFilter()}
-              {this.renderSymbolTable()}
-            </TabPane>
-          </Tabs>
-        </Col>
-        <Col className={"symbol-right"} span={14}>
-          <Row>
-            <Col span={24} className={"symbol-chart"}>
-              <Row className={"symbol-chart-info"} type={"flex"} justify={"space-between"} align={"middle"}>
-                <Col>
-                  <div className={"symbol-chart-title"}>
-                    <span>{currentSymbol?.symbol_display?.name}</span>
-                    <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
-                      {
-                        currentSymbol?.product_details?.new_price
-                      }
-                      {
-                        change >= 0
-                          ? <IconFont type={"icon-arrow-up"}/>
-                          : <IconFont type={"icon-arrow-down"}/>
-                      }
-                    </span>
-                    <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
-                      {
-                        change > 0 ? "+" + change : change
-                      }
-                    </span>
-                    <span className={`${chg >= 0 ? "p-up" : "p-down"}`}>
-                      {
-                        chg > 0 ? "+" + chg : chg
-                      }
-                      %
-                    </span>
-                    <span className={"symbol-chart-title-status"}>
-                      {
-                        traderStatusMap[currentSymbol?.trader_status]
-                      }
-                    </span>
-                  </div>
-                </Col>
-                <Col>
-                  <div className={"symbol-order-favorite"}>
-                    <span className={"symbol-order-btn"} onClick={this.onDoubleClick}>下单</span>
-                    <StarFilled onClick={this.togggleFavorite} style={{
-                      color: currentSymbol?.is_self_select == 1 ? "#f2e205" : "white",
-                      cursor: "pointer",
-                    }}/>
-                  </div>
-                </Col>
-              </Row>
-
-
-            </Col>
-            <Col span={24} className={"symbol-order"}>
-              <Tabs
-                tabBarStyle={{
-                  padding: "0 10px",
-                }}
-                activeKey={orderTabKey} onTabClick={(key, evt) => {
-                // console.log("key", key);
-                  this.setState({
-                    orderTabKey: key,
-                  }, () => {
-                    if (key != "finish") {
-                      this.getTradeList({
-                        params: {
-                          status: key,
-                        },
-                      }, key);
-                    } else {
-                      this.getTradeHistoryList({
-                        params: {
-                          page: 1,
-                          page_size: 5,
-                        },
-                      });
+      <div className={"symbol-left"}>
+        <Tabs
+          tabBarStyle={{
+            padding: "0 10px",
+          }}
+          defaultActiveKey={"1"}>
+          <TabPane tab={"自选"} key={"1"}>
+            {this.renderFilter()}
+            {this.renderSymbolTable()}
+          </TabPane>
+        </Tabs>
+      </div>
+      <div className={"symbol-right"}>
+        <Row>
+          <Col span={24} className={"symbol-chart"}>
+            <Row className={"symbol-chart-info"} type={"flex"} justify={"space-between"} align={"middle"}>
+              <Col>
+                <div className={"symbol-chart-title"}>
+                  <span>{currentSymbol?.symbol_display?.name}</span>
+                  <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
+                    {
+                      currentSymbol?.product_details?.new_price
                     }
-                  });
-                }
-                }>
-                {
-                  orderTabs.map(item =>
-                    <TabPane tab={item.name} key={item.id}>
-                      {this.renderOrderTable(item.name)}
-                    </TabPane>
-                  )
-                }
-              </Tabs>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+                    {
+                      change >= 0
+                        ? <IconFont type={"icon-arrow-up"}/>
+                        : <IconFont type={"icon-arrow-down"}/>
+                    }
+                  </span>
+                  <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
+                    {
+                      change > 0 ? "+" + change : change
+                    }
+                  </span>
+                  <span className={`${chg >= 0 ? "p-up" : "p-down"}`}>
+                    {
+                      chg > 0 ? "+" + chg : chg
+                    }
+                    %
+                  </span>
+                  <span className={"symbol-chart-title-status"}>
+                    {
+                      traderStatusMap[currentSymbol?.trader_status]
+                    }
+                  </span>
+                </div>
+              </Col>
+              <Col>
+                <div className={"symbol-order-favorite"}>
+                  <span className={"symbol-order-btn"} onClick={this.onDoubleClick}>下单</span>
+                  <StarFilled onClick={this.togggleFavorite} style={{
+                    color: currentSymbol?.is_self_select == 1 ? "#f2e205" : "white",
+                    cursor: "pointer",
+                  }}/>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={24} className={"symbol-order"}>
+            <Tabs
+              tabBarStyle={{
+                padding: "0 10px",
+              }}
+              activeKey={orderTabKey} onTabClick={(key, evt) => {
+              // console.log("key", key);
+                this.setState({
+                  orderTabKey: key,
+                }, () => {
+                  if (key != "finish") {
+                    this.getTradeList({
+                      params: {
+                        status: key,
+                      },
+                    }, key);
+                  } else {
+                    this.getTradeHistoryList({
+                      params: {
+                        page: 1,
+                        page_size: 5,
+                      },
+                    });
+                  }
+                });
+              }
+              }>
+              {
+                orderTabs.map(item =>
+                  <TabPane tab={item.name} key={item.id}>
+                    {this.renderOrderTable(item.name)}
+                  </TabPane>
+                )
+              }
+            </Tabs>
+          </Col>
+        </Row>
+      </div>
       <Modal
         className={"symbol-modal"}
         mask={false}
@@ -974,11 +980,9 @@ export default class extends BaseReact {
         bodyStyle={{
           backgroundColor: "#373e47",
         }}
-        visible={this.state.modalVisible}
+        visible={this.props.market.orderModalVisible}
         onCancel={() => {
-          this.setState({
-            modalVisible: false,
-          });
+          this.props.market.toggleOrderModalVisible();
         }}
         closable={false}
         footer={null}

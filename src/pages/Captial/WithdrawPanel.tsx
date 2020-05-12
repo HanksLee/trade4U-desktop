@@ -22,9 +22,10 @@ export default class WithdrawPanel extends BaseReact {
   }
 
   withdraw = async (values) => {
-    const res = await this.$api.captial.withdraw(values);
+    await this.$api.captial.withdraw(values);
     this.getWithdrawableBalance();
     message.success('提取成功');
+    this.resetForm();
   }
 
   resetForm = () => {

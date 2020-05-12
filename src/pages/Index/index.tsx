@@ -4,15 +4,19 @@ import AppRouter from "../../router";
 import { Layout, Menu, Icon, Input, Select } from "antd";
 import { PAGE_ROUTES, SUBMENU_ROUTES } from "constant";
 import { withRouter } from "react-router-dom";
-import "./index.scss";
-import { inject, observer } from "mobx-react";
-import debounce from "lodash/debounce";
 import messageIcon from "assets/img/message-icon.svg";
 import settingsIcon from "assets/img/settings-icon.svg";
 import MessageModal from "components/MessageModal";
 import SettingsModal from "components/SettingsModal";
+import logoSVG from "assets/img/logo.svg";
+import messageSVG from "assets/img/message.svg";
+import settingsSVG from "assets/img/settings.svg";
+import serviceSVG from "assets/img/service.svg";
+import "./index.scss";
+import { inject, observer } from "mobx-react";
+import debounce from "lodash/debounce";
 
-const { Header, Sider, Content, } = Layout;
+const { Header, Sider, Content } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
 const Option = Select.Option;
@@ -27,6 +31,8 @@ export interface IIndexState {
   showContainer: boolean;
   messageModalStatus: boolean;
   settingsModalStatus: boolean;
+  currentTab: string;
+  symbolOptions: any[];
 }
 
 // 用于计算出侧边栏的展开路径的数组
@@ -76,6 +82,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     symbolOptions: [],
     messageModalStatus: false,
     settingsModalStatus: false,
+    currentTab: "行情"
   };
 
   constructor(props) {
@@ -85,7 +92,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      location: { pathname, },
+      location: { pathname }
     } = nextProps;
 
     const pathlist = exactFromSidebarPath(PAGE_ROUTES);
@@ -103,109 +110,58 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     });
 
     return {
-      selectedKeys,
+      selectedKeys
     };
+  }
+
+  componentWillMount() {
+    // console.log(1111);
   }
 
   async componentDidMount() {
     const {
-      location: { pathname, },
+      location: { pathname }
     } = this.props;
     // openKeys初始化
-    const allPaths = computedPathLevel(pathname);
-    const openKeys = SUBMENU_ROUTES.filter(item => allPaths.includes(item));
+    // const allPaths = computedPathLevel(pathname);
+    // const openKeys = SUBMENU_ROUTES.filter((item) => allPaths.includes(item));
+    //
+    // this.setState({ openKeys, });
 
-    this.setState({ openKeys, });
+    this.props.history.push("/dashboard/market");
   }
 
   hideModal = () => {
     this.setState({
       messageModalStatus: false,
-      settingsModalStatus: false,
+      settingsModalStatus: false
     });
   };
 
   showMessageModal = () => {
-    this.setState({ messageModalStatus: true, });
+    this.setState({ messageModalStatus: true });
   };
 
   showSettingsModal = () => {
-    this.setState({ settingsModalStatus: true, });
+    this.setState({ settingsModalStatus: true });
   };
 
   toggle = () => {
     // 收起菜单时openKeys置空，保存之前展开的子项，展开菜单时，恢复子项
-    const { collapsed, openKeys, } = this.state;
+    const { collapsed, openKeys } = this.state;
     this.setState({
-      collapsed: !collapsed,
+      collapsed: !collapsed
     });
     if (!collapsed) {
       this.preOpenKeys = openKeys;
       this.setState({
-        openKeys: [],
+        openKeys: []
       });
     } else {
       this.setState({
-        openKeys: this.preOpenKeys,
+        openKeys: this.preOpenKeys
       });
     }
-  };
-
-  onMenuItemClick = item => {
-    // 选中菜单子项后收起其他展开的所有菜单
-    if (item.keyPath.length > 1) {
-      this.setState({
-        openKeys: [item.keyPath[1]],
-      });
-    }
-    this.props.history.push(item.key);
-  };
-
-  onOpenChange = openKeys => {
-    this.setState({ openKeys, });
-  };
-
-  renderMenu = (): JSX.Element => {
-    const { selectedKeys, openKeys, } = this.state;
-    const { computedSidebar, } = this.props.common;
-
-    return (
-      <Menu
-        theme="dark"
-        mode="inline"
-        openKeys={openKeys}
-        onOpenChange={this.onOpenChange}
-        onClick={this.onMenuItemClick}
-        selectedKeys={selectedKeys}
-      >
-        {computedSidebar.map(route => this.renderMenuItem(route))}
-      </Menu>
-    );
-  };
-
-  renderMenuItem = (route: any): JSX.Element => {
-    if (route.children && route.children.length > 0) {
-      return (
-        <SubMenu
-          key={route.path}
-          title={
-            <span>
-              <Icon type={route.icon} />
-              <span>{route.title}</span>
-            </span>
-          }
-        >
-          {route.children.map(subRoute => this.renderMenuItem(subRoute))}
-        </SubMenu>
-      );
-    }
-
-    return (
-      <MenuItem key={route.path}>
-        <Icon type={route.icon} />
-        <span>{route.title}</span>
-      </MenuItem>
-    );
   };
 
   onSearch = evt => {
@@ -215,8 +171,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   searchSymbol = async val => {
     this.props.market.searchSymbol({
       params: {
-        search: val,
-      },
+        search: val
+      }
     });
   };
 
@@ -225,121 +181,140 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
       showContainer,
       symbolOptions,
       messageModalStatus,
-      settingsModalStatus,
+      settingsModalStatus
     } = this.state;
-    const { location, } = this.props;
+    const { location } = this.props;
+    const { computedSidebar } = this.props.common;
 
     return (
-      <Layout className="layout">
-        {showContainer && (
-          <Header className="header">
-            {/*<Input placeholder={'输入交易品种进行搜索'} style={{ width: 200, marginLeft: 30, }} onChange={this.onSearch}/>*/}
-
-            <Select
-              showSearch
-              allowClear
-              style={{
-                width: 200,
-                marginLeft: 30,
-              }}
-              // value={this.state.searchValue}
-              placeholder={"输入交易品种进行搜索"}
-              filterOption={false}
-              onFocus={async () => {
-                // const res = await this.$api.market.searchSymbol({});
-                // if (res.status == 200) {
-                //   this.setState({
-                //     symbolOptions: res.data,
-                //   })
-                // }
-              }}
-              onSearch={debounce(async value => {
-                const res = await this.$api.market.searchSymbol({
-                  params: {
-                    search: value,
-                  },
-                });
-
-                if (res.status == 200) {
-                  this.setState({
-                    symbolOptions: res.data,
-                  });
+      <div className={"home"}>
+        <div className="home-header">
+          <Select
+            size={"large"}
+            showSearch
+            allowClear
+            style={{
+              width: 240,
+              marginLeft: 70
+            }}
+            // value={this.state.searchValue}
+            placeholder={"输入交易品种进行搜索"}
+            filterOption={false}
+            onFocus={async () => {
+              // const res = await this.$api.market.searchSymbol({});
+              // if (res.status == 200) {
+              //   this.setState({
+              //     symbolOptions: res.data,
+              //   })
+              // }
+            }}
+            onSearch={debounce(async value => {
+              const res = await this.$api.market.searchSymbol({
+                params: {
+                  search: value
                 }
-              }, 500)}
-              onChange={(value, elem) => {
-                this.props.market.getCurrentSymbol(value);
-              }}
-              notFoundContent={null}
-            >
-              {symbolOptions.map(item => (
-                <OptGroup label={item.name}>
-                  {item.data.map(subItem => (
-                    <Option key={subItem.id}>{subItem.name}</Option>
-                  ))}
-                </OptGroup>
-              ))}
-            </Select>
-            <h2>MetaTrader 4</h2>
-            <p className="header-right">
-              <span onClick={this.showMessageModal}>
-                <img src={messageIcon} alt="message-icon" />
-                消息
-              </span>
-              {messageModalStatus && (
-                <MessageModal onCancel={this.hideModal}></MessageModal>
-              )}
-              <span onClick={this.showSettingsModal}>
-                <img src={settingsIcon} alt="settings-icon" />
-                设定
-              </span>
-              {settingsModalStatus && (
-                <SettingsModal onCancel={this.hideModal}></SettingsModal>
-              )}
-            </p>
-          </Header>
-        )}
+              });
 
-        <Layout>
+              if (res.status == 200) {
+                this.setState({
+                  symbolOptions: res.data
+                });
+              }
+            }, 500)}
+            onChange={(value, elem) => {
+              this.props.market.getCurrentSymbol(value);
+              if (this.props.history.pathname !== "/dashboard/symbol") {
+                this.props.history.push("/dashboard/symbol");
+                this.setState({
+                  currentTab: "个股"
+                });
+              }
+            }}
+            notFoundContent={null}
+          >
+            {symbolOptions.map(item => (
+              <OptGroup label={item.name}>
+                {item.data.map(subItem => (
+                  <Option key={subItem.id}>{subItem.name}</Option>
+                ))}
+              </OptGroup>
+            ))}
+          </Select>
+          <h2>
+            <img src={logoSVG} alt="" />
+            WeTrader
+          </h2>
+          <p className="home-header-right">
+            <span
+              onClick={() => {
+                this.showMessageModal();
+              }}
+            >
+              <img src={messageSVG} alt="" />
+              消息
+            </span>
+            <span
+              onClick={() => {
+                this.showSettingsModal();
+              }}
+            >
+              <img src={settingsSVG} alt="" />
+              设定
+            </span>
+            <span
+              onClick={() => {
+                // @todo
+              }}
+            >
+              <img src={serviceSVG} alt="" />
+              联系客服
+            </span>
+          </p>
+        </div>
+        <div className={"home-content"}>
           {// 响应式布局
-            showContainer && (
-              <Sider
-                breakpoint="sm"
-                onBreakpoint={broken => {
-                  if (broken) {
-                    this.setState({ collapsed: true, });
-                  }
-                }}
-                onCollapse={(collapsed, type) => {
-                  if (type === "responsive" && collapsed === false) {
-                    this.setState({ collapsed: false, });
-                  }
-                  if (type === "clickTrigger") {
-                    if (collapsed === false) {
-                      this.setState({ collapsed: false, });
-                    } else {
-                      this.setState({ collapsed: true, });
+          showContainer && (
+            <div className={"home-sidebar"}>
+              {computedSidebar.map(item => (
+                <div
+                  className={`sidebar-row ${
+                    this.state.currentTab == item.title ? "active" : ""
+                  }`}
+                  onClick={() => {
+                    this.setState(
+                      {
+                        currentTab: item.title
+                      },
+                      () => {
+                        this.props.history.push(item.path);
+                      }
+                    );
+                  }}
+                >
+                  <img
+                    src={
+                      this.state.currentTab == item.title
+                        ? item.activeIcon
+                        : item.icon
                     }
-                  }
-                }}
-              // collapsible
-                collapsed={this.state.collapsed}
-              >
-                {this.renderMenu()}
-              </Sider>
-            )}
-          <Layout>
-            <Content className="content">
-              {location.pathname === "/dashboard" ||
-              location.pathname === "/dashboard/" ? (
-                  <p style={{ fontSize: 30, fontWeight: 500, margin: 20, }}>
-                  Welcome to WeTrade 桌面端
-                  </p>
-                ) : null}
-              <AppRouter />
-            </Content>
-          </Layout>
-        </Layout>
-      </Layout>
+                    alt=""
+                  />
+                  <p>{item.title}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className={"home-panel"}>
+            {location.pathname === "/dashboard" ||
+            location.pathname === "/dashboard/" ? (
+              <p style={{ fontSize: 30, fontWeight: 500, margin: 20 }}>
+                Welcome to WeTrade 桌面端
+              </p>
+            ) : null}
+            <AppRouter />
+          </div>
+        </div>
+      </div>
     );
   }
 }

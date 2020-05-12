@@ -5,6 +5,7 @@ import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
 import { Form, Input, Button, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
+import { FormInstance } from 'antd/lib/form';
 import './index.scss';
 
 export interface ILoginProps {
@@ -20,6 +21,8 @@ export interface ILoginState {
 /* eslint new-cap: "off" */
 @WithRoute('/login')
 export default class Login extends BaseReact<ILoginProps, ILoginState> {
+  formRef = React.createRef<FormInstance>();
+
   constructor(props: ILoginProps) {
     super(props);
 
@@ -86,12 +89,16 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
   renderBrokerChoosePanel = () => {
     const { brokerList, } = this.state;
     return (
-      <Form layout="vertical" onFinish={this.chooseBroker} hideRequiredMark={true}>
+      <Form ref={this.formRef} layout="vertical" onFinish={this.chooseBroker} hideRequiredMark={true}>
         <Form.Item name="token" label="请选择券商" rules={[{ required: true, message: "请选择券商", }]}>
-          <Select showSearch optionFilterProp="children" className="line-selector">
+          <Select
+            showSearch
+            optionFilterProp="children"
+            className="line-selector"
+          >
             {
               brokerList.map(item => {
-                return <Select.Option value={item.token}>{item.broker.name}</Select.Option>;
+                return <Select.Option key={item.token} value={item.token}>{item.broker.name}</Select.Option>;
               })
             }
           </Select>
@@ -113,12 +120,17 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
         brokerList: res.data.results,
         searchResult: res.data.results,
       });
+      if (res.data.results.length > 0) {
+        this.formRef.current.setFieldsValue({
+          token: res.data.results[0].token,
+        });
+      }
     }
   }
 
   chooseBroker = (values) => {
     utils.setLStorage('MOON_DESKTOP_TOKEN', values.token);
-    this.props.history.push('/dashboard');
+    this.props.history.push('/');
   }
 
   render() {

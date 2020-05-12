@@ -1,20 +1,30 @@
+import marketSVG from 'assets/img/market.svg';
+import marketActiveSVG from 'assets/img/market-active.svg';
+import symbolSVG from 'assets/img/symbol.svg';
+import symbolActiveSVG from 'assets/img/symbol-active.svg';
+import capitalSVG from 'assets/img/capital.svg';
+import capitalActiveSVG from 'assets/img/capital-active.svg';
+
 export const FORMAT_TIME = 'YYYY.MM.DD HH:mm:ss';
 
 export const PAGE_ROUTES = [
   {
     title: '个股',
     path: '/dashboard/symbol',
-    icon: 'coffee',
+    icon: symbolSVG,
+    activeIcon: symbolActiveSVG,
   },
   {
     title: '行情',
     path: '/dashboard/market',
-    icon: 'appstore',
+    icon: marketSVG,
+    activeIcon: marketActiveSVG,
   },
   {
     title: '资金',
     path: '/dashboard/captial',
-    icon: 'team',
+    icon: capitalSVG,
+    activeIcon: capitalActiveSVG,
   }
 ];
 
