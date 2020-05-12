@@ -460,8 +460,8 @@ export default class extends BaseReact {
                       </div>
 
                       <div className={"symbol-item-info"}>
-                        <span>最大交易量</span>
-                        <span>{item?.symbol_display?.max_trading_volume}</span>
+                        <span>最大交易手数</span>
+                        <span>{item?.symbol_display?.max_lots}</span>
                       </div>
                     </Col>
                     <Col span={12}>
@@ -474,8 +474,8 @@ export default class extends BaseReact {
                         <span>{item?.symbol_display?.margin_currency_display}</span>
                       </div>
                       <div className={"symbol-item-info"}>
-                        <span>最小交易量</span>
-                        <span>{item?.symbol_display?.min_trading_volume}</span>
+                        <span>最小交易手数</span>
+                        <span>{item?.symbol_display?.min_lots}</span>
                       </div>
 
                       <div className={"symbol-item-info"}>
