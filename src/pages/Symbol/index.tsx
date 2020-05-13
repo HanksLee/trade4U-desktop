@@ -474,15 +474,14 @@ export default class extends BaseReact {
                         <span>{item?.symbol_display?.margin_currency_display}</span>
                       </div>
                       <div className={"symbol-item-info"}>
+                        <span>交易数步长</span>
+                        <span>{
+                          (item?.symbol_display?.lots_step)?.toFixed(2)
+                        }</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
                         <span>最小交易手数</span>
                         <span>{item?.symbol_display?.min_lots}</span>
-                      </div>
-
-                      <div className={"symbol-item-info"}>
-                        <span>交易量步长</span>
-                        <span>{
-                          (item?.symbol_display?.volume_step / item?.symbol_display?.contract_size)?.toFixed(2)
-                        }</span>
                       </div>
                     </Col>
                   </Row>
