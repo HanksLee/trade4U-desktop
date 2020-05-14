@@ -18,7 +18,7 @@ import "./index.scss";
 import { inject, observer } from "mobx-react";
 import debounce from "lodash/debounce";
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
 const Option = Select.Option;
@@ -84,7 +84,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     symbolOptions: [],
     messageModalStatus: false,
     settingsModalStatus: false,
-    currentTab: "行情"
+    currentTab: "行情",
   };
 
   constructor(props) {
@@ -94,7 +94,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      location: { pathname }
+      location: { pathname, },
     } = nextProps;
 
     const pathlist = exactFromSidebarPath(PAGE_ROUTES);
@@ -112,7 +112,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     });
 
     return {
-      selectedKeys
+      selectedKeys,
     };
   }
 
@@ -122,7 +122,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   async componentDidMount() {
     const {
-      location: { pathname }
+      location: { pathname, },
     } = this.props;
     // openKeys初始化
     // const allPaths = computedPathLevel(pathname);
@@ -135,32 +135,32 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   hideModal = () => {
     this.setState({}, () => {
-      this.setState({ messageModalStatus: false, settingsModalStatus: false });
+      this.setState({ messageModalStatus: false, settingsModalStatus: false, });
     });
   };
 
   showMessageModal = () => {
-    this.setState({ messageModalStatus: true });
+    this.setState({ messageModalStatus: true, });
   };
 
   showSettingsModal = () => {
-    this.setState({ settingsModalStatus: true });
+    this.setState({ settingsModalStatus: true, });
   };
 
   toggle = () => {
     // 收起菜单时openKeys置空，保存之前展开的子项，展开菜单时，恢复子项
-    const { collapsed, openKeys } = this.state;
+    const { collapsed, openKeys, } = this.state;
     this.setState({
-      collapsed: !collapsed
+      collapsed: !collapsed,
     });
     if (!collapsed) {
       this.preOpenKeys = openKeys;
       this.setState({
-        openKeys: []
+        openKeys: [],
       });
     } else {
       this.setState({
-        openKeys: this.preOpenKeys
+        openKeys: this.preOpenKeys,
       });
     }
   };
@@ -172,8 +172,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   searchSymbol = async val => {
     this.props.market.searchSymbol({
       params: {
-        search: val
-      }
+        search: val,
+      },
     });
   };
 
@@ -182,10 +182,10 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
       showContainer,
       symbolOptions,
       messageModalStatus,
-      settingsModalStatus
+      settingsModalStatus,
     } = this.state;
-    const { location } = this.props;
-    const { computedSidebar } = this.props.common;
+    const { location, } = this.props;
+    const { computedSidebar, } = this.props.common;
 
     return (
       <div className={"home"}>
@@ -196,7 +196,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             allowClear
             style={{
               width: 240,
-              marginLeft: 70
+              marginLeft: 70,
             }}
             // value={this.state.searchValue}
             placeholder={"输入交易品种进行搜索"}
@@ -212,13 +212,13 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             onSearch={debounce(async value => {
               const res = await this.$api.market.searchSymbol({
                 params: {
-                  search: value
-                }
+                  search: value,
+                },
               });
 
               if (res.status == 200) {
                 this.setState({
-                  symbolOptions: res.data
+                  symbolOptions: res.data,
                 });
               }
             }, 500)}
@@ -227,7 +227,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
                 this.setState({
-                  currentTab: "个股"
+                  currentTab: "个股",
                 });
               }
             }}
@@ -280,44 +280,44 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
         </div>
         <div className={"home-content"}>
           {// 响应式布局
-          showContainer && (
-            <div className={"home-sidebar"}>
-              {computedSidebar.map(item => (
-                <div
-                  className={`sidebar-row ${
-                    this.state.currentTab == item.title ? "active" : ""
-                  }`}
-                  onClick={() => {
-                    this.setState(
-                      {
-                        currentTab: item.title
-                      },
-                      () => {
-                        this.props.history.push(item.path);
+            showContainer && (
+              <div className={"home-sidebar"}>
+                {computedSidebar.map(item => (
+                  <div
+                    className={`sidebar-row ${
+                      this.state.currentTab == item.title ? "active" : ""
+                    }`}
+                    onClick={() => {
+                      this.setState(
+                        {
+                          currentTab: item.title,
+                        },
+                        () => {
+                          this.props.history.push(item.path);
+                        }
+                      );
+                    }}
+                  >
+                    <img
+                      src={
+                        this.state.currentTab == item.title
+                          ? item.activeIcon
+                          : item.icon
                       }
-                    );
-                  }}
-                >
-                  <img
-                    src={
-                      this.state.currentTab == item.title
-                        ? item.activeIcon
-                        : item.icon
-                    }
-                    alt=""
-                  />
-                  <p>{item.title}</p>
-                </div>
-              ))}
-            </div>
-          )}
+                      alt=""
+                    />
+                    <p>{item.title}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           <div className={"home-panel"}>
             {location.pathname === "/dashboard" ||
             location.pathname === "/dashboard/" ? (
-              <p style={{ fontSize: 30, fontWeight: 500, margin: 20 }}>
+                <p style={{ fontSize: 30, fontWeight: 500, margin: 20, }}>
                 Welcome to WeTrade 桌面端
-              </p>
-            ) : null}
+                </p>
+              ) : null}
             <AppRouter />
           </div>
         </div>
