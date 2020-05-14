@@ -112,6 +112,7 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
     const res = await this.$api.common.login({
       ...values,
       key: this.state.codeInfo.key,
+      platform: 'client_app',
     });
 
     if (res.status === 201) {
