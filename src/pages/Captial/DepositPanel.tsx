@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Spin } from 'antd';
+import closeModalIcon from "assets/img/close-modal-icon.svg";
+import { LoadingOutlined } from '@ant-design/icons';
 import './index.scss';
 
 export default class DepositPanel extends BaseReact {
@@ -13,6 +15,7 @@ export default class DepositPanel extends BaseReact {
     paymentMethods: [],
     isPaying: false,
     orderNumber: '',
+    showLoading: false,
   }
 
   componentDidMount() {
@@ -45,6 +48,7 @@ export default class DepositPanel extends BaseReact {
           this.setState({
             isPaying: true,
             orderNumber: res.data.order_number,
+            showLoading: true,
           });
           this.paymentWindow = window.open(res.data.gopayurl); 
           this.checkDepositStatus();
@@ -71,6 +75,7 @@ export default class DepositPanel extends BaseReact {
       this.setState({
         isPaying: false,
         orderNumber: '',
+        showLoading: false,
       });
       this.resetForm();
     } else {
@@ -81,9 +86,15 @@ export default class DepositPanel extends BaseReact {
   resetForm = () => {
     this.formRef.current.resetFields();
   }
+
+  hideLoading = () => {
+    this.setState({
+      showLoading: false,
+    });
+  }
   
   render() {
-    const { withdrawableBalance, paymentMethods, } = this.state;
+    const { withdrawableBalance, paymentMethods, showLoading, } = this.state;
 
     return (
       <div className="deposit-panel">
@@ -112,6 +123,22 @@ export default class DepositPanel extends BaseReact {
             <Button htmlType="submit">充值</Button>
           </div>
         </Form>
+        {
+          showLoading && (
+            <div className="paying-dialog">
+              <img
+                className="paying-dialog-close"
+                src={closeModalIcon}
+                onClick={this.hideLoading}
+                alt="关闭"
+              />
+              <div className="paying-dialog-content">
+                <div>充值中</div>
+                <Spin indicator={<LoadingOutlined />} />
+              </div>
+            </div>
+          )
+        }
       </div>
     );
   }
