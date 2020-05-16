@@ -1,4 +1,6 @@
 .symbol-editor {
+  padding: 10px;
+
   .symbol-editor-price {
     text-align: center;
     font-size: 48px;
@@ -43,5 +45,37 @@
     background-color: $down;
     border: none;
     //border: 1px solid $down !important;
+  }
+
+  .input-number {
+
+    .ant-form-item-control-input-content {
+      display: flex;
+      position: relative;
+    }
+    .input-number-up-down {
+      display: flex;
+      flex-direction: column;
+      color: white;
+      position: absolute;
+      right: 0;
+    }
+
+    svg {
+      cursor: pointer;
+    }
+  }
+
+  .input-up-down {
+
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }

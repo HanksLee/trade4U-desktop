@@ -342,6 +342,7 @@ export default class extends BaseReact {
     clearTimeout(this.timer);
 
     this.prevent = true;
+    this.props.market.getCurrentSymbol(item.symbol);
     this.props.market.toggleOrderModalVisible();
     this.setState({
       // modalVisible: true,

@@ -25,7 +25,11 @@ import {
 import { toJS } from "mobx";
 import "./index.scss";
 import {
-  CheckCircleFilled
+  CheckCircleFilled,
+  CaretUpFilled,
+  CaretDownFilled,
+  UpOutlined,
+  DownOutlined
 } from "@ant-design/icons";
 
 const FormItem = Form.Item;
@@ -174,9 +178,11 @@ export default class SymbolEditor extends BaseReact {
       },
     } = this.props;
 
+    const lots = currentOrder?.lots || currentSymbol?.symbol_display?.min_lots;
+
     const payload: any = {
-      trading_volume: currentOrder?.lots * currentSymbol?.symbol_display?.contract_size,
-      lots: currentOrder.lots || currentSymbol?.symbol_display?.min_lots,
+      trading_volume: lots * currentSymbol?.symbol_display?.contract_size,
+      lots,
       symbol: currentSymbol.id,
       take_profit: currentOrder?.take_profit,
       stop_loss: currentOrder?.stop_loss,
@@ -203,12 +209,15 @@ export default class SymbolEditor extends BaseReact {
                 买入完成
               </h2>
             </div>,
+            onOk() {
+              modal.destroy();
+            },
           });
 
           setTimeout(() => {
-            modal.destroy();
+            this.props.market.setCurrentOrder({}, true);
             this.props.market.toggleOrderModalVisible();
-          }, 1000);
+          }, 300);
         }
       } else {
 
@@ -260,7 +269,8 @@ export default class SymbolEditor extends BaseReact {
   render() {
     const { orderMode, } = this.props;
     const { currentShowOrder, currentSymbol, setCurrentOrder, } = this.props.market;
-    // console.log("currentSymbol", currentSymbol);
+    const price_step = 1 / (10 ** currentSymbol?.symbol_display?.decimals_place);
+    const decimals_place = currentSymbol?.symbol_display?.decimals_place;
 
     return (
       <div className={"editor symbol-editor"}>
@@ -356,47 +366,152 @@ export default class SymbolEditor extends BaseReact {
                   currentShowOrder?.actionMode == "future"
                   && (
                     <Col span={11}>
-                      <FormItem label={"价格"}>
-                        <Input min={0.01} type={"number"} onChange={evt => {
-                          setCurrentOrder({
-                            open_price: evt.target.value,
-                          });
-                        }}/>
+                      <FormItem
+                        label={"价格"}
+                        className={'input-number'}
+                      >
+                        <Input
+                          value={
+                            currentShowOrder?.open_price}
+                          min={0.01} type={"number"} onChange={evt => {
+                            setCurrentOrder({
+                              open_price: evt.target.value,
+                            });
+                          }}/>
+                        <section className={'input-number-up-down'}>
+                          <UpOutlined onClick={() => {
+                            if (!currentShowOrder.open_price) {
+                              setCurrentOrder({
+                                open_price: +(currentSymbol?.product_details?.sell + price_step).toFixed(decimals_place),
+                              });
+                            } else {
+                              setCurrentOrder({
+                                open_price: +(currentShowOrder.open_price + price_step).toFixed(decimals_place),
+                              });
+                            }
+                          } } />
+                          <DownOutlined onClick={() => {
+                            if (!currentShowOrder.open_price) {
+                              setCurrentOrder({
+                                open_price: +(currentSymbol?.product_details?.sell - price_step).toFixed(decimals_place),
+                              });
+                            } else {
+                              setCurrentOrder({
+                                open_price: +(currentShowOrder.open_price - price_step).toFixed(decimals_place),
+                              });
+                            }
+                          }}/>
+                        </section>
                       </FormItem>
                     </Col>
                   )
                 }
                 <Col span={11}>
-                  <FormItem label={"数量"}>
-                    <Input value={
-                      currentShowOrder?.lots ||
+                  <FormItem
+                    className={'input-number'}
+                    label={"数量"}>
+                    <Input
+                      value={
+                        currentShowOrder?.lots ||
                       currentSymbol?.symbol_display?.min_lots}
-                    step={currentSymbol?.symbol_display?.lots_step}
-                    min={currentSymbol?.symbol_display?.min_lots || 0} type={"number"} onChange={evt => {
-                      setCurrentOrder({
-                        lots: +evt.target.value,
-                      });
-                    }}/>
+                      step={currentSymbol?.symbol_display?.lots_step}
+                      min={currentSymbol?.symbol_display?.min_lots || 0} type={"number"} onChange={evt => {
+                        setCurrentOrder({
+                          lots: +evt.target.value,
+                        });
+                      }}/>
+                    <section className={'input-number-up-down'}>
+                      <UpOutlined onClick={() => {
+                        if (!currentShowOrder.lots) {
+                          setCurrentOrder({
+                            lots: currentSymbol?.symbol_display?.min_lots,
+                          });
+                        } else {
+                          setCurrentOrder({
+                            lots: currentShowOrder.lots + currentSymbol?.symbol_display?.lots_step,
+                          });
+                        }
+                      } } />
+                      <DownOutlined onClick={() => {
+                        if (!currentShowOrder.lots
+                          || (currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step < currentSymbol?.symbol_display?.min_lots)
+                        ) {
+                          return;
+                        } else {
+                          setCurrentOrder({
+                            lots: currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step,
+                          });
+                        }
+                      }}/>
+                    </section>
                   </FormItem>
                 </Col>
               </Row>
               <Row type={"flex"} justify={"space-between"}>
                 <Col span={11}>
-                  <FormItem label={"止损"}>
+                  <FormItem label={"止损"} className={'input-number'}>
                     <Input value={currentShowOrder?.stop_loss} type={"number"} onChange={evt => {
                       setCurrentOrder({
                         stop_loss: +evt.target.value,
                       });
                     }}/>
+                    <section className={'input-number-up-down'}>
+                      <UpOutlined onClick={() => {
+                        if (!currentShowOrder.stop_loss) {
+                          setCurrentOrder({
+                            stop_loss: +(currentSymbol?.product_details?.sell + price_step).toFixed(decimals_place),
+                          });
+                        } else {
+                          setCurrentOrder({
+                            stop_loss: +(currentShowOrder.stop_loss + price_step).toFixed(decimals_place),
+                          });
+                        }
+                      } } />
+                      <DownOutlined onClick={() => {
+                        if (!currentShowOrder.stop_loss) {
+                          setCurrentOrder({
+                            stop_loss: +(currentSymbol?.product_details?.sell - price_step).toFixed(decimals_place),
+                          });
+                        } else {
+                          setCurrentOrder({
+                            stop_loss: +(currentShowOrder.stop_loss - price_step).toFixed(decimals_place),
+                          });
+                        }
+                      }}/>
+                    </section>
                   </FormItem>
                 </Col>
                 <Col span={11}>
-                  <FormItem label={"止盈"}>
+                  <FormItem label={"止盈"} className={'input-number'}>
                     <Input value={currentShowOrder?.take_profit} type={"number"} onChange={evt => {
                       setCurrentOrder({
                         take_profit: +evt.target.value,
                       });
                     }}/>
+                    <section className={'input-number-up-down'}>
+                      <UpOutlined onClick={() => {
+                        if (!currentShowOrder.take_profit) {
+                          setCurrentOrder({
+                            take_profit: +(currentSymbol?.product_details?.buy + price_step).toFixed(decimals_place),
+                          });
+                        } else {
+                          setCurrentOrder({
+                            take_profit: +(currentShowOrder.take_profit + price_step).toFixed(decimals_place),
+                          });
+                        }
+                      } } />
+                      <DownOutlined onClick={() => {
+                        if (!currentShowOrder.take_profit) {
+                          setCurrentOrder({
+                            take_profit: +(currentSymbol?.product_details?.buy - price_step).toFixed(decimals_place),
+                          });
+                        } else {
+                          setCurrentOrder({
+                            take_profit: +(currentShowOrder.take_profit - price_step).toFixed(decimals_place),
+                          });
+                        }
+                      }}/>
+                    </section>
                   </FormItem>
                 </Col>
               </Row>

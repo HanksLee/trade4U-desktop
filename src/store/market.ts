@@ -58,7 +58,7 @@ class MarketStore extends BaseStore {
   @action
   getCurrentSymbol = async (id, config) => {
     const res = await this.$api.market.getCurrentSymbol(id, config);
-    this.setCurrentSymbol(res.data);
+    this.setCurrentSymbol(res.data, true);
   }
 
   @computed
