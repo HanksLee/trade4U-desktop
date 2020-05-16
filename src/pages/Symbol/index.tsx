@@ -386,7 +386,6 @@ export default class extends BaseReact {
     } = this.props.market;
     const itemWidth = Math.floor(24 / columns.length);
 
-
     return (
       <div className={"symbol-sidebar custom-table"}>
         <Row className={"custom-table-title"} type={"flex"} justify={"space-between"}>
@@ -936,7 +935,9 @@ export default class extends BaseReact {
                 </div>
               </Col>
             </Row>
-            <TVChartContainer symbol={currentSymbol.symbol} />
+            <TVChartContainer
+              symbol={currentSymbol.id ? String(currentSymbol.id) : currentSymbol.id}
+            />
           </Col>
           <Col span={24} className={"symbol-order"}>
             <Tabs

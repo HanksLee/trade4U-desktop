@@ -17,7 +17,8 @@ const resolutionMap = {
 export default class DatafeedProvider {
   wsConnect = null;
   lastItem = null;
-  interval = null;
+  lastResolution = null;
+  lastSymbolName = null;
   subscriberList = [];
   kChartData = [];
 
@@ -31,14 +32,10 @@ export default class DatafeedProvider {
 
   resolveSymbol = async (symbol, onSymbolResolvedCallback) => {
     if (symbol === '000') return;
-    const res = await api.market.getProductTrend(symbol);
     const res2 = await api.market.getCurrentSymbol(symbol);
-    console.log('res', res)
-    console.log('res2', res2)
-    const data = res.data;
     setTimeout(function() {
       onSymbolResolvedCallback({
-        name: data.name,
+        name: symbol,
         ticker: symbol,
         type: res2.data.product_details.type,
         description: res2.data.symbol_display.description,
@@ -65,7 +62,15 @@ export default class DatafeedProvider {
   }
 
   getBars = async function(symbolInfo, resolution, from, to, onHistoryCallback) {
+    console.log('getBars---', symbolInfo, resolution);
+
     if (!symbolInfo.name) return;
+
+    if (resolution !== this.lastResolution || symbolInfo.name !== this.lastSymbolName) {
+      this.lastResolution = resolution;
+      this.lastSymbolName = symbolInfo.name;
+      this.kChartData = [];
+    }
 
     const existingData = this.kChartData || [];
     if (existingData.length) {
@@ -97,7 +102,7 @@ export default class DatafeedProvider {
 
       this.subscriberList = this.subscriberList || [];
       for (const sub of this.subscriberList) {
-        if (sub.symbol !== this.symbol || sub.resolution !== resolution) {
+        if (sub.symbolName !== this.lastSymbolName || sub.resolution !== this.lastSymbolName) {
           this.kChartData = [];
           return;
         }
@@ -113,7 +118,7 @@ export default class DatafeedProvider {
     if (found) return;
 
     this.subscriberList.push({
-      symbol: symbolInfo,
+      symbolName: symbolInfo.name,
       resolution: resolution,
       uid: subscriberUID,
       callback: onRealtimeCallback,

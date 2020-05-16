@@ -11,10 +11,12 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
   tvWidget = null;
   containerId = 'tv_chart_container_' + (new Date()).getTime()
   isReady = false
+  currentSymbol = null
 
   componentDidMount() {
+    this.currentSymbol = this.props.symbol || utils.getLStorage("LATEST_SYMBOL") || '000';
     const widgetOptions = {
-      symbol: this.props.symbol || utils.getLStorage("LATEST_SYMBOL") || '000',
+      symbol: this.currentSymbol,
       datafeed: new DatafeedProvider(),
       interval: '1D',
       container_id: this.containerId,
@@ -47,9 +49,14 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.symbol !== nextProps.symbol && this.isReady) {
-      // console.log('setSymbol', this.props.symbol, nextProps.symbol);
-      this.tvWidget.setSymbol(nextProps.symbol, '1D');
+    if (this.props.symbol !== nextProps.symbol && this.isReady && this.currentSymbol !== nextProps.symbol && nextProps.symbol) {
+      try {
+        this.tvWidget.setSymbol(nextProps.symbol, '1D', () => {
+          this.currentSymbol = nextProps.symbol;
+        });
+      } catch (error) {
+        console.log('setSymbol', error);
+      }
     }
   }
 
