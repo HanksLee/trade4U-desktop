@@ -29,7 +29,7 @@ import cloneDeep from "lodash/cloneDeep";
 import {
   traderStatusMap
 } from "constant";
-
+import TVChartContainer from './TVChartContainer';
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
 
@@ -930,6 +930,7 @@ export default class extends BaseReact {
                 </div>
               </Col>
             </Row>
+            <TVChartContainer symbol={currentSymbol.symbol} />
           </Col>
           <Col span={24} className={"symbol-order"}>
             <Tabs

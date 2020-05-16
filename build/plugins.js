@@ -50,6 +50,18 @@ const devPlugins = [
   new HtmlWebpackHarddiskPlugin({
     outputPath: resolve(`dist/${config.mode}/index.html`),
   }),
+  new CopyPlugin([
+    {
+      from: resolve('src/assets/charting_library'),
+      to: resolve(`dist/${config.mode}/assets/charting_library`),
+      cache: true,
+    },
+    {
+      from: resolve('src/assets/datafeeds'),
+      to: resolve(`dist/${config.mode}/assets/datafeeds`),
+      cache: true,
+    },
+  ])
 ]
 
 const prodPlugins = [
@@ -85,11 +97,13 @@ const prodPlugins = [
   new CopyPlugin([
     {
       from: resolve('src/assets/img'),
-      to: resolve(`dist/${config.mode}/assets/img`),      cache: true,
+      to: resolve(`dist/${config.mode}/assets/img`),
+      cache: true,
     },
     {
       from: resolve('src/assets/font/dist'),
-      to: resolve(`dist/${config.mode}/assets/font`),      cache: true,
+      to: resolve(`dist/${config.mode}/assets/font`),
+      cache: true,
     },
     {
       from: resolve('src/service-register.js'),
@@ -99,6 +113,16 @@ const prodPlugins = [
           // .replace(/\[serverPath\]/g, config.isProd ? `/activity/${duboConfig.project}` : '');
         return content;
       },
+      cache: true,
+    },
+    {
+      from: resolve('src/assets/charting_library'),
+      to: resolve(`dist/${config.mode}/assets/charting_library`),
+      cache: true,
+    },
+    {
+      from: resolve('src/assets/datafeeds'),
+      to: resolve(`dist/${config.mode}/assets/datafeeds`),
       cache: true,
     },
   ]),
