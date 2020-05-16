@@ -169,13 +169,18 @@ export default class extends BaseReact {
         //   }
         // }
         //
-        return {
-          ...item,
-          product_details: {
+        const newItem = cloneDeep(item);
+        if (
+          newItem?.product_details?.symbol == data.symbol
+          && Number(newItem?.product_details?.timestamp) < Number(data.timestamp)
+        ) {
+          newItem.product_details = {
             ...item.product_details,
             ...data,
-          },
-        };
+          };
+        }
+
+        return newItem;
       });
       this.props.market.setSelfSelectSymbolList(newSelfSelectSymbolList);
     };
@@ -338,11 +343,13 @@ export default class extends BaseReact {
     }, this.delay);
   };
 
-  onDoubleClick = (item) => {
+  onDoubleClick = (item?) => {
     clearTimeout(this.timer);
 
     this.prevent = true;
-    this.props.market.getCurrentSymbol(item.symbol);
+    if (item) {
+      this.props.market.getCurrentSymbol(item.symbol);
+    }
     this.props.market.toggleOrderModalVisible();
     this.setState({
       // modalVisible: true,
@@ -380,8 +387,6 @@ export default class extends BaseReact {
     const itemWidth = Math.floor(24 / columns.length);
 
 
-
-
     return (
       <div className={"symbol-sidebar custom-table"}>
         <Row className={"custom-table-title"} type={"flex"} justify={"space-between"}>
@@ -416,7 +421,7 @@ export default class extends BaseReact {
                 this.onSingleClick(item);
               }}
               onDoubleClick={(e) => {
-                this.onDoubleClick(item);
+                this.onDoubleClick();
               }}
               >
                 <Col span={24}>
@@ -923,7 +928,7 @@ export default class extends BaseReact {
               </Col>
               <Col>
                 <div className={"symbol-order-favorite"}>
-                  <span className={"symbol-order-btn"} onClick={this.onDoubleClick}>下单</span>
+                  <span className={"symbol-order-btn"} onClick={() => this.onDoubleClick()}>下单</span>
                   <StarFilled onClick={this.togggleFavorite} style={{
                     color: currentSymbol?.is_self_select == 1 ? "#f2e205" : "white",
                     cursor: "pointer",

@@ -39,6 +39,7 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
       theme: 'Dark',
       debug: true,
     };
+    // eslint-disable-next-line new-cap
     this.tvWidget = new window.TradingView.widget(widgetOptions);
     this.tvWidget.onChartReady(() => {
       this.isReady = true;
@@ -47,7 +48,7 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
 
   componentWillReceiveProps(nextProps) {
     if (this.props.symbol !== nextProps.symbol && this.isReady) {
-      console.log('setSymbol', this.props.symbol, nextProps.symbol);
+      // console.log('setSymbol', this.props.symbol, nextProps.symbol);
       this.tvWidget.setSymbol(nextProps.symbol, '1D');
     }
   }
