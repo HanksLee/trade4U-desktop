@@ -50,7 +50,7 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.symbol !== nextProps.symbol && this.isReady && this.currentSymbol !== nextProps.symbol && nextProps.symbol) {
+    if (this.props.symbol !== nextProps.symbol && this.isReady && this.currentSymbol !== nextProps.symbol) {
       try {
         this.tvWidget.setSymbol(nextProps.symbol, '1D', () => {
           this.currentSymbol = nextProps.symbol;

@@ -87,6 +87,7 @@ export default class DatafeedProvider {
     this.kChartData = bars;
     onHistoryCallback(bars, { noData: !bars.length, });
   
+    if (this.wsConnect) this.wsConnect.close();
     this.wsConnect = ws(`symbol/${symbolInfo.ticker}/trend`);
     this.wsConnect.onmessage = (event) => {
       const message = event.data;

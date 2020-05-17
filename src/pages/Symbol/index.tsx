@@ -406,9 +406,6 @@ export default class extends BaseReact {
         >
           {
             selfSelectSymbolList.map(item => {
-              // console.log('item', item);
-              // console.log('currentSymbol', currentSymbol);
-
               return <Row style={{
                 backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
               }} className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
@@ -942,10 +939,15 @@ export default class extends BaseReact {
                 </div>
               </Col>
             </Row>
-            <TVChartContainer
-              className={this.state.foldTabs ? 'unfold-chart' : 'fold-chart'}
-              symbol={currentSymbol.id ? String(currentSymbol.id) : currentSymbol.id}
-            />
+            <div className={this.state.foldTabs ? 'unfold-chart' : 'fold-chart'}>
+              {
+                currentSymbol.id && (
+                  <TVChartContainer
+                    symbol={currentSymbol.id ? String(currentSymbol.id) : currentSymbol.id}
+                  />
+                )
+              }
+            </div>
           </Col>
           <Col span={24} className={`symbol-order ${this.state.foldTabs ? 'fold-tabs' : 'unfold-tabs'}`}>
             <Tabs
