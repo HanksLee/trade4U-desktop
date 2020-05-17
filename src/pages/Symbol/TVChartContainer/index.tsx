@@ -56,7 +56,7 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
           this.currentSymbol = nextProps.symbol;
         });
       } catch (error) {
-        console.log('setSymbol', error);
+        // console.log('setSymbol', error);
       }
     }
   }

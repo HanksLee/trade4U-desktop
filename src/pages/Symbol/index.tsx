@@ -75,7 +75,7 @@ export default class extends BaseReact {
       page_size: 5,
     },
     orderMode: "add",
-    foldTabs: true,
+    foldTabs: false,
   };
 
   async componentDidMount() {

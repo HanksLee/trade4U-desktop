@@ -70,7 +70,6 @@ class MarketStore extends BaseStore {
 
   @action
   setCurrentSymbol = (symbol, overwrite = false) => {
-    console.log('setCurrentSymbol', symbol);
     if (overwrite) {
       this.currentSymbol = symbol;
     } else {

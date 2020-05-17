@@ -44,6 +44,8 @@
 
   .home-content {
     display: flex;
+    //height: calc(100vh - 56px);
+    //overflow-y: scroll;
 
     .home-sidebar {
       width: 60px;
@@ -58,6 +60,8 @@
       flex: 1;
       padding-left: 10px;
       padding-top: 10px;
+      height: calc(100vh - 56px);
+      overflow-y: scroll;
     }
   }
 

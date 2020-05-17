@@ -5,6 +5,13 @@ import { PAGE_ROUTES } from 'constant';
 import jwtDecode from 'jwt-decode';
 
 class CommonStore extends BaseStore {
+  // 股票涨跌颜色模式，1-绿涨红跌 2-红涨绿跌
+  @observable
+  stockColorMode = 1;
+  @action
+  setStockColorMode = mode => {
+    this.stockColorMode = mode;
+  }
   @observable
   paginationConfig = {
     defaultCurrent: 1,
