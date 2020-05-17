@@ -70,6 +70,7 @@ export default class DatafeedProvider {
       this.lastResolution = resolution;
       this.lastSymbolName = symbolInfo.name;
       this.kChartData = [];
+      this.subscriberList = [];
     }
 
     const existingData = this.kChartData || [];
@@ -87,6 +88,7 @@ export default class DatafeedProvider {
     this.kChartData = bars;
     onHistoryCallback(bars, { noData: !bars.length, });
   
+    if (this.wsConnect) this.wsConnect.close();
     this.wsConnect = ws(`symbol/${symbolInfo.ticker}/trend`);
     this.wsConnect.onmessage = (event) => {
       const message = event.data;
@@ -102,12 +104,12 @@ export default class DatafeedProvider {
 
       this.subscriberList = this.subscriberList || [];
       for (const sub of this.subscriberList) {
-        if (sub.symbolName !== this.lastSymbolName || sub.resolution !== this.lastSymbolName) {
+        if (sub.symbolName !== this.lastSymbolName || sub.resolution !== this.lastResolution) {
           this.kChartData = [];
-          return;
+        } else {
+          if (typeof sub.callback !== 'function') return;
+          sub.callback(formatData);
         }
-        if (typeof sub.callback !== 'function') return;
-        sub.callback(formatData);
       }
     };
   }
