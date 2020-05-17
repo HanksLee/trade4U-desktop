@@ -4,6 +4,7 @@ import utils from 'utils';
 import './index.scss';
 
 interface TVChartContainerProps {
+  className?: string;
   symbol: string;
 };
 
@@ -68,8 +69,9 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
   }
 
   render() {
+    const { className = '', } = this.props;
     return (
-      <div id={this.containerId} className="TVChartContainer" />
+      <div id={this.containerId} className={`TVChartContainer ${className}`} />
     );
   }
 }

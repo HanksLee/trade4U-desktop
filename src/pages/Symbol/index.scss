@@ -85,14 +85,36 @@
           color: $active-color;
         }
       }
+
+      .fold-chart {
+        height: calc(100vh - -56px - 45px - 474px - 20px);
+      }
+
+      .unfold-chart {
+        height: calc(100vh - 56px - 45px - 56px - 20px);
+      }
     }
 
     .symbol-order {
-      //height: 300px;
-      //border: 1px solid white;
-      //margin-left: 10px;
       margin-top: 10px;
       background-color: $primary-color;
+
+      &.unfold-tabs {
+        height: 464px;
+      }
+
+      &.fold-tabs {
+        height: 56px;
+      }
+
+      .rect-dock {
+        display: inline-block;
+        background-image: url('../../assets/img/rect-dock.png');
+        width:23px;
+        height:20px;
+        border-radius:2px;
+        background-size: cover;
+      }
 
       .symbol-order-info {
         color: $text-color;

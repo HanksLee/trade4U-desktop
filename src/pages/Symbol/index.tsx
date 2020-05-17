@@ -7,15 +7,12 @@ import {
   Table,
   Spin,
   Modal,
-  Icon,
   DatePicker
 } from "antd";
-import { symbolMarkets } from "constant";
 import {
   StarFilled,
   createFromIconfontCN
 } from "@ant-design/icons";
-
 import WithRoute from "components/@shared/WithRoute";
 import InfiniteScroll from "react-infinite-scroller";
 import "./index.scss";
@@ -24,12 +21,10 @@ import { inject, observer } from "mobx-react";
 import ws from "utils/ws";
 import utils from "utils";
 import moment from "moment";
-import { toJS } from "mobx";
+import { traderStatusMap } from "constant";
 import cloneDeep from "lodash/cloneDeep";
-import {
-  traderStatusMap
-} from "constant";
 import TVChartContainer from './TVChartContainer';
+
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
 
@@ -80,6 +75,7 @@ export default class extends BaseReact {
       page_size: 5,
     },
     orderMode: "add",
+    foldTabs: true,
   };
 
   async componentDidMount() {
@@ -865,6 +861,11 @@ export default class extends BaseReact {
     </div>;
   };
 
+  toggleFoldTabs = () => {
+    this.setState((prevState) => ({
+      foldTabs: !prevState.foldTabs,
+    }));
+  }
 
   render() {
     const { orderTabKey, } = this.state;
@@ -876,6 +877,12 @@ export default class extends BaseReact {
 
     const change = currentSymbol?.product_details?.change;
     const chg = currentSymbol?.product_details?.chg;
+
+    const OrderTabs = orderTabs.map(item =>
+      <TabPane tab={item.name} key={item.id}>
+        {this.renderOrderTable(item.name)}
+      </TabPane>
+    );
 
     return <div className={"symbol-page"}>
       <div className={"symbol-left"}>
@@ -936,11 +943,13 @@ export default class extends BaseReact {
               </Col>
             </Row>
             <TVChartContainer
+              className={this.state.foldTabs ? 'unfold-chart' : 'fold-chart'}
               symbol={currentSymbol.id ? String(currentSymbol.id) : currentSymbol.id}
             />
           </Col>
-          <Col span={24} className={"symbol-order"}>
+          <Col span={24} className={`symbol-order ${this.state.foldTabs ? 'fold-tabs' : 'unfold-tabs'}`}>
             <Tabs
+              tabBarExtraContent={<span onClick={this.toggleFoldTabs} className="rect-dock" />}
               tabBarStyle={{
                 padding: "0 10px",
               }}
@@ -966,13 +975,7 @@ export default class extends BaseReact {
                 });
               }
               }>
-              {
-                orderTabs.map(item =>
-                  <TabPane tab={item.name} key={item.id}>
-                    {this.renderOrderTable(item.name)}
-                  </TabPane>
-                )
-              }
+              {OrderTabs}
             </Tabs>
           </Col>
         </Row>
