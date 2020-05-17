@@ -70,6 +70,7 @@ export default class DatafeedProvider {
       this.lastResolution = resolution;
       this.lastSymbolName = symbolInfo.name;
       this.kChartData = [];
+      this.subscriberList = [];
     }
 
     const existingData = this.kChartData || [];
@@ -103,12 +104,12 @@ export default class DatafeedProvider {
 
       this.subscriberList = this.subscriberList || [];
       for (const sub of this.subscriberList) {
-        if (sub.symbolName !== this.lastSymbolName || sub.resolution !== this.lastSymbolName) {
+        if (sub.symbolName !== this.lastSymbolName || sub.resolution !== this.lastResolution) {
           this.kChartData = [];
-          return;
+        } else {
+          if (typeof sub.callback !== 'function') return;
+          sub.callback(formatData);
         }
-        if (typeof sub.callback !== 'function') return;
-        sub.callback(formatData);
       }
     };
   }
