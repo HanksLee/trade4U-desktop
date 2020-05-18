@@ -23,7 +23,12 @@ import utils from "utils";
 import moment from "moment";
 import { traderStatusMap } from "constant";
 import cloneDeep from "lodash/cloneDeep";
+import {
+  STOCK_COLOR_MAP
+} from 'constant';
 import TVChartContainer from './TVChartContainer';
+import { toJS } from 'mobx';
+import utils from 'utils';
 
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
@@ -49,7 +54,7 @@ const orderTabs = [
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/symbol")
-@inject("market")
+@inject("market", "common")
 @observer
 export default class extends BaseReact {
   private selfSymbolWSConnect = null;
@@ -79,6 +84,8 @@ export default class extends BaseReact {
   };
 
   async componentDidMount() {
+    (window as any).$market = this.props.common;
+
     this.getSelfSymbolList();
     this.getSymbolTypeList();
     this.getTradeList({
@@ -122,7 +129,7 @@ export default class extends BaseReact {
     this.selfSymbolWSConnect.onmessage = (event) => {
       const message = event.data;
       const data = JSON.parse(message).data;
-      const { selfSelectSymbolList, } = this.props.market;
+      const { selfSelectSymbolList, currentSymbol, setCurrentSymbol, } = this.props.market;
       const newSelfSelectSymbolList = selfSelectSymbolList.map((item, index) => {
         // if (item.symbol_display.product_display.code === data.symbol &&
         //   Number(item.product_details.timestamp) < Number(data.timestamp)) {
@@ -170,9 +177,66 @@ export default class extends BaseReact {
           newItem?.product_details?.symbol == data.symbol
           && Number(newItem?.product_details?.timestamp) < Number(data.timestamp)
         ) {
-          newItem.product_details = {
-            ...item.product_details,
+          const payload = {
             ...data,
+            buy_change: (
+              data.buy - newItem.product_details.buy > 0
+                ? 'up'
+                : data.buy - newItem.product_details.buy == 0
+                  ? 'balance'
+                  : 'down'
+            ),
+            sell_change: (
+              data.sell - newItem.product_details.sell > 0
+                ? 'up'
+                : data.sell - newItem.product_details.sell == 0
+                  ? 'balance'
+                  : 'down'
+            ),
+            new_price_change: (
+              data.new_price - newItem.product_details.new_price > 0
+                ? 'up'
+                : data.new_price - newItem.product_details.new_price == 0
+                  ? 'balance'
+                  : 'down'
+            ),
+            change_change: (
+              data.change - newItem.product_details.change > 0
+                ? 'up'
+                : data.change - newItem.product_details.change == 0
+                  ? 'balance'
+                  : 'down'
+            ),
+            chg_change: (
+              data.change - newItem.product_details.change > 0
+                ? 'up'
+                : data.change - newItem.product_details.change == 0
+                  ? 'balance'
+                  : 'down'
+            ),
+          };
+
+          // 同步到 currentSymbol
+
+          if (
+            currentSymbol?.product_details?.symbol == data.symbol
+            && Number(currentSymbol?.product_details?.timestamp) < Number(data.timestamp)
+          ) {
+
+            const symbol = {
+              ...currentSymbol,
+              product_details: {
+                ...currentSymbol.product_details,
+                ...payload,
+              },
+            };
+
+            setCurrentSymbol(symbol);
+          }
+
+          newItem.product_details = {
+            ...newItem.product_details,
+            ...payload,
           };
         }
 
@@ -380,6 +444,11 @@ export default class extends BaseReact {
       selfSelectSymbolList,
       currentSymbol,
     } = this.props.market;
+    const {
+      common: {
+        stockColorMode,
+      },
+    } = this.props;
     const itemWidth = Math.floor(24 / columns.length);
 
     return (
@@ -434,10 +503,15 @@ export default class extends BaseReact {
                       }}>{item?.symbol_display?.spread}</span>
                     </Col>
                     <Col span={itemWidth}>
-                      <span className={"p-up self-select-buy-block"}>{item?.product_details?.buy}</span>
+                      <span className={`
+                        ${utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)}
+                        self-select-buy-block`}
+                      >{item?.product_details?.buy}</span>
                     </Col>
                     <Col span={itemWidth}>
-                      <span className={"p-down self-select-sell-block"}>{item?.product_details?.sell}</span>
+                      <span className={`
+                      ${utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)}
+                      self-select-sell-block`}>{item?.product_details?.sell}</span>
                     </Col>
                   </Row>
                 </Col>
@@ -870,10 +944,18 @@ export default class extends BaseReact {
       market: {
         currentSymbol,
       },
+      common: {
+        stockColorMode,
+      },
     } = this.props;
 
+    const new_price = currentSymbol?.product_details?.new_price;
+    const new_price_change = currentSymbol?.product_details?.new_price_change;
+
     const change = currentSymbol?.product_details?.change;
+    const change_change = currentSymbol?.product_details?.change_change;
     const chg = currentSymbol?.product_details?.chg;
+    const chg_change = currentSymbol?.product_details?.chg_change;
 
     const OrderTabs = orderTabs.map(item =>
       <TabPane tab={item.name} key={item.id}>
@@ -901,22 +983,23 @@ export default class extends BaseReact {
               <Col>
                 <div className={"symbol-chart-title"}>
                   <span>{currentSymbol?.symbol_display?.name}</span>
-                  <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
+                  <span className={`${utils.getStockChangeClass(new_price_change, stockColorMode)}
+                  `}>
                     {
                       currentSymbol?.product_details?.new_price
                     }
                     {
-                      change >= 0
+                      new_price >= 0
                         ? <IconFont type={"icon-arrow-up"}/>
                         : <IconFont type={"icon-arrow-down"}/>
                     }
                   </span>
-                  <span className={`${change >= 0 ? "p-up" : "p-down"}`}>
+                  <span className={`${utils.getStockChangeClass(change_change, stockColorMode)}`}>
                     {
                       change > 0 ? "+" + change : change
                     }
                   </span>
-                  <span className={`${chg >= 0 ? "p-up" : "p-down"}`}>
+                  <span className={`${utils.getStockChangeClass(chg_change, stockColorMode)}`}>
                     {
                       chg > 0 ? "+" + chg : chg
                     }
@@ -985,7 +1068,7 @@ export default class extends BaseReact {
       <Modal
         className={"symbol-modal"}
         mask={false}
-        width={970}
+        width={670}
         style={{
           backgroundColor: "#373e47",
         }}

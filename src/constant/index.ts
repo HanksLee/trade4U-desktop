@@ -7,6 +7,20 @@ import capitalActiveSVG from 'assets/img/capital-active.svg';
 
 export const FORMAT_TIME = 'YYYY.MM.DD HH:mm:ss';
 
+export const STOCK_COLOR_MAP = {
+  // 绿涨红跌
+  1: {
+    up: 'stock-green',
+    down: 'stock-red',
+    balance: 'stock-white',
+  },
+  2: {
+    up: 'stock-red',
+    down: 'stock-green',
+    balance: 'stock-white',
+  },
+};
+
 export const PAGE_ROUTES = [
   {
     title: '个股',

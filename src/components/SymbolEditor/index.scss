@@ -1,5 +1,19 @@
 .symbol-editor {
   padding: 10px;
+  position: relative;
+
+  .symbol-editor-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    z-index: 9;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
 
   .symbol-editor-price {
     text-align: center;

@@ -175,6 +175,18 @@ img.emoji {
   color: $grey;
 }
 
+.stock-green {
+  color: $up;
+}
+
+.stock-red {
+  color: $down;
+}
+
+.stock-white {
+  color: white;
+}
+
 .bg-up {
   background-color: $up;
 }

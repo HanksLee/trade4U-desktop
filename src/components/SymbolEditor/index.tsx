@@ -31,6 +31,7 @@ import {
   UpOutlined,
   DownOutlined
 } from "@ant-design/icons";
+import closeSVG from 'assets/img/ic_close.svg';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -274,18 +275,18 @@ export default class SymbolEditor extends BaseReact {
 
     return (
       <div className={"editor symbol-editor"}>
-        <div>
-          <Icon type="close-circle" onClick={() => {
-            // console.log(111);
-          }}/>
+        <div className={'symbol-editor-close'} onClick={() => {
+          this.props.market.toggleOrderModalVisible();
+        }}>
+          <img src={closeSVG} alt=""/>
         </div>
         <Row>
-          <Col className={"symbol-editor-chart"} span={12}>
-            chart
-          </Col>
+          {/*<Col className={"symbol-editor-chart"} span={12}>*/}
+          {/*chart*/}
+          {/*</Col>*/}
           <Col style={{
             paddingLeft: 6,
-          }} className={"symbol-editor-form"} span={12}>
+          }} className={"symbol-editor-form"} span={24}>
             <Form layout={"vertical"}>
               <FormItem label={"交易品种"}>
                 <Input

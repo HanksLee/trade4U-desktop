@@ -2,6 +2,10 @@ import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
 import { inject, observer } from 'mobx-react';
 import { Table } from 'antd';
+import {
+  STOCK_COLOR_MAP
+} from "constant";
+import utils from 'utils';
 
 interface Rank {
   name:	string;
@@ -31,12 +35,12 @@ interface RankTableState {
 export default class RankTable extends BaseReact<RankTableProps, RankTableState> {
   constructor(props) {
     super(props);
-  
+
     this.state = {
       rankList: [],
     };
   }
-  
+
   componentDidMount() {
     this.getSymbolTypeRank();
   }
@@ -69,23 +73,39 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
   }
 
   compareStyle = (orign, target) => {
-    if (orign < target) {
-      return <span className="data-down">{orign}</span>;
-    } else if (orign > target) {
-      return <span className="data-up">{orign}</span>;
-    } else {
-      return <span>{orign}</span>;
-    }
+    // if (orign < target) {
+    //   return <span className="data-down">{orign}</span>;
+    // } else if (orign > target) {
+    //   return <span className="data-up">{orign}</span>;
+    // } else {
+    //   return <span>{orign}</span>;
+    // }
+
+    const {
+      common: {
+        stockColorMode,
+      },
+    } = this.props;
+
+    return <span className={`${utils.getStockChangeClass(target - orign, stockColorMode)}`}>{orign}</span>;
   }
 
   compareToChg = (orign, chg) => {
-    if (orign < chg) {
-      return <span className="data-down">{orign}</span>;
-    } else if (orign > chg) {
-      return <span className="data-up">{orign}</span>;
-    } else {
-      return <span>{orign}</span>;
-    }
+    // if (orign < chg) {
+    //   return <span className="data-down">{orign}</span>;
+    // } else if (orign > chg) {
+    //   return <span className="data-up">{orign}</span>;
+    // } else {
+    //   return <span>{orign}</span>;
+    // }
+
+    const {
+      common: {
+        stockColorMode,
+      },
+    } = this.props;
+
+    return <span className={`${utils.getStockChangeClass(chg - orign, stockColorMode)}`}>{orign}</span>;
   }
 
   getColumns = () => {
@@ -119,13 +139,21 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         sorter: true,
         sortOrder: this.getSortOrderValue('change_rise', 'change_drop'),
         render: (text) => {
-          if (text > 0) {
-            return <span className="data-up">{`+${text}`}</span>;
-          } else if (text < 0) {
-            return <span className="data-down">{text}</span>;
-          } else {
-            return <span>{text}</span>;
-          }
+          // if (text > 0) {
+          //   return <span className="data-up">{`+${text}`}</span>;
+          // } else if (text < 0) {
+          //   return <span className="data-down">{text}</span>;
+          // } else {
+          //   return <span>{text}</span>;
+          // }
+
+          const {
+            common: {
+              stockColorMode,
+            },
+          } = this.props;
+
+          return <span className={`${utils.getStockChangeClass(text, stockColorMode)}`}>{text}</span>;
         },
       },
       {
@@ -134,13 +162,21 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
         sorter: true,
         sortOrder: this.getSortOrderValue('chg_rise', 'chg_drop'),
         render: (text) => {
-          if (text > 0) {
-            return <span className="data-up">{`+${text}`}</span>;
-          } else if (text < 0) {
-            return <span className="data-down">{text}</span>;
-          } else {
-            return <span>{text}</span>;
-          }
+          // if (text > 0) {
+          //   return <span className="data-up">{`+${text}`}</span>;
+          // } else if (text < 0) {
+          //   return <span className="data-down">{text}</span>;
+          // } else {
+          //   return <span>{text}</span>;
+          // }
+
+          const {
+            common: {
+              stockColorMode,
+            },
+          } = this.props;
+
+          return <span className={`${utils.getStockChangeClass(text, stockColorMode)}`}>{text}</span>;
         },
       },
       {
@@ -198,7 +234,7 @@ export default class RankTable extends BaseReact<RankTableProps, RankTableState>
     this.props.market.setSorter(newSorter);
     setTimeout(this.getSymbolTypeRank, 0);
   }
-  
+
   render () {
     const { rankList, } = this.state;
 

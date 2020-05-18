@@ -1,6 +1,11 @@
-import * as React from 'react';
-import { BaseReact } from 'components/@shared/BaseReact';
-import { createChart } from 'lightweight-charts';
+import * as React from "react";
+import { BaseReact } from "components/@shared/BaseReact";
+import { createChart } from "lightweight-charts";
+import { inject, observer } from "mobx-react";
+import {
+  STOCK_COLOR_MAP
+} from "constant";
+import utils from 'utils';
 
 interface Trend {
   time: number;
@@ -23,10 +28,12 @@ interface TrendGraphState {
   } | null;
 }
 
+@inject("market", "common")
+@observer
 export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphState> {
-  chart: any = null
-  container: any = null
-  areaSeries: any = null
+  chart: any = null;
+  container: any = null;
+  areaSeries: any = null;
 
   constructor(props: TrendGraphProps) {
     super(props);
@@ -50,8 +57,8 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
       width: width,
       height: height - 100,
       layout: {
-        backgroundColor: 'transparent',
-        textColor: '#d1d4dc',
+        backgroundColor: "transparent",
+        textColor: "#d1d4dc",
       },
       priceScale: {
         autoScale: true,
@@ -59,7 +66,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
           top: 0.2,
           bottom: 0.2,
         },
-        position: 'left',
+        position: "left",
         borderVisible: false,
       },
       timeScale: {
@@ -69,23 +76,23 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
       },
       grid: {
         horzLines: {
-          color: 'rgba(255, 255, 255, 0.1)',
+          color: "rgba(255, 255, 255, 0.1)",
         },
         vertLines: {
-          color: 'rgba(255, 255, 255, 0.1)',
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
       localization: {
-        locale: 'zh-CN',
+        locale: "zh-CN",
         timeFormatter: this.timestampFormat,
       },
       handleScroll: false,
       handleScale: false,
     });
     this.areaSeries = this.chart.addAreaSeries({
-      topColor: 'rgba(21, 146, 230, 0.4)',
-      bottomColor: 'rgba(21, 146, 230, 0)',
-      lineColor: 'rgba(21, 146, 230, 1)',
+      topColor: "rgba(21, 146, 230, 0.4)",
+      bottomColor: "rgba(21, 146, 230, 0)",
+      lineColor: "rgba(21, 146, 230, 1)",
       lineStyle: 0,
       lineWidth: 1,
       crosshairMarkerVisible: false,
@@ -94,7 +101,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
     this.areaSeries.setData([]);
     this.getProductTrend();
     setInterval(this.getProductTrend, 60 * 1000);
-  }
+  };
 
   getProductTrend = async () => {
     const { productCode, } = this.props;
@@ -113,7 +120,7 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
     }
     this.areaSeries.setData(data);
     this.chart.timeScale().fitContent();
-  }
+  };
 
   timestampFormat = (timestamp) => {
     function addZero(i) {
@@ -126,12 +133,17 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
     const date = new Date((timestamp - 8 * 60 * 60) * 1000);
     const hour = addZero(date.getHours());
     const minutes = addZero(date.getMinutes());
-    return hour + ':' + minutes;
-  }
-  
-  render () {
+    return hour + ":" + minutes;
+  };
+
+  render() {
     const { detail, } = this.state;
-    const { width, height, } = this.props;
+    const {
+      width, height, common: {
+        stockColorMode,
+      },
+    } = this.props;
+
     return (
       <div className="trend-graph" style={{ width: `${width}px`, height: `${height}px`, }}>
         <div className="trend-graph-title">大盘指数</div>
@@ -141,13 +153,14 @@ export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphSta
             : (
               <div className="trend-graph-detail">
                 <span>{detail.name}</span>
-                <span className={detail.change >= 0 ? 'data-up' : 'data-down'}>{detail.new_price}</span>
-                <span className={detail.change >= 0 ? 'data-up' : 'data-down'}>{detail.change}</span>
-                <span className={detail.chg >= 0 ? 'data-up' : 'data-down'}>{detail.chg === 0 ? 0 : detail.chg + '%'}</span>
+                <span className={`${utils.getStockChangeClass(detail.change, stockColorMode)}`}>{detail.new_price}</span>
+                <span className={`${utils.getStockChangeClass(detail.change, stockColorMode)}`}>{detail.change}</span>
+                <span
+                  className={`${utils.getStockChangeClass(detail.chg, stockColorMode)}`}></span>
               </div>
             )
         }
-        <div ref={this.container} />
+        <div ref={this.container}/>
       </div>
     );
   }
