@@ -1,18 +1,25 @@
 .symbol-page {
   color: white;
-  height: calc(100vh - 56px - 10px);
+  height: calc(100vh - 56px);
   display: flex;
+  padding-left: 10px;
+  padding-top: 10px;
+  //border: 1px solid white;
+  overflow: hidden;
 
   .symbol-left {
-    //height: 100vh;
-    //width: 370px;
-    flex-basis: 370px;
+    //border: 1px solid red;
     width: 370px;
     background-color: $primary-color;
     //overflow-y: scroll;
 
     //margin: 0 10px;
     //border: 1px solid white;
+
+    .custom-table-body {
+      height: calc(100vh - 45px - 22px - 43px);
+      overflow-y: scroll;
+    }
 
     .symbol-filter {
       display: flex;
@@ -32,9 +39,9 @@
     .symbol-sidebar {
       color: white;
       text-align: center;
-      height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
+      //height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
       width: 370px;
-      overflow-y: scroll;
+      //overflow-y: scroll;
 
 
     .symbol-sidebar-info {
@@ -59,6 +66,9 @@
 
   .symbol-right {
     //height: 100vh;
+    width: calc(100vw - 60px - 10px - 370px);
+    //border: 1px solid green;
+    overflow: hidden;
     flex: 1;
 
     >.ant-row {
@@ -91,7 +101,7 @@
       }
 
       .fold-chart {
-        height: calc(100vh - -56px - 45px - 474px - 20px);
+        height: calc(100vh - 56px - 45px - 554px - 20px);
       }
 
       .unfold-chart {
@@ -104,8 +114,8 @@
       background-color: $primary-color;
 
       &.unfold-tabs {
-        height: 364px;
-        overflow-y: scroll;
+        height: (45px + 57px + 55px + 260px);
+        //overflow-y: scroll;
       }
 
       &.fold-tabs {
@@ -151,6 +161,10 @@
         cursor: pointer;
       }
     }
+  }
+
+  .ant-spin-container {
+    background-color: #232c37;
   }
 }
 

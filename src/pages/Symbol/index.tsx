@@ -222,7 +222,6 @@ export default class extends BaseReact {
             currentSymbol?.product_details?.symbol == data.symbol
             && Number(currentSymbol?.product_details?.timestamp) < Number(data.timestamp)
           ) {
-
             const symbol = {
               ...currentSymbol,
               product_details: {
@@ -712,7 +711,8 @@ export default class extends BaseReact {
         {
           title: "平仓时间",
           dataIndex: "close_time",
-          width: 80,
+          width: 120,
+          fixed: 'right',
           render: (text, record) => moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
         }
 
@@ -732,6 +732,10 @@ export default class extends BaseReact {
           value: tradeHistoryListMeta?.data?.balance?.toFixed(2),
         }
       ];
+
+      const columnsWidth = columns.reduce(function (total, cur) {
+        return total + cur.width;
+      }, 0);
 
       return <div>
         <div className="symbol-order-info">
@@ -777,6 +781,10 @@ export default class extends BaseReact {
             });
           }}
           columns={columns}
+          scroll={{
+            x: columnsWidth,
+            y: 260,
+          }}
           dataSource={tradeHistoryList}
         >
 
@@ -833,6 +841,7 @@ export default class extends BaseReact {
       {
         title: "盈亏",
         dataIndex: "profit",
+
       },
       {
         title: "开仓时间",
@@ -899,6 +908,7 @@ export default class extends BaseReact {
       </div>
       <Table
         rowClassName={"symbol-order-table-row"}
+        scroll={{ y: 260, }}
         onRow={record => {
           return {
             onDoubleClick: async evt => {
@@ -919,7 +929,10 @@ export default class extends BaseReact {
         pagination={
           {
             size: "small",
-            pageSize: 5,
+            pageSize: this.state.orderTabKey == "in_transaction"
+              ? tradeList.length
+              : futureTradeList.length,
+
           }
         }
         columns={columns}

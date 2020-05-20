@@ -57,6 +57,9 @@ export default class SymbolEditor extends BaseReact {
     const {
       orderOperateType,
     } = this.state;
+    const actionSwitch = currentSymbol?.symbol_display?.action;
+    const useBuyBtn = actionSwitch.includes('0');
+    const useSellBtn = actionSwitch.includes('1');
 
     // 是否是持仓订单
     if (orderMode == "update") {
@@ -123,8 +126,8 @@ export default class SymbolEditor extends BaseReact {
 
 
     if (orderMode == "add" && currentSymbol?.symbol_display?.action?.length > 0) {
-      const useBuyBtn = currentSymbol?.symbol_display?.action?.includes("0");
-      const useSellBtn = currentSymbol?.symbol_display?.action?.includes("1");
+      // const useBuyBtn = currentSymbol?.symbol_display?.action?.includes("0");
+      // const useSellBtn = currentSymbol?.symbol_display?.action?.includes("1");
 
       if (currentShowOrder?.actionMode == "future") {
         // 如果是挂单交易
@@ -140,8 +143,10 @@ export default class SymbolEditor extends BaseReact {
       return (
         <Row type={"flex"} justify={"space-between"}>
           {
-            useBuyBtn && <Col span={11}>
-              <div className={"custom-btn bg-up"} onClick={() => {
+            <Col span={11}>
+              <div className={`custom-btn bg-up ${!useBuyBtn ? 'bg-grey' : ''}`} onClick={() => {
+                if (!useBuyBtn) return;
+
                 setCurrentOrder({
                   action: 0,
                 });
@@ -152,8 +157,10 @@ export default class SymbolEditor extends BaseReact {
             </Col>
           }
           {
-            useSellBtn && <Col span={11}>
-              <div className={"custom-btn bg-down"} onClick={() => {
+            <Col span={11}>
+              <div className={`custom-btn bg-down ${!useSellBtn ? 'bg-grey' : ''}`} onClick={() => {
+                if (!useSellBtn) return;
+
                 setCurrentOrder({
                   action: 1,
                 });
@@ -272,6 +279,9 @@ export default class SymbolEditor extends BaseReact {
     const { currentShowOrder, currentSymbol, setCurrentOrder, } = this.props.market;
     const price_step = 1 / (10 ** currentSymbol?.symbol_display?.decimals_place);
     const decimals_place = currentSymbol?.symbol_display?.decimals_place;
+    const actionSwitch = currentSymbol?.symbol_display?.action;
+    const useBuyBtn = actionSwitch.includes('0');
+    const useSellBtn = actionSwitch.includes('1');
 
     return (
       <div className={"editor symbol-editor"}>
@@ -330,7 +340,11 @@ export default class SymbolEditor extends BaseReact {
                     >
                       {
                         tradeFutureTypeOptions.map(item => {
-                          return <Option key={item.id}>
+                          return <Option disabled={
+                            (item.id == '2' || item.id == '4')
+                              ? !useBuyBtn
+                              : !useSellBtn
+                          } key={item.id}>
                             {item.name}
                           </Option>;
                         })
@@ -413,10 +427,9 @@ export default class SymbolEditor extends BaseReact {
                     label={"数量"}>
                     <Input
                       value={
-                        currentShowOrder?.lots ||
-                      currentSymbol?.symbol_display?.min_lots}
+                        currentShowOrder?.lots || undefined}
                       step={currentSymbol?.symbol_display?.lots_step}
-                      min={currentSymbol?.symbol_display?.min_lots || 0} type={"number"} onChange={evt => {
+                      min={currentSymbol?.symbol_display?.min_lots} type={"number"} onChange={evt => {
                         setCurrentOrder({
                           lots: +evt.target.value,
                         });
