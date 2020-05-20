@@ -29,6 +29,9 @@ import {
 import TVChartContainer from './TVChartContainer';
 import { toJS } from 'mobx';
 import utils from 'utils';
+import {
+  MinusOutlined
+} from '@ant-design/icons';
 
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
@@ -131,47 +134,6 @@ export default class extends BaseReact {
       const data = JSON.parse(message).data;
       const { selfSelectSymbolList, currentSymbol, setCurrentSymbol, } = this.props.market;
       const newSelfSelectSymbolList = selfSelectSymbolList.map((item, index) => {
-        // if (item.symbol_display.product_display.code === data.symbol &&
-        //   Number(item.product_details.timestamp) < Number(data.timestamp)) {
-        //   const buyItemDom = $$($$('.self-select-buy-block')[index])
-        //   const sellItemDom = $$($$('.self-select-sell-block')[index])
-        //   if (data.buy > item.product_details.buy) {
-        //     clearTimeout(this.buyTimers[index])
-        //     buyItemDom.addClass('increase')
-        //     this.buyTimers[index] = setTimeout(() => {
-        //       buyItemDom && buyItemDom.hasClass('increase') && buyItemDom.removeClass('increase')
-        //     }, 2000);
-        //   } else if (data.buy < item.product_details.buy) {
-        //     clearTimeout(this.buyTimers[index])
-        //     buyItemDom.addClass('decrease')
-        //     this.buyTimers[index] = setTimeout(() => {
-        //       buyItemDom && buyItemDom.hasClass('decrease') && buyItemDom.removeClass('decrease')
-        //     }, 2000);
-        //   }
-        //
-        //   if (data.sell > item.product_details.sell) {
-        //     clearTimeout(this.sellTimers[index])
-        //     sellItemDom.addClass('increase')
-        //     this.sellTimers[index] = setTimeout(() => {
-        //       sellItemDom && sellItemDom.hasClass('increase') && sellItemDom.removeClass('increase')
-        //     }, 2000);
-        //   } else if (data.sell < item.product_details.sell) {
-        //     clearTimeout(this.sellTimers[index])
-        //     sellItemDom.addClass('decrease')
-        //     this.sellTimers[index] = setTimeout(() => {
-        //       sellItemDom && sellItemDom.hasClass('decrease') && sellItemDom.removeClass('decrease')
-        //     }, 2000);
-        //   }
-        //
-        //   return {
-        //     ...item,
-        //     product_details: {
-        //       ...item.product_details,
-        //       ...data,
-        //     }
-        //   }
-        // }
-        //
         const newItem = cloneDeep(item);
         if (
           newItem?.product_details?.symbol == data.symbol
@@ -249,6 +211,10 @@ export default class extends BaseReact {
 
     this.orderWSConnect.onmessage = (evt) => {
       const msg = JSON.parse(evt.data);
+      // console.log('msg', msg);
+      // console.log('tradeList', this.props.market?.tradeList);
+
+
       if (msg.type == "meta_fund") {
         this.updateTradeInfo({
           balance: msg.data.balance,
@@ -257,11 +223,12 @@ export default class extends BaseReact {
       } else {
         let list = cloneDeep(this.props.market?.tradeList);
         let futureList = cloneDeep(this.props.market?.futureTradeList);
+
         if (msg.type == "order_open") {
           list = [msg.data, ...list];
         } else if (msg.type == "order_profit") {
           list = list.map((item) => {
-            if (item.order_number == msg.data.order_number) {
+            if (item.order_number == msg.data.order_number && msg.data.timestamp > item.timestamp) {
               item = msg.data;
             }
             return item;
@@ -503,13 +470,19 @@ export default class extends BaseReact {
                     </Col>
                     <Col span={itemWidth}>
                       <span className={`
-                        ${utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)}
+                        ${
+      STOCK_COLOR_MAP[stockColorMode][item?.product_details?.buy_change || 'balance']
+  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+      }
                         self-select-buy-block`}
                       >{item?.product_details?.buy}</span>
                     </Col>
                     <Col span={itemWidth}>
                       <span className={`
-                      ${utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)}
+                      ${
+      STOCK_COLOR_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
+  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+      }
                       self-select-sell-block`}>{item?.product_details?.sell}</span>
                     </Col>
                   </Row>
@@ -841,6 +814,10 @@ export default class extends BaseReact {
       {
         title: "盈亏",
         dataIndex: "profit",
+        render: (text, record) => <span
+          className={`
+          ${utils.getStockChangeClass(text, this.props.common.stockColorMode)}
+          `}>{text > 0 ? `+${text}` : text}</span>,
 
       },
       {
@@ -962,13 +939,16 @@ export default class extends BaseReact {
       },
     } = this.props;
 
-    const new_price = currentSymbol?.product_details?.new_price;
-    const new_price_change = currentSymbol?.product_details?.new_price_change;
+    // const sell = currentSymbol?.product_details?.sell;
+    const sell_change = currentSymbol?.product_details?.sell_change;
 
     const change = currentSymbol?.product_details?.change;
     const change_change = currentSymbol?.product_details?.change_change;
     const chg = currentSymbol?.product_details?.chg;
     const chg_change = currentSymbol?.product_details?.chg_change;
+
+    // console.log('sell_change', sell_change);
+
 
     const OrderTabs = orderTabs.map(item =>
       <TabPane tab={item.name} key={item.id}>
@@ -990,29 +970,43 @@ export default class extends BaseReact {
         </Tabs>
       </div>
       <div className={"symbol-right"}>
-        <Row>
+        <Row style={{ height: '100%', }}>
           <Col span={24} className={"symbol-chart"}>
             <Row className={"symbol-chart-info"} type={"flex"} justify={"space-between"} align={"middle"}>
               <Col>
                 <div className={"symbol-chart-title"}>
                   <span>{currentSymbol?.symbol_display?.name}</span>
-                  <span className={`${utils.getStockChangeClass(new_price_change, stockColorMode)}
+                  <span className={`
+                  ${
+  STOCK_COLOR_MAP[stockColorMode][sell_change || 'balance']
+}
                   `}>
                     {
-                      currentSymbol?.product_details?.new_price
+                      currentSymbol?.product_details?.sell
                     }
                     {
-                      new_price >= 0
+                      sell_change == 'up'
                         ? <IconFont type={"icon-arrow-up"}/>
-                        : <IconFont type={"icon-arrow-down"}/>
+                        : sell_change == 'down'
+                          ? <IconFont type={"icon-arrow-down"}/>
+                          : <MinusOutlined />
                     }
                   </span>
-                  <span className={`${utils.getStockChangeClass(change_change, stockColorMode)}`}>
+                  <span className={`
+                  ${
+  STOCK_COLOR_MAP[stockColorMode][change_change || 'balance']
+}
+                  `}>
                     {
                       change > 0 ? "+" + change : change
                     }
                   </span>
-                  <span className={`${utils.getStockChangeClass(chg_change, stockColorMode)}`}>
+                  <span className={`
+                  ${
+  STOCK_COLOR_MAP[stockColorMode][chg_change || 'balance']
+
+}
+                  `}>
                     {
                       chg > 0 ? "+" + chg : chg
                     }
