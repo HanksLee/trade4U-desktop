@@ -166,6 +166,13 @@
   .ant-spin-container {
     background-color: #232c37;
   }
+
+  .ant-table-cell ant-table-cell-fix-right ant-table-cell-fix-right-first,
+  .ant-table-cell-fix-left, .ant-table-cell-fix-right
+  {
+    background-color: #232c37 !important;
+    transition: unset !important;
+  }
 }
 
 .symbol-modal {

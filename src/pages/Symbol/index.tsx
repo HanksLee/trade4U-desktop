@@ -96,7 +96,7 @@ export default class extends BaseReact {
         status: "in_transaction",
       },
     }, "in_transaction");
-    this.connnetWebsocket();
+    // this.connnetWebsocket();
   }
 
   componentWillUnmount() {
@@ -154,6 +154,13 @@ export default class extends BaseReact {
                 : data.sell - newItem.product_details.sell == 0
                   ? 'balance'
                   : 'down'
+            ),
+            sell_open_change: (
+              data.sell - data.close > 0
+                ? 'up'
+                : data.sell - newItem.close == 0
+                ? 'balance'
+                : 'down'
             ),
             new_price_change: (
               data.new_price - newItem.product_details.new_price > 0
@@ -864,7 +871,7 @@ export default class extends BaseReact {
       },
       {
         title: "预付款比率(%)",
-        value: tradeInfo?.margin_level == 0 ? "-" : tradeInfo?.margin_level?.toFixed(2),
+        value: tradeInfo?.margin_level == 0 ? "-" : (tradeInfo?.margin_level * 100 )?.toFixed(2),
       }
     ];
 
@@ -941,6 +948,7 @@ export default class extends BaseReact {
 
     // const sell = currentSymbol?.product_details?.sell;
     const sell_change = currentSymbol?.product_details?.sell_change;
+    const sell_open_change = currentSymbol?.product_details?.sell_open_change;
 
     const change = currentSymbol?.product_details?.change;
     const change_change = currentSymbol?.product_details?.change_change;
@@ -978,23 +986,23 @@ export default class extends BaseReact {
                   <span>{currentSymbol?.symbol_display?.name}</span>
                   <span className={`
                   ${
-  STOCK_COLOR_MAP[stockColorMode][sell_change || 'balance']
+  STOCK_COLOR_MAP[stockColorMode][sell_open_change || 'balance']
 }
                   `}>
                     {
                       currentSymbol?.product_details?.sell
                     }
                     {
-                      sell_change == 'up'
+                      sell_open_change == 'up'
                         ? <IconFont type={"icon-arrow-up"}/>
-                        : sell_change == 'down'
+                        : sell_open_change == 'down'
                           ? <IconFont type={"icon-arrow-down"}/>
                           : <MinusOutlined />
                     }
                   </span>
                   <span className={`
                   ${
-  STOCK_COLOR_MAP[stockColorMode][change_change || 'balance']
+  STOCK_COLOR_MAP[stockColorMode][sell_open_change || 'balance']
 }
                   `}>
                     {
@@ -1003,7 +1011,7 @@ export default class extends BaseReact {
                   </span>
                   <span className={`
                   ${
-  STOCK_COLOR_MAP[stockColorMode][chg_change || 'balance']
+  STOCK_COLOR_MAP[stockColorMode][sell_open_change || 'balance']
 
 }
                   `}>
