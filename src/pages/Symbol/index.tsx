@@ -25,7 +25,7 @@ import { traderStatusMap } from "constant";
 import cloneDeep from "lodash/cloneDeep";
 import {
   STOCK_COLOR_MAP,
-  STOCK_COLOR_GIF_MAP,
+  STOCK_COLOR_GIF_MAP
 } from 'constant';
 import TVChartContainer from './TVChartContainer';
 import { toJS } from 'mobx';
@@ -252,6 +252,10 @@ export default class extends BaseReact {
         }
         setTradeList(list);
         setTradeList(futureList, "future");
+        this.updateTradeInfo({
+          balance: this.props.market.tradeInfo.balance,
+          margin: this.props.market.tradeInfo.margin,
+        });
       }
     };
   };
@@ -479,12 +483,12 @@ export default class extends BaseReact {
                     <Col span={itemWidth}>
                       <span className={`
                       ${
-                        STOCK_COLOR_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
-                        // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-                        }
+      STOCK_COLOR_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
+  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+      }
                         ${
-                        STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
-                        }
+      STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
+      }
                       self-select-sell-block`}>{item?.product_details?.sell}</span>
                     </Col>
                     <Col span={itemWidth}>
@@ -494,8 +498,8 @@ export default class extends BaseReact {
   // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
       }
                               ${
-                        STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.buy_change || 'balance']
-                        }
+      STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.buy_change || 'balance']
+      }
                         self-select-buy-block`}
                       >{item?.product_details?.buy}</span>
                     </Col>
@@ -558,6 +562,7 @@ export default class extends BaseReact {
 
   updateTradeInfo = (tradeInfo) => {
     let payload: any = {};
+
     const { tradeList, setTradeInfo, } = this.props.market;
     if (utils.isEmpty(tradeInfo)) {
       payload = {
