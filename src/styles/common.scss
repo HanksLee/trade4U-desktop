@@ -183,6 +183,16 @@ img.emoji {
   color: $down;
 }
 
+.stock-green-gif {
+  @include bg('img/stock-green.gif');
+  background-size: 100% 100%;
+}
+
+.stock-red-gif {
+  @include bg('img/stock-red.gif');
+  background-size: 100% 100%;
+}
+
 .stock-white {
   color: white;
 }

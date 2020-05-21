@@ -21,6 +21,20 @@ export const STOCK_COLOR_MAP = {
   },
 };
 
+export const STOCK_COLOR_GIF_MAP = {
+  // 绿涨红跌
+  1: {
+    up: 'stock-green-gif',
+    down: 'stock-red-gif',
+    balance: '',
+  },
+  2: {
+    up: 'stock-red-gif',
+    down: 'stock-green-gif',
+    balance: '',
+  },
+};
+
 export const PAGE_ROUTES = [
   {
     title: '个股',

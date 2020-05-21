@@ -24,7 +24,8 @@ import moment from "moment";
 import { traderStatusMap } from "constant";
 import cloneDeep from "lodash/cloneDeep";
 import {
-  STOCK_COLOR_MAP
+  STOCK_COLOR_MAP,
+  STOCK_COLOR_GIF_MAP,
 } from 'constant';
 import TVChartContainer from './TVChartContainer';
 import { toJS } from 'mobx';
@@ -406,11 +407,11 @@ export default class extends BaseReact {
       title: "点差",
       dataIndex: "dots",
     }, {
-      title: "买入",
-      dataIndex: "buy",
-    }, {
       title: "卖出",
       dataIndex: "sell",
+    }, {
+      title: "买入",
+      dataIndex: "buy",
     }];
 
     const {
@@ -449,7 +450,7 @@ export default class extends BaseReact {
           {
             selfSelectSymbolList.map(item => {
               return <Row style={{
-                backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
+                // backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
               }} className={"custom-table-item"} key={item.id} type={"flex"} justify={"space-between"}
               onClick={(e) => {
                 this.onSingleClick(item);
@@ -477,20 +478,26 @@ export default class extends BaseReact {
                     </Col>
                     <Col span={itemWidth}>
                       <span className={`
+                      ${
+                        STOCK_COLOR_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
+                        // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                        }
+                        ${
+                        STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
+                        }
+                      self-select-sell-block`}>{item?.product_details?.sell}</span>
+                    </Col>
+                    <Col span={itemWidth}>
+                      <span className={`
                         ${
       STOCK_COLOR_MAP[stockColorMode][item?.product_details?.buy_change || 'balance']
   // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
       }
+                              ${
+                        STOCK_COLOR_GIF_MAP[stockColorMode][item?.product_details?.buy_change || 'balance']
+                        }
                         self-select-buy-block`}
                       >{item?.product_details?.buy}</span>
-                    </Col>
-                    <Col span={itemWidth}>
-                      <span className={`
-                      ${
-      STOCK_COLOR_MAP[stockColorMode][item?.product_details?.sell_change || 'balance']
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-      }
-                      self-select-sell-block`}>{item?.product_details?.sell}</span>
                     </Col>
                   </Row>
                 </Col>
