@@ -96,7 +96,7 @@ export default class extends BaseReact {
         status: "in_transaction",
       },
     }, "in_transaction");
-    // this.connnetWebsocket();
+    this.connnetWebsocket();
   }
 
   componentWillUnmount() {
@@ -159,8 +159,8 @@ export default class extends BaseReact {
               data.sell - data.close > 0
                 ? 'up'
                 : data.sell - newItem.close == 0
-                ? 'balance'
-                : 'down'
+                  ? 'balance'
+                  : 'down'
             ),
             new_price_change: (
               data.new_price - newItem.product_details.new_price > 0
@@ -871,7 +871,7 @@ export default class extends BaseReact {
       },
       {
         title: "预付款比率(%)",
-        value: tradeInfo?.margin_level == 0 ? "-" : (tradeInfo?.margin_level * 100 )?.toFixed(2),
+        value: tradeInfo?.margin_level == 0 ? "-" : (tradeInfo?.margin_level * 100)?.toFixed(2),
       }
     ];
 
