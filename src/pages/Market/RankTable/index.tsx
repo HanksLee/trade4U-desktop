@@ -31,14 +31,14 @@ interface RankTableState {
 @inject("common", "market")
 @observer
 export default class RankTable extends BaseReact<
-  RankTableProps,
-  RankTableState
+RankTableProps,
+RankTableState
 > {
   constructor(props) {
     super(props);
 
     this.state = {
-      rankList: []
+      rankList: [],
     };
   }
 
@@ -47,19 +47,19 @@ export default class RankTable extends BaseReact<
   }
 
   getSymbolTypeRank = async () => {
-    const { symbolTypeCode } = this.props;
+    const { symbolTypeCode, } = this.props;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
-        rank_type: this.$store.market.sorter
-      }
+        rank_type: this.$store.market.sorter,
+      },
     });
     this.setState({
-      rankList: res.data
+      rankList: res.data,
     });
   };
 
   getSortOrderValue = (riseKey, dropKey) => {
-    const { sorter } = this.props.market;
+    const { sorter, } = this.props.market;
 
     if (sorter === riseKey) {
       return "ascend";
@@ -82,7 +82,7 @@ export default class RankTable extends BaseReact<
     // }
 
     const {
-      common: { stockColorMode }
+      common: { stockColorMode, },
     } = this.props;
 
     return (
@@ -107,7 +107,7 @@ export default class RankTable extends BaseReact<
     // }
 
     const {
-      common: { stockColorMode }
+      common: { stockColorMode, },
     } = this.props;
 
     return (
@@ -123,18 +123,18 @@ export default class RankTable extends BaseReact<
     return [
       {
         title: "品种名字",
-        dataIndex: "name"
+        dataIndex: "name",
       },
       {
         title: "品种代码",
-        dataIndex: "symbol"
+        dataIndex: "symbol",
       },
       {
         title: "买入价",
         dataIndex: "buy",
         sorter: true,
         sortOrder: this.getSortOrderValue("buy_rise", "buy_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg)
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
 
       {
@@ -142,7 +142,7 @@ export default class RankTable extends BaseReact<
         dataIndex: "sell",
         sorter: true,
         sortOrder: this.getSortOrderValue("sell_rise", "sell_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg)
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
       {
         title: "涨跌额",
@@ -159,7 +159,7 @@ export default class RankTable extends BaseReact<
           // }
 
           const {
-            common: { stockColorMode }
+            common: { stockColorMode, },
           } = this.props;
 
           return (
@@ -169,7 +169,7 @@ export default class RankTable extends BaseReact<
               {text}
             </span>
           );
-        }
+        },
       },
       {
         title: "涨跌幅",
@@ -186,7 +186,7 @@ export default class RankTable extends BaseReact<
           // }
 
           const {
-            common: { stockColorMode }
+            common: { stockColorMode, },
           } = this.props;
 
           return (
@@ -196,46 +196,46 @@ export default class RankTable extends BaseReact<
               {text}
             </span>
           );
-        }
+        },
       },
       {
         title: "开盘价",
         dataIndex: "open",
         sorter: true,
         sortOrder: this.getSortOrderValue("open_rise", "open_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "收盘价",
         dataIndex: "last_close",
         sorter: true,
-        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop")
+        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop"),
       },
       {
         title: "最高价",
         dataIndex: "high",
         sorter: true,
         sortOrder: this.getSortOrderValue("high_rise", "high_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "最低价",
         dataIndex: "low",
         sorter: true,
         sortOrder: this.getSortOrderValue("low_rise", "low_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "成交价",
         dataIndex: "volume",
         sorter: true,
-        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop")
+        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop"),
       },
       {
         title: "成交金额",
         dataIndex: "amount",
         sorter: true,
-        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop")
+        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop"),
       }
     ];
   };
@@ -255,7 +255,7 @@ export default class RankTable extends BaseReact<
   };
 
   render() {
-    const { rankList } = this.state;
+    const { rankList, } = this.state;
 
     return (
       <Table

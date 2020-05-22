@@ -16,7 +16,7 @@ interface MarketState {
 }
 
 const symbolTypeMap = {
-  HK: ["IXIXHSI", "IXIXHSCEI", "HSCCI"]
+  HK: ["IXIXHSI", "IXIXHSCEI", "HSCCI"],
 };
 
 /* eslint new-cap: "off" */
@@ -32,7 +32,7 @@ export default class Market extends BaseReact<any, MarketState> {
       currentSymbolTypeCode: "HK",
       width: 0,
       height: 0,
-      symbleTypeList: []
+      symbleTypeList: [],
     };
   }
 
@@ -52,7 +52,7 @@ export default class Market extends BaseReact<any, MarketState> {
     const res = await this.$api.market.getSymbolTypeList();
 
     if (res.status == 200) {
-      this.setState({ symbleTypeList: res.data.results });
+      this.setState({ symbleTypeList: res.data.results, });
     }
   };
 
@@ -66,17 +66,17 @@ export default class Market extends BaseReact<any, MarketState> {
       const height = width;
       this.setState({
         width,
-        height
+        height,
       });
     }
   };
 
   switchCurrentSymbolTypeCode = symbolTypeCode => {
-    this.setState({ currentSymbolTypeCode: symbolTypeCode });
+    this.setState({ currentSymbolTypeCode: symbolTypeCode, });
   };
 
   render() {
-    const { currentSymbolTypeCode, symbleTypeList, width, height } = this.state;
+    const { currentSymbolTypeCode, symbleTypeList, width, height, } = this.state;
 
     return (
       <div className="market-page">
