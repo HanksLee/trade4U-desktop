@@ -4,8 +4,9 @@ import { inject, observer } from "mobx-react";
 import { Table } from "antd";
 import { STOCK_COLOR_MAP } from "constant";
 import utils from "utils";
+import "./index.scss";
 
-interface Rank {
+interface Forex {
   name: string;
   change: number;
   open: number;
@@ -20,41 +21,41 @@ interface Rank {
   symbol: string;
 }
 
-interface RankTableProps {
+interface ForexTableProps {
   symbolTypeCode: string;
 }
 
-interface RankTableState {
-  rankList: Rank[];
+interface ForexTableState {
+  forexList: Forex[];
 }
 
 @inject("common", "market")
 @observer
-export default class RankTable extends BaseReact<
-RankTableProps,
-RankTableState
+export default class ForexTable extends BaseReact<
+ForexTableProps,
+ForexTableState
 > {
   constructor(props) {
     super(props);
 
     this.state = {
-      rankList: [],
+      forexList: [],
     };
   }
 
   componentDidMount() {
-    this.getSymbolTypeRank();
+    this.getSymbolTypeForex();
   }
 
-  getSymbolTypeRank = async () => {
+  getSymbolTypeForex = async () => {
     const { symbolTypeCode, } = this.props;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
-        rank_type: this.$store.market.sorter,
+        forex_type: this.$store.market.sorter,
       },
     });
     this.setState({
-      rankList: res.data,
+      forexList: res.data,
     });
   };
 
@@ -124,14 +125,19 @@ RankTableState
       {
         title: "品种名字",
         dataIndex: "name",
+        ellipsis: true,
+        fixed: "left",
+        width: 150,
       },
       {
         title: "品种代码",
         dataIndex: "symbol",
+        width: 150,
       },
       {
         title: "买入价",
         dataIndex: "buy",
+        width: 150,
         sorter: true,
         sortOrder: this.getSortOrderValue("buy_rise", "buy_drop"),
         render: (text, record) => this.compareToChg(text, record.chg),
@@ -140,6 +146,7 @@ RankTableState
       {
         title: "卖出价",
         dataIndex: "sell",
+        width: 150,
         sorter: true,
         sortOrder: this.getSortOrderValue("sell_rise", "sell_drop"),
         render: (text, record) => this.compareToChg(text, record.chg),
@@ -147,6 +154,7 @@ RankTableState
       {
         title: "涨跌额",
         dataIndex: "change",
+        width: 150,
         sorter: true,
         sortOrder: this.getSortOrderValue("change_rise", "change_drop"),
         render: text => {
@@ -174,6 +182,7 @@ RankTableState
       {
         title: "涨跌幅",
         dataIndex: "chg",
+        width: 150,
         sorter: true,
         sortOrder: this.getSortOrderValue("chg_rise", "chg_drop"),
         render: text => {
@@ -202,6 +211,7 @@ RankTableState
         title: "开盘价",
         dataIndex: "open",
         sorter: true,
+        width: 250,
         sortOrder: this.getSortOrderValue("open_rise", "open_drop"),
         render: (text, record) => this.compareStyle(text, record.last_close),
       },
@@ -209,12 +219,14 @@ RankTableState
         title: "收盘价",
         dataIndex: "last_close",
         sorter: true,
+        width: 250,
         sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop"),
       },
       {
         title: "最高价",
         dataIndex: "high",
         sorter: true,
+        width: 250,
         sortOrder: this.getSortOrderValue("high_rise", "high_drop"),
         render: (text, record) => this.compareStyle(text, record.last_close),
       },
@@ -222,6 +234,7 @@ RankTableState
         title: "最低价",
         dataIndex: "low",
         sorter: true,
+        width: 250,
         sortOrder: this.getSortOrderValue("low_rise", "low_drop"),
         render: (text, record) => this.compareStyle(text, record.last_close),
       },
@@ -229,12 +242,14 @@ RankTableState
         title: "成交价",
         dataIndex: "volume",
         sorter: true,
+        width: 150,
         sortOrder: this.getSortOrderValue("volume_rise", "volume_drop"),
       },
       {
         title: "成交金额",
         dataIndex: "amount",
         sorter: true,
+        width: 150,
         sortOrder: this.getSortOrderValue("amount_rise", "amount_drop"),
       }
     ];
@@ -251,18 +266,18 @@ RankTableState
     }
 
     this.props.market.setSorter(newSorter);
-    setTimeout(this.getSymbolTypeRank, 0);
+    setTimeout(this.getSymbolTypeForex, 0);
   };
 
   render() {
-    const { rankList, } = this.state;
+    const { forexList, } = this.state;
 
     return (
       <Table
         rowKey="symbol"
         columns={this.getColumns()}
         pagination={false}
-        dataSource={rankList}
+        dataSource={forexList}
         onChange={this.handleTableChange}
       />
     );
