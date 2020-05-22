@@ -529,12 +529,12 @@ export default class SymbolEditor extends BaseReact {
                 </Col>
               </Row>
               <div className={"symbol-editor-price"}>
-                <span className={"p-up"}>{
-                  currentSymbol?.product_details?.buy
-                }</span>
-                <span>/</span>
                 <span className={"p-down"}>{
                   currentSymbol?.product_details?.sell
+                }</span>
+                <span>/</span>
+                <span className={"p-up"}>{
+                  currentSymbol?.product_details?.buy
                 }</span>
               </div>
               {
