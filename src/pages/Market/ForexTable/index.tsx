@@ -32,14 +32,14 @@ interface ForexTableState {
 @inject("common", "market")
 @observer
 export default class ForexTable extends BaseReact<
-ForexTableProps,
-ForexTableState
+  ForexTableProps,
+  ForexTableState
 > {
   constructor(props) {
     super(props);
 
     this.state = {
-      forexList: [],
+      forexList: []
     };
   }
 
@@ -48,19 +48,19 @@ ForexTableState
   }
 
   getSymbolTypeForex = async () => {
-    const { symbolTypeCode, } = this.props;
+    const { symbolTypeCode } = this.props;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
-        forex_type: this.$store.market.sorter,
-      },
+        forex_type: this.$store.market.sorter
+      }
     });
     this.setState({
-      forexList: res.data,
+      forexList: res.data
     });
   };
 
   getSortOrderValue = (riseKey, dropKey) => {
-    const { sorter, } = this.props.market;
+    const { sorter } = this.props.market;
 
     if (sorter === riseKey) {
       return "ascend";
@@ -83,7 +83,7 @@ ForexTableState
     // }
 
     const {
-      common: { stockColorMode, },
+      common: { stockColorMode }
     } = this.props;
 
     return (
@@ -108,7 +108,7 @@ ForexTableState
     // }
 
     const {
-      common: { stockColorMode, },
+      common: { stockColorMode }
     } = this.props;
 
     return (
@@ -125,36 +125,36 @@ ForexTableState
       {
         title: "品种名字",
         dataIndex: "name",
-        ellipsis: true,
-        fixed: "left",
-        width: 150,
+        // ellipsis: true,
+        // fixed: "left",
+        width: 100
       },
       {
         title: "品种代码",
         dataIndex: "symbol",
-        width: 150,
+        width: 100
       },
       {
         title: "买入价",
         dataIndex: "buy",
-        width: 150,
+        width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("buy_rise", "buy_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg),
+        render: (text, record) => this.compareToChg(text, record.chg)
       },
 
       {
         title: "卖出价",
         dataIndex: "sell",
-        width: 150,
+        width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("sell_rise", "sell_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg),
+        render: (text, record) => this.compareToChg(text, record.chg)
       },
       {
         title: "涨跌额",
         dataIndex: "change",
-        width: 150,
+        width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("change_rise", "change_drop"),
         render: text => {
@@ -167,7 +167,7 @@ ForexTableState
           // }
 
           const {
-            common: { stockColorMode, },
+            common: { stockColorMode }
           } = this.props;
 
           return (
@@ -177,12 +177,12 @@ ForexTableState
               {text}
             </span>
           );
-        },
+        }
       },
       {
         title: "涨跌幅",
         dataIndex: "chg",
-        width: 150,
+        width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("chg_rise", "chg_drop"),
         render: text => {
@@ -195,7 +195,7 @@ ForexTableState
           // }
 
           const {
-            common: { stockColorMode, },
+            common: { stockColorMode }
           } = this.props;
 
           return (
@@ -205,52 +205,52 @@ ForexTableState
               {text}
             </span>
           );
-        },
+        }
       },
       {
         title: "开盘价",
         dataIndex: "open",
         sorter: true,
-        width: 250,
+        width: 100,
         sortOrder: this.getSortOrderValue("open_rise", "open_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close),
+        render: (text, record) => this.compareStyle(text, record.last_close)
       },
       {
         title: "收盘价",
         dataIndex: "last_close",
         sorter: true,
-        width: 250,
-        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop"),
+        width: 100,
+        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop")
       },
       {
         title: "最高价",
         dataIndex: "high",
         sorter: true,
-        width: 250,
+        width: 100,
         sortOrder: this.getSortOrderValue("high_rise", "high_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close),
+        render: (text, record) => this.compareStyle(text, record.last_close)
       },
       {
         title: "最低价",
         dataIndex: "low",
         sorter: true,
-        width: 250,
+        width: 100,
         sortOrder: this.getSortOrderValue("low_rise", "low_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close),
+        render: (text, record) => this.compareStyle(text, record.last_close)
       },
       {
         title: "成交价",
         dataIndex: "volume",
         sorter: true,
-        width: 150,
-        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop"),
+        width: 100,
+        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop")
       },
       {
         title: "成交金额",
         dataIndex: "amount",
         sorter: true,
-        width: 150,
-        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop"),
+        width: 100,
+        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop")
       }
     ];
   };
@@ -270,7 +270,7 @@ ForexTableState
   };
 
   render() {
-    const { forexList, } = this.state;
+    const { forexList } = this.state;
 
     return (
       <Table
