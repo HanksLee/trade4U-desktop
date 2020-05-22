@@ -1,36 +1,43 @@
-import RankTable from './RankTable';
-import TrendGraph from './TrendGraph';
-import WithRoute from 'components/@shared/WithRoute';
-import * as React from 'react';
-import { BaseReact } from 'components/@shared/BaseReact';
-import { Col, Row } from 'antd';
-import './index.scss';
+import RankTable from "./RankTable";
+import TrendGraph from "./TrendGraph";
+import ForexTable from "./ForexTable";
+import WithRoute from "components/@shared/WithRoute";
+import * as React from "react";
+import { BaseReact } from "components/@shared/BaseReact";
+import { inject, observer } from "mobx-react";
+import { Col, Row } from "antd";
+import "./index.scss";
 
 interface MarketState {
   currentSymbolTypeCode: string;
   width: number;
   height: number;
+  symbleTypeList: any[];
 }
 
 const symbolTypeMap = {
-  HK: ['IXIXHSI', 'IXIXHSCEI', 'HSCCI'],
+  HK: ["IXIXHSI", "IXIXHSCEI", "HSCCI"]
 };
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/market")
+@inject("market", "common")
+@observer
 export default class Market extends BaseReact<any, MarketState> {
-  container: any = null
+  container: any = null;
   constructor(props) {
     super(props);
     this.container = React.createRef();
     this.state = {
-      currentSymbolTypeCode: 'HK',
+      currentSymbolTypeCode: "HK",
       width: 0,
       height: 0,
+      symbleTypeList: []
     };
   }
 
   componentDidMount() {
+    this.getSymbolTypeList();
     this.computeTrendGraphStyle();
     setTimeout(() => {
       this.computeTrendGraphStyle();
@@ -41,36 +48,69 @@ export default class Market extends BaseReact<any, MarketState> {
     };
   }
 
+  getSymbolTypeList = async () => {
+    const res = await this.$api.market.getSymbolTypeList();
+
+    if (res.status == 200) {
+      this.setState({ symbleTypeList: res.data.results });
+    }
+  };
+
   computeTrendGraphStyle = () => {
-    const containerWidth = this.container.current.offsetWidth;
-    const width = Math.floor((containerWidth - 20) / symbolTypeMap[this.state.currentSymbolTypeCode].length);
-    const height = width;
-    this.setState({
-      width,
-      height,
-    });
-  }
-  
+    if (this.container) {
+      const containerWidth = this.container.current.offsetWidth;
+      const width = Math.floor(
+        (containerWidth - 20) /
+          symbolTypeMap[this.state.currentSymbolTypeCode].length
+      );
+      const height = width;
+      this.setState({
+        width,
+        height
+      });
+    }
+  };
+
+  switchCurrentSymbolTypeCode = symbolTypeCode => {
+    this.setState({ currentSymbolTypeCode: symbolTypeCode });
+  };
+
   render() {
-    const { currentSymbolTypeCode, width, height, } = this.state;
+    const { currentSymbolTypeCode, symbleTypeList, width, height } = this.state;
 
     return (
       <div className="market-page">
         <ul className="symbol-type-list">
-          <li className={ currentSymbolTypeCode === 'HK' ? 'selected-symbol-type' : ''}>港股</li>
+          {symbleTypeList.map(item => (
+            <li
+              className={
+                currentSymbolTypeCode === item.symbol_type_code
+                  ? "selected-symbol-type"
+                  : ""
+              }
+              onClick={() => {
+                this.switchCurrentSymbolTypeCode(item.symbol_type_code);
+              }}
+            >
+              {item.symbol_type_name}
+            </li>
+          ))}
         </ul>
-        <div className="trend-graph-panel" ref={this.container}>
-          {
-            symbolTypeMap[currentSymbolTypeCode].map(item => (
-              <TrendGraph
-                productCode={item}
-                width={width}
-                height={height}
-              />
-            ))
-          }
-        </div>
-        <RankTable symbolTypeCode={currentSymbolTypeCode} />
+        {currentSymbolTypeCode === "HK" && (
+          <>
+            <div className="trend-graph-panel" ref={this.container}>
+              {symbolTypeMap[currentSymbolTypeCode].map(item => (
+                <TrendGraph productCode={item} width={width} height={height} />
+              ))}
+            </div>
+            <RankTable symbolTypeCode={currentSymbolTypeCode} />
+          </>
+        )}
+        {currentSymbolTypeCode === "MT" && (
+          <>
+            <ForexTable symbolTypeCode={currentSymbolTypeCode} />
+          </>
+        )}
       </div>
     );
   }

@@ -1,0 +1,12 @@
+.ant-table-wrapper {
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.ant-table-cell-fix-left {
+  background-color: #232c37;
+}
+
+.ant-table-wrapper .ant-table-tbody tr:hover td {
+  background-color: #232c37 !important;
+}
