@@ -62,6 +62,13 @@
         }
       }
     }
+
+    .self-select-buy-block,
+    .self-select-sell-block {
+      padding: 13px 4px;
+      position: relative;
+      top: 1px;
+    }
   }
 
   .symbol-right {

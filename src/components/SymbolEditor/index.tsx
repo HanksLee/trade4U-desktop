@@ -144,6 +144,19 @@ export default class SymbolEditor extends BaseReact {
         <Row type={"flex"} justify={"space-between"}>
           {
             <Col span={11}>
+              <div className={`custom-btn bg-down ${!useSellBtn ? 'bg-grey' : ''}`} onClick={() => {
+                if (!useSellBtn) return;
+
+                setCurrentOrder({
+                  action: 1,
+                });
+                this.onSubmit();
+              }}>卖出
+              </div>
+            </Col>
+          }
+          {
+            <Col span={11}>
               <div className={`custom-btn bg-up ${!useBuyBtn ? 'bg-grey' : ''}`} onClick={() => {
                 if (!useBuyBtn) return;
 
@@ -156,20 +169,6 @@ export default class SymbolEditor extends BaseReact {
               </div>
             </Col>
           }
-          {
-            <Col span={11}>
-              <div className={`custom-btn bg-down ${!useSellBtn ? 'bg-grey' : ''}`} onClick={() => {
-                if (!useSellBtn) return;
-
-                setCurrentOrder({
-                  action: 1,
-                });
-                this.onSubmit();
-              }}>卖出
-              </div>
-            </Col>
-          }
-
         </Row>
       );
     }

@@ -8,35 +8,34 @@ import "./index.scss";
 import SymbolEditor from "components/SymbolEditor";
 import { inject, observer } from "mobx-react";
 import ws from "utils/ws";
-import utils from "utils";
 import moment from "moment";
 import { traderStatusMap } from "constant";
 import cloneDeep from "lodash/cloneDeep";
-import { STOCK_COLOR_MAP } from "constant";
+import { STOCK_COLOR_MAP, STOCK_COLOR_GIF_MAP } from "constant";
 import TVChartContainer from "./TVChartContainer";
 import { toJS } from "mobx";
 import utils from "utils";
 import { MinusOutlined } from "@ant-design/icons";
 
-const { TabPane, } = Tabs;
-const { RangePicker, } = DatePicker;
+const { TabPane } = Tabs;
+const { RangePicker } = DatePicker;
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
+  scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js"
 });
 
 const orderTabs = [
   {
     id: "in_transaction",
-    name: "持仓",
+    name: "持仓"
   },
   {
     id: "pending",
-    name: "挂单",
+    name: "挂单"
   },
   {
     id: "finish",
-    name: "历史",
+    name: "历史"
   }
 ];
 
@@ -65,10 +64,10 @@ export default class extends BaseReact {
     loading: false,
     historyFilter: {
       page: 1,
-      page_size: 5,
+      page_size: 5
     },
     orderMode: "add",
-    foldTabs: false,
+    foldTabs: false
   };
 
   async componentDidMount() {
@@ -79,8 +78,8 @@ export default class extends BaseReact {
     this.getTradeList(
       {
         params: {
-          status: "in_transaction",
-        },
+          status: "in_transaction"
+        }
       },
       "in_transaction"
     );
@@ -102,7 +101,7 @@ export default class extends BaseReact {
   getSelfSymbolList = async () => {
     await this.props.market.getSelfSelectSymbolList();
     const {
-      market: { selfSelectSymbolList, currentSymbol, },
+      market: { selfSelectSymbolList, currentSymbol }
     } = this.props;
 
     if (utils.isEmpty(currentSymbol)) {
@@ -120,7 +119,7 @@ export default class extends BaseReact {
       const {
         selfSelectSymbolList,
         currentSymbol,
-        setCurrentSymbol,
+        setCurrentSymbol
       } = this.props.market;
       const newSelfSelectSymbolList = selfSelectSymbolList.map(
         (item, index) => {
@@ -135,38 +134,38 @@ export default class extends BaseReact {
                 data.buy - newItem.product_details.buy > 0
                   ? "up"
                   : data.buy - newItem.product_details.buy == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down",
               sell_change:
                 data.sell - newItem.product_details.sell > 0
                   ? "up"
                   : data.sell - newItem.product_details.sell == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down",
               sell_open_change:
                 data.sell - data.close > 0
                   ? "up"
                   : data.sell - newItem.close == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down",
               new_price_change:
                 data.new_price - newItem.product_details.new_price > 0
                   ? "up"
                   : data.new_price - newItem.product_details.new_price == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down",
               change_change:
                 data.change - newItem.product_details.change > 0
                   ? "up"
                   : data.change - newItem.product_details.change == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down",
               chg_change:
                 data.change - newItem.product_details.change > 0
                   ? "up"
                   : data.change - newItem.product_details.change == 0
-                    ? "balance"
-                    : "down",
+                  ? "balance"
+                  : "down"
             };
 
             // 同步到 currentSymbol
@@ -180,8 +179,8 @@ export default class extends BaseReact {
                 ...currentSymbol,
                 product_details: {
                   ...currentSymbol.product_details,
-                  ...payload,
-                },
+                  ...payload
+                }
               };
 
               setCurrentSymbol(symbol);
@@ -189,7 +188,7 @@ export default class extends BaseReact {
 
             newItem.product_details = {
               ...newItem.product_details,
-              ...payload,
+              ...payload
             };
           }
 
@@ -200,7 +199,7 @@ export default class extends BaseReact {
     };
 
     this.orderWSConnect = ws("order");
-    const { setTradeList, } = this.props.market;
+    const { setTradeList } = this.props.market;
 
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
@@ -210,7 +209,7 @@ export default class extends BaseReact {
       if (msg.type == "meta_fund") {
         this.updateTradeInfo({
           balance: msg.data.balance,
-          margin: msg.data.margin,
+          margin: msg.data.margin
         });
       } else {
         let list = cloneDeep(this.props.market?.tradeList);
@@ -239,6 +238,10 @@ export default class extends BaseReact {
         }
         setTradeList(list);
         setTradeList(futureList, "future");
+        this.updateTradeInfo({
+          balance: this.props.market.tradeInfo.balance,
+          margin: this.props.market.tradeInfo.margin
+        });
       }
     };
   };
@@ -246,7 +249,7 @@ export default class extends BaseReact {
   getTradeList = async (config, type) => {
     this.setState(
       {
-        loading: true,
+        loading: true
       },
       async () => {
         try {
@@ -256,7 +259,7 @@ export default class extends BaseReact {
           let tradeInfo = {
             balance: res.data.balance,
             // equity: 1014404.86, // 净值
-            margin: res.data.margin, // 预付款
+            margin: res.data.margin // 预付款
             // free_margin: 1014399.22, // 可用预付款
             // margin_level: 18017848.22, // 预付款比例
           };
@@ -265,7 +268,7 @@ export default class extends BaseReact {
           this.$msg.error(e);
         }
 
-        this.setState({ loading: false, });
+        this.setState({ loading: false });
       }
     );
   };
@@ -273,7 +276,7 @@ export default class extends BaseReact {
   getTradeHistoryList = async config => {
     this.setState(
       {
-        loading: true,
+        loading: true
       },
       async () => {
         try {
@@ -285,7 +288,7 @@ export default class extends BaseReact {
     );
 
     this.setState({
-      loading: false,
+      loading: false
     });
   };
 
@@ -297,10 +300,10 @@ export default class extends BaseReact {
         symbolTypeList: [
           {
             id: 0,
-            symbol_type_name: "全部",
+            symbol_type_name: "全部"
           },
           ...res.data.results
-        ],
+        ]
       });
     }
   };
@@ -312,12 +315,12 @@ export default class extends BaseReact {
         historyFilter: {
           ...this.state.historyFilter,
           close_start_time: dateRange ? dateRange[0].unix() : undefined,
-          close_end_time: dateRange ? dateRange[1].unix() : undefined,
-        },
+          close_end_time: dateRange ? dateRange[1].unix() : undefined
+        }
       },
       () => {
         this.getTradeHistoryList({
-          params: this.state.historyFilter,
+          params: this.state.historyFilter
         });
       }
     );
@@ -326,21 +329,21 @@ export default class extends BaseReact {
   onFilterChange = async id => {
     this.setState(
       {
-        currentFilter: id,
+        currentFilter: id
       },
       async () => {
         // @todo 调取 symbol-list 接口
         await this.props.market.getSelfSelectSymbolList({
           params: {
-            type__name: id == "全部" ? undefined : id,
-          },
+            type__name: id == "全部" ? undefined : id
+          }
         });
       }
     );
   };
 
   renderFilter = () => {
-    const { currentFilter, symbolTypeList, } = this.state;
+    const { currentFilter, symbolTypeList } = this.state;
 
     return (
       <div className={"symbol-filter"}>
@@ -365,14 +368,14 @@ export default class extends BaseReact {
   };
 
   onSingleClick = item => {
-    const { openSymbolId, } = this.state;
+    const { openSymbolId } = this.state;
 
     this.getCurrentSymbol(item);
 
     this.timer = setTimeout(() => {
       if (!this.prevent) {
         this.setState({
-          openSymbolId: item.id == openSymbolId ? undefined : item.id,
+          openSymbolId: item.id == openSymbolId ? undefined : item.id
         });
       }
     }, this.delay);
@@ -389,7 +392,7 @@ export default class extends BaseReact {
     this.setState(
       {
         // modalVisible: true,
-        orderMode: "add",
+        orderMode: "add"
       },
       () => {
         setTimeout(() => {
@@ -400,33 +403,33 @@ export default class extends BaseReact {
   };
 
   renderSymbolTable = () => {
-    const { hasMore, openSymbolId, } = this.state;
+    const { hasMore, openSymbolId } = this.state;
     const columns = [
       {
         title: "品种",
-        dataIndex: "market",
+        dataIndex: "market"
       },
       {
         title: "股票代号",
-        dataIndex: "code",
+        dataIndex: "code"
       },
       {
         title: "点差",
-        dataIndex: "dots",
-      },
-      {
-        title: "买入",
-        dataIndex: "buy",
+        dataIndex: "dots"
       },
       {
         title: "卖出",
-        dataIndex: "sell",
+        dataIndex: "sell"
+      },
+      {
+        title: "买入",
+        dataIndex: "buy"
       }
     ];
 
-    const { selfSelectSymbolList, currentSymbol, } = this.props.market;
+    const { selfSelectSymbolList, currentSymbol } = this.props.market;
     const {
-      common: { stockColorMode, },
+      common: { stockColorMode }
     } = this.props;
     const itemWidth = Math.floor(24 / columns.length);
 
@@ -455,12 +458,11 @@ export default class extends BaseReact {
           {selfSelectSymbolList.map(item => {
             return (
               <Row
-                style={{
-                  backgroundColor:
-                    item.symbol == currentSymbol.id
-                      ? "rgba(0, 0, 0, .4)"
-                      : undefined,
-                }}
+                style={
+                  {
+                    // backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
+                  }
+                }
                 className={"custom-table-item"}
                 key={item.id}
                 type={"flex"}
@@ -477,7 +479,7 @@ export default class extends BaseReact {
                     <Col span={itemWidth}>
                       <span
                         style={{
-                          color: "#838D9E",
+                          color: "#838D9E"
                         }}
                       >
                         {item?.symbol_display?.name}
@@ -486,7 +488,7 @@ export default class extends BaseReact {
                     <Col span={itemWidth}>
                       <span
                         style={{
-                          color: "#FFF",
+                          color: "#FFF"
                         }}
                       >
                         {item?.product_details?.symbol}
@@ -495,7 +497,7 @@ export default class extends BaseReact {
                     <Col span={itemWidth}>
                       <span
                         style={{
-                          color: "#838D9E",
+                          color: "#838D9E"
                         }}
                       >
                         {item?.symbol_display?.spread}
@@ -504,29 +506,39 @@ export default class extends BaseReact {
                     <Col span={itemWidth}>
                       <span
                         className={`
+                      ${
+                        STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                        ]
+                        // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                      }
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
-                        self-select-buy-block`}
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                            item?.product_details?.sell_change || "balance"
+                          ]
+                        }
+                      self-select-sell-block`}
                       >
-                        {item?.product_details?.buy}
+                        {item?.product_details?.sell}
                       </span>
                     </Col>
                     <Col span={itemWidth}>
                       <span
                         className={`
-                      ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
-                      self-select-sell-block`}
+                        ${
+                          STOCK_COLOR_MAP[stockColorMode][
+                            item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                        }
+                              ${
+                                STOCK_COLOR_GIF_MAP[stockColorMode][
+                                  item?.product_details?.buy_change || "balance"
+                                ]
+                              }
+                        self-select-buy-block`}
                       >
-                        {item?.product_details?.sell}
+                        {item?.product_details?.buy}
                       </span>
                     </Col>
                   </Row>
@@ -586,6 +598,7 @@ export default class extends BaseReact {
               </Row>
             );
           })}
+          )}
         </InfiniteScroll>
       </div>
     );
@@ -597,16 +610,17 @@ export default class extends BaseReact {
 
   updateTradeInfo = tradeInfo => {
     let payload: any = {};
-    const { tradeList, setTradeInfo, } = this.props.market;
+
+    const { tradeList, setTradeInfo } = this.props.market;
     if (utils.isEmpty(tradeInfo)) {
       payload = {
         balance: this.props.market.tradeInfo.balance,
-        margin: this.props.market.tradeInfo.margin,
+        margin: this.props.market.tradeInfo.margin
       };
     } else {
       payload = {
         balance: tradeInfo.balance,
-        margin: tradeInfo.margin,
+        margin: tradeInfo.margin
       };
     }
 
@@ -621,15 +635,15 @@ export default class extends BaseReact {
 
   togggleFavorite = async () => {
     const {
-      market: { currentSymbol, setCurrentSymbol, },
+      market: { currentSymbol, setCurrentSymbol }
     } = this.props;
 
     try {
       if (currentSymbol.is_self_select == 1) {
         const res = await this.$api.market.deleteSelfSelectSymbolList({
           data: {
-            symbol: [currentSymbol?.id],
-          },
+            symbol: [currentSymbol?.id]
+          }
         });
 
         if (res.status == 204) {
@@ -637,13 +651,13 @@ export default class extends BaseReact {
             `${currentSymbol?.symbol_display?.name}成功移除自选`
           );
           setCurrentSymbol({
-            is_self_select: 0,
+            is_self_select: 0
           });
           this.getSelfSymbolList();
         }
       } else {
         const res = await this.$api.market.addSelfSelectSymbolList({
-          symbol: [currentSymbol?.id],
+          symbol: [currentSymbol?.id]
         });
 
         if (res.status == 201) {
@@ -651,7 +665,7 @@ export default class extends BaseReact {
             `${currentSymbol?.symbol_display?.name}成功添加到自选`
           );
           setCurrentSymbol({
-            is_self_select: 1,
+            is_self_select: 1
           });
           this.getSelfSymbolList();
         }
@@ -664,33 +678,33 @@ export default class extends BaseReact {
   renderOrderTable = type => {
     if (type == "历史") {
       const {
-        market: { tradeHistoryListMeta, tradeHistoryList, },
+        market: { tradeHistoryListMeta, tradeHistoryList }
       } = this.props;
       const columns = [
         {
           title: "品种",
           dataIndex: "symbol_name",
-          width: 80,
+          width: 80
         },
         {
           title: "品种代码",
           dataIndex: "product_code",
-          width: 100,
+          width: 100
         },
         {
           title: "开仓价",
           dataIndex: "open_price",
-          width: 80,
+          width: 80
         },
         {
           title: "平仓价",
           dataIndex: "close_price",
-          width: 80,
+          width: 80
         },
         {
           title: "交易手数",
           dataIndex: "lots",
-          width: 80,
+          width: 80
         },
         {
           title: "止盈/止损",
@@ -702,39 +716,39 @@ export default class extends BaseReact {
                 <p className={"p-down"}>{record.stop_loss}</p>
               </div>
             );
-          },
+          }
         },
         {
           title: "订单号",
           dataIndex: "order_number",
-          width: 80,
+          width: 80
         },
         {
           title: "库存费",
           dataIndex: "swaps",
-          width: 80,
+          width: 80
         },
         {
           title: "税费",
           dataIndex: "taxes",
-          width: 80,
+          width: 80
         },
         {
           title: "手续费",
           dataIndex: "fee",
-          width: 80,
+          width: 80
         },
         {
           title: "盈亏",
           dataIndex: "profit",
-          width: 80,
+          width: 80
         },
         {
           title: "开仓时间",
           dataIndex: "create_time",
           width: 80,
           render: (text, record) =>
-            moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
+            moment(text * 1000).format("YYYY.MM.DD HH:mm:ss")
         },
         {
           title: "平仓时间",
@@ -742,22 +756,22 @@ export default class extends BaseReact {
           width: 120,
           fixed: "right",
           render: (text, record) =>
-            moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
+            moment(text * 1000).format("YYYY.MM.DD HH:mm:ss")
         }
       ];
 
       const orderInfo = [
         {
           title: "盈利",
-          value: tradeHistoryListMeta?.data?.profit?.toFixed(2),
+          value: tradeHistoryListMeta?.data?.profit?.toFixed(2)
         },
         {
           title: "亏损",
-          value: tradeHistoryListMeta?.data?.loss?.toFixed(2),
+          value: tradeHistoryListMeta?.data?.loss?.toFixed(2)
         },
         {
           title: "结余",
-          value: tradeHistoryListMeta?.data?.balance?.toFixed(2),
+          value: tradeHistoryListMeta?.data?.balance?.toFixed(2)
         }
       ];
 
@@ -774,7 +788,7 @@ export default class extends BaseReact {
               style={{
                 marginBottom: 16,
                 marginLeft: 16,
-                textAlign: "left",
+                textAlign: "left"
               }}
             >
               <Col span={24}>
@@ -798,23 +812,23 @@ export default class extends BaseReact {
               size: "small",
               pageSize: 5,
               current: tradeHistoryListMeta?.page,
-              total: tradeHistoryListMeta?.total,
+              total: tradeHistoryListMeta?.total
             }}
             onChange={(pagination, filters, sorter) => {
               const payload: any = {
                 ...this.state.historyFilter,
                 page: pagination.current,
-                page_size: pagination.pageSize,
+                page_size: pagination.pageSize
               };
 
               this.getTradeHistoryList({
-                params: payload,
+                params: payload
               });
             }}
             columns={columns}
             scroll={{
               x: columnsWidth,
-              y: 260,
+              y: 260
             }}
             dataSource={tradeHistoryList}
           ></Table>
@@ -826,24 +840,24 @@ export default class extends BaseReact {
       {
         title: "品种",
         dataIndex: "symbol_name",
-        width: 80,
+        width: 80
       },
       {
         title: "品种代码",
         dataIndex: "product_code",
-        width: 100,
+        width: 100
       },
       {
         title: "开仓价",
-        dataIndex: "open_price",
+        dataIndex: "open_price"
       },
       {
         title: "交易手数",
-        dataIndex: "lots",
+        dataIndex: "lots"
       },
       {
         title: "订单号",
-        dataIndex: "order_number",
+        dataIndex: "order_number"
       },
       {
         title: "止盈/止损",
@@ -854,19 +868,19 @@ export default class extends BaseReact {
               <p>{record?.stop_loss || "-"}</p>
             </div>
           );
-        },
+        }
       },
       {
         title: "库存费",
-        dataIndex: "swaps",
+        dataIndex: "swaps"
       },
       {
         title: "税费",
-        dataIndex: "taxes",
+        dataIndex: "taxes"
       },
       {
         title: "手续费",
-        dataIndex: "fee",
+        dataIndex: "fee"
       },
       {
         title: "盈亏",
@@ -879,17 +893,17 @@ export default class extends BaseReact {
           >
             {text > 0 ? `+${text}` : text}
           </span>
-        ),
+        )
       },
       {
         title: "开仓时间",
         dataIndex: "create_time",
         render: (text, record) =>
-          moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
+          moment(text * 1000).format("YYYY.MM.DD HH:mm:ss")
       }
     ];
     const {
-      market: { tradeList, futureTradeList, tradeInfo, setCurrentOrder, },
+      market: { tradeList, futureTradeList, tradeInfo, setCurrentOrder }
     } = this.props;
 
     // balance: res.data.balance,
@@ -901,30 +915,30 @@ export default class extends BaseReact {
     const orderInfo = [
       {
         title: "持仓盈亏",
-        value: tradeInfo?.profit?.toFixed(2),
+        value: tradeInfo?.profit?.toFixed(2)
       },
       {
         title: "结余",
-        value: tradeInfo?.balance?.toFixed(2),
+        value: tradeInfo?.balance?.toFixed(2)
       },
       {
         title: "净值",
-        value: tradeInfo?.equity?.toFixed(2),
+        value: tradeInfo?.equity?.toFixed(2)
       },
       {
         title: "预付款",
-        value: tradeInfo?.margin?.toFixed(2),
+        value: tradeInfo?.margin?.toFixed(2)
       },
       {
         title: "可用预付款",
-        value: tradeInfo?.free_margin?.toFixed(2),
+        value: tradeInfo?.free_margin?.toFixed(2)
       },
       {
         title: "预付款比率(%)",
         value:
           tradeInfo?.margin_level == 0
             ? "-"
-            : (tradeInfo?.margin_level * 100)?.toFixed(2),
+            : (tradeInfo?.margin_level * 100)?.toFixed(2)
       }
     ];
 
@@ -944,7 +958,7 @@ export default class extends BaseReact {
         </div>
         <Table
           rowClassName={"symbol-order-table-row"}
-          scroll={{ y: 260, }}
+          scroll={{ y: 260 }}
           onRow={record => {
             return {
               onDoubleClick: async evt => {
@@ -956,9 +970,9 @@ export default class extends BaseReact {
 
                 this.setState({
                   // modalVisible: true,
-                  orderMode: "update",
+                  orderMode: "update"
                 });
-              },
+              }
             };
           }}
           loading={this.state.loading}
@@ -967,7 +981,7 @@ export default class extends BaseReact {
             pageSize:
               this.state.orderTabKey == "in_transaction"
                 ? tradeList.length
-                : futureTradeList.length,
+                : futureTradeList.length
           }}
           columns={columns}
           dataSource={
@@ -982,15 +996,15 @@ export default class extends BaseReact {
 
   toggleFoldTabs = () => {
     this.setState(prevState => ({
-      foldTabs: !prevState.foldTabs,
+      foldTabs: !prevState.foldTabs
     }));
   };
 
   render() {
-    const { orderTabKey, } = this.state;
+    const { orderTabKey } = this.state;
     const {
-      market: { currentSymbol, },
-      common: { stockColorMode, },
+      market: { currentSymbol },
+      common: { stockColorMode }
     } = this.props;
 
     // const sell = currentSymbol?.product_details?.sell;
@@ -1015,7 +1029,7 @@ export default class extends BaseReact {
         <div className={"symbol-left"}>
           <Tabs
             tabBarStyle={{
-              padding: "0 10px",
+              padding: "0 10px"
             }}
             defaultActiveKey={"1"}
           >
@@ -1026,7 +1040,7 @@ export default class extends BaseReact {
           </Tabs>
         </div>
         <div className={"symbol-right"}>
-          <Row style={{ height: "100%", }}>
+          <Row style={{ height: "100%" }}>
             <Col span={24} className={"symbol-chart"}>
               <Row
                 className={"symbol-chart-info"}
@@ -1040,10 +1054,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                    STOCK_COLOR_MAP[stockColorMode][
+                      sell_open_change || "balance"
+                    ]
+                  }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1058,10 +1072,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                    STOCK_COLOR_MAP[stockColorMode][
+                      sell_open_change || "balance"
+                    ]
+                  }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1069,10 +1083,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                    STOCK_COLOR_MAP[stockColorMode][
+                      sell_open_change || "balance"
+                    ]
+                  }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1097,7 +1111,7 @@ export default class extends BaseReact {
                           currentSymbol?.is_self_select == 1
                             ? "#f2e205"
                             : "white",
-                        cursor: "pointer",
+                        cursor: "pointer"
                       }}
                     />
                   </div>
@@ -1128,22 +1142,22 @@ export default class extends BaseReact {
                   <span onClick={this.toggleFoldTabs} className="rect-dock" />
                 }
                 tabBarStyle={{
-                  padding: "0 10px",
+                  padding: "0 10px"
                 }}
                 activeKey={orderTabKey}
                 onTabClick={(key, evt) => {
                   // console.log("key", key);
                   this.setState(
                     {
-                      orderTabKey: key,
+                      orderTabKey: key
                     },
                     () => {
                       if (key != "finish") {
                         this.getTradeList(
                           {
                             params: {
-                              status: key,
-                            },
+                              status: key
+                            }
                           },
                           key
                         );
@@ -1151,8 +1165,8 @@ export default class extends BaseReact {
                         this.getTradeHistoryList({
                           params: {
                             page: 1,
-                            page_size: 5,
-                          },
+                            page_size: 5
+                          }
                         });
                       }
                     }
@@ -1169,10 +1183,10 @@ export default class extends BaseReact {
           mask={false}
           width={670}
           style={{
-            backgroundColor: "#373e47",
+            backgroundColor: "#373e47"
           }}
           bodyStyle={{
-            backgroundColor: "#373e47",
+            backgroundColor: "#373e47"
           }}
           visible={this.props.market.orderModalVisible}
           onCancel={() => {
@@ -1184,15 +1198,15 @@ export default class extends BaseReact {
           <SymbolEditor
             getTradeHistoryList={() => {
               this.getTradeHistoryList({
-                params: this.state.historyFilter,
+                params: this.state.historyFilter
               });
             }}
             getTradeList={() => {
               this.getTradeList(
                 {
                   params: {
-                    status: orderTabKey,
-                  },
+                    status: orderTabKey
+                  }
                 },
                 orderTabKey
               );

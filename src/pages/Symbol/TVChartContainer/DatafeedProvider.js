@@ -56,7 +56,7 @@ export default class DatafeedProvider {
       low: item[6],
       high: item[5],
       open: item[8],
-      close: item[7],
+      close: item[2],
       volume: item[4],
     }));
   }
@@ -98,7 +98,7 @@ export default class DatafeedProvider {
         low: data.low,
         high: data.high,
         open: data.open,
-        close: data.close,
+        close: data.sell,
         volume: data.volume,
       };
 
