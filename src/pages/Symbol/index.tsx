@@ -173,7 +173,7 @@ export default class extends BaseReact {
             if (
               currentSymbol?.product_details?.symbol == data.symbol &&
               Number(currentSymbol?.product_details?.timestamp) <
-                Number(data.timestamp)
+              Number(data.timestamp)
             ) {
               const symbol = {
                 ...currentSymbol,
@@ -352,7 +352,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -451,7 +451,7 @@ export default class extends BaseReact {
           hasMore={hasMore}
           loader={
             <div className="custom-table-loadmore" key={0}>
-              <Spin />
+              <Spin/>
             </div>
           }
         >
@@ -507,16 +507,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-                        STOCK_COLOR_MAP[stockColorMode][
+                          STOCK_COLOR_MAP[stockColorMode][
                           item?.product_details?.sell_change || "balance"
-                        ]
-                        // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-                      }
+                            ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
                           STOCK_COLOR_GIF_MAP[stockColorMode][
-                            item?.product_details?.sell_change || "balance"
-                          ]
-                        }
+                          item?.product_details?.sell_change || "balance"
+                            ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -527,15 +527,15 @@ export default class extends BaseReact {
                         className={`
                         ${
                           STOCK_COLOR_MAP[stockColorMode][
-                            item?.product_details?.buy_change || "balance"
-                          ]
+                          item?.product_details?.buy_change || "balance"
+                            ]
                           // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-                        }
+                          }
                               ${
-                                STOCK_COLOR_GIF_MAP[stockColorMode][
-                                  item?.product_details?.buy_change || "balance"
-                                ]
-                              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                            ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -546,7 +546,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -598,7 +598,6 @@ export default class extends BaseReact {
               </Row>
             );
           })}
-          )}
         </InfiniteScroll>
       </div>
     );
@@ -741,7 +740,18 @@ export default class extends BaseReact {
         {
           title: "盈亏",
           dataIndex: "profit",
-          width: 80
+          width: 80,
+          render: (text, record) => {
+            return (
+              <span
+                className={`
+          ${utils.getStockChangeClass(text, this.props.common.stockColorMode)}
+          `}
+              >
+            {text > 0 ? `+${text}` : text}
+          </span>
+            );
+          }
         },
         {
           title: "开仓时间",
@@ -792,7 +802,7 @@ export default class extends BaseReact {
               }}
             >
               <Col span={24}>
-                <RangePicker onChange={this.onDateRangeChanged} />
+                <RangePicker onChange={this.onDateRangeChanged}/>
               </Col>
             </Row>
             <Row type={"flex"} justify={"space-between"}>
@@ -801,7 +811,9 @@ export default class extends BaseReact {
                   <p>
                     <strong>{item.title}</strong>
                   </p>
-                  <p>{item.value}</p>
+                  <p className={`
+                    ${utils.getStockChangeClass(item.value, this.props.common.stockColorMode)}
+                  `}>{item.value}</p>
                 </Col>
               ))}
             </Row>
@@ -915,7 +927,7 @@ export default class extends BaseReact {
     const orderInfo = [
       {
         title: "持仓盈亏",
-        value: tradeInfo?.profit?.toFixed(2)
+        value: tradeInfo?.profit?.toFixed(2),
       },
       {
         title: "结余",
@@ -1054,28 +1066,28 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-                    STOCK_COLOR_MAP[stockColorMode][
-                      sell_open_change || "balance"
-                    ]
-                  }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                          ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
                       {sell_open_change == "up" ? (
-                        <IconFont type={"icon-arrow-up"} />
+                        <IconFont type={"icon-arrow-up"}/>
                       ) : sell_open_change == "down" ? (
-                        <IconFont type={"icon-arrow-down"} />
+                        <IconFont type={"icon-arrow-down"}/>
                       ) : (
-                        <MinusOutlined />
+                        <MinusOutlined/>
                       )}
                     </span>
                     <span
                       className={`
                   ${
-                    STOCK_COLOR_MAP[stockColorMode][
-                      sell_open_change || "balance"
-                    ]
-                  }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                          ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1083,10 +1095,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-                    STOCK_COLOR_MAP[stockColorMode][
-                      sell_open_change || "balance"
-                    ]
-                  }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                          ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1135,11 +1147,11 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
-                  <span onClick={this.toggleFoldTabs} className="rect-dock" />
+                  <span onClick={this.toggleFoldTabs} className="rect-dock"/>
                 }
                 tabBarStyle={{
                   padding: "0 10px"
