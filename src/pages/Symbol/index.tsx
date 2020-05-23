@@ -741,6 +741,15 @@ export default class extends BaseReact {
           title: "盈亏",
           dataIndex: "profit",
           width: 80,
+          render: (text, record) => (
+            <span
+              className={`
+          ${utils.getStockChangeClass(text, this.props.common.stockColorMode)}
+          `}
+            >
+            {text > 0 ? `+${text}` : text}
+          </span>
+          ),
         },
         {
           title: "开仓时间",
@@ -952,7 +961,9 @@ export default class extends BaseReact {
                 <p>
                   <strong>{item.title}</strong>
                 </p>
-                <p>{item.value}</p>
+                <p className={`
+                          ${utils.getStockChangeClass(item.value, this.props.common.stockColorMode)}
+                `}>{item.value}</p>
               </Col>
             ))}
           </Row>
