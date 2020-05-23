@@ -747,8 +747,8 @@ export default class extends BaseReact {
           ${utils.getStockChangeClass(text, this.props.common.stockColorMode)}
           `}
             >
-            {text > 0 ? `+${text}` : text}
-          </span>
+              {text > 0 ? `+${text}` : text}
+            </span>
           ),
         },
         {
