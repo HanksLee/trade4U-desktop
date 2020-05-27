@@ -173,7 +173,7 @@ export default class extends BaseReact {
             if (
               currentSymbol?.product_details?.symbol == data.symbol &&
               Number(currentSymbol?.product_details?.timestamp) <
-                Number(data.timestamp)
+              Number(data.timestamp)
             ) {
               const symbol = {
                 ...currentSymbol,
@@ -451,7 +451,7 @@ export default class extends BaseReact {
           hasMore={hasMore}
           loader={
             <div className="custom-table-loadmore" key={0}>
-              <Spin />
+              <Spin/>
             </div>
           }
         >
@@ -598,7 +598,6 @@ export default class extends BaseReact {
               </Row>
             );
           })}
-          )}
         </InfiniteScroll>
       </div>
     );
@@ -742,6 +741,15 @@ export default class extends BaseReact {
           title: "盈亏",
           dataIndex: "profit",
           width: 80,
+          render: (text, record) => (
+            <span
+              className={`
+          ${utils.getStockChangeClass(text, this.props.common.stockColorMode)}
+          `}
+            >
+              {text > 0 ? `+${text}` : text}
+            </span>
+          ),
         },
         {
           title: "开仓时间",
@@ -792,7 +800,7 @@ export default class extends BaseReact {
               }}
             >
               <Col span={24}>
-                <RangePicker onChange={this.onDateRangeChanged} />
+                <RangePicker onChange={this.onDateRangeChanged}/>
               </Col>
             </Row>
             <Row type={"flex"} justify={"space-between"}>
@@ -801,7 +809,9 @@ export default class extends BaseReact {
                   <p>
                     <strong>{item.title}</strong>
                   </p>
-                  <p>{item.value}</p>
+                  <p className={`
+                    ${utils.getStockChangeClass(item.value, this.props.common.stockColorMode)}
+                  `}>{item.value}</p>
                 </Col>
               ))}
             </Row>
@@ -951,7 +961,9 @@ export default class extends BaseReact {
                 <p>
                   <strong>{item.title}</strong>
                 </p>
-                <p>{item.value}</p>
+                <p className={`
+                          ${utils.getStockChangeClass(item.value, this.props.common.stockColorMode)}
+                `}>{item.value}</p>
               </Col>
             ))}
           </Row>
@@ -1062,11 +1074,11 @@ export default class extends BaseReact {
                     >
                       {currentSymbol?.product_details?.sell}
                       {sell_open_change == "up" ? (
-                        <IconFont type={"icon-arrow-up"} />
+                        <IconFont type={"icon-arrow-up"}/>
                       ) : sell_open_change == "down" ? (
-                        <IconFont type={"icon-arrow-down"} />
+                        <IconFont type={"icon-arrow-down"}/>
                       ) : (
-                        <MinusOutlined />
+                        <MinusOutlined/>
                       )}
                     </span>
                     <span
@@ -1139,7 +1151,7 @@ export default class extends BaseReact {
             >
               <Tabs
                 tabBarExtraContent={
-                  <span onClick={this.toggleFoldTabs} className="rect-dock" />
+                  <span onClick={this.toggleFoldTabs} className="rect-dock"/>
                 }
                 tabBarStyle={{
                   padding: "0 10px",
