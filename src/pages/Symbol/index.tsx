@@ -408,22 +408,27 @@ export default class extends BaseReact {
       {
         title: "品种",
         dataIndex: "market",
+        col: 4,
       },
       {
         title: "股票代号",
         dataIndex: "code",
+        col: 4,
       },
       {
         title: "点差",
         dataIndex: "dots",
+        col: 2,
       },
       {
         title: "卖出",
         dataIndex: "sell",
+        col: 6,
       },
       {
         title: "买入",
         dataIndex: "buy",
+        col: 6,
       }
     ];
 
@@ -441,7 +446,7 @@ export default class extends BaseReact {
           justify={"space-between"}
         >
           {columns.map(item => {
-            return <Col span={itemWidth}>{item.title}</Col>;
+            return <Col span={item.col || itemWidth}>{item.title}</Col>;
           })}
         </Row>
         <InfiniteScroll
@@ -476,7 +481,7 @@ export default class extends BaseReact {
               >
                 <Col span={24}>
                   <Row type={"flex"} justify={"space-between"}>
-                    <Col span={itemWidth}>
+                    <Col span={4}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -485,7 +490,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.name}
                       </span>
                     </Col>
-                    <Col span={itemWidth}>
+                    <Col span={4}>
                       <span
                         style={{
                           color: "#FFF",
@@ -494,7 +499,7 @@ export default class extends BaseReact {
                         {item?.product_details?.symbol}
                       </span>
                     </Col>
-                    <Col span={itemWidth}>
+                    <Col span={2}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -503,7 +508,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.spread}
                       </span>
                     </Col>
-                    <Col span={itemWidth}>
+                    <Col span={6}>
                       <span
                         className={`
                       ${
@@ -522,7 +527,7 @@ export default class extends BaseReact {
                         {item?.product_details?.sell}
                       </span>
                     </Col>
-                    <Col span={itemWidth}>
+                    <Col span={6}>
                       <span
                         className={`
                         ${
