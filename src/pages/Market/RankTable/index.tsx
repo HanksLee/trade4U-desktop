@@ -2,7 +2,7 @@ import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
 import { inject, observer } from "mobx-react";
 import { Table } from "antd";
-import { STOCK_COLOR_MAP } from "constant";
+import { withRouter } from "react-router-dom";
 import utils from "utils";
 
 interface Rank {
@@ -28,12 +28,10 @@ interface RankTableState {
   rankList: Rank[];
 }
 
+@withRouter
 @inject("common", "market")
 @observer
-export default class RankTable extends BaseReact<
-RankTableProps,
-RankTableState
-> {
+export default class RankTable extends BaseReact<RankTableProps, RankTableState> {
   constructor(props) {
     super(props);
 
@@ -264,6 +262,16 @@ RankTableState
         pagination={false}
         dataSource={rankList}
         onChange={this.handleTableChange}
+        onRow={record => {
+          return {
+            onDoubleClick: () => {
+              this.props.market.getCurrentSymbol(record.id);
+              if (this.props.history.pathname !== "/dashboard/symbol") {
+                this.props.history.push("/dashboard/symbol");
+              }
+            },
+          };
+        }}
       />
     );
   }
