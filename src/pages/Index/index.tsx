@@ -84,7 +84,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     symbolOptions: [],
     messageModalStatus: false,
     settingsModalStatus: false,
-    currentTab: "行情",
+    currentTab: "个股",
   };
 
   constructor(props) {
@@ -116,21 +116,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     };
   }
 
-  componentWillMount() {
-    // console.log(1111);
-  }
-
   async componentDidMount() {
-    const {
-      location: { pathname, },
-    } = this.props;
-    // openKeys初始化
-    // const allPaths = computedPathLevel(pathname);
-    // const openKeys = SUBMENU_ROUTES.filter((item) => allPaths.includes(item));
-    //
-    // this.setState({ openKeys, });
-
-    this.props.history.push("/dashboard/market");
+    this.props.history.push("/dashboard/symbol");
   }
 
   hideModal = () => {
