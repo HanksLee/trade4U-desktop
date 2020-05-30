@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react";
 import { Table } from "antd";
 import { STOCK_COLOR_MAP } from "constant";
 import utils from "utils";
+import { withRouter } from "react-router-dom";
 import "./index.scss";
 
 interface Forex {
@@ -29,6 +30,7 @@ interface ForexTableState {
   forexList: Forex[];
 }
 
+@withRouter
 @inject("common", "market")
 @observer
 export default class ForexTable extends BaseReact<
@@ -279,6 +281,17 @@ ForexTableState
         pagination={false}
         dataSource={forexList}
         onChange={this.handleTableChange}
+        onRow={record => {
+          return {
+            onDoubleClick: () => {
+              this.props.market.getCurrentSymbol(record.symbol);
+              this.props.common.setCurrentTab('个股');
+              if (this.props.history.pathname !== "/dashboard/symbol") {
+                this.props.history.push("/dashboard/symbol");
+              }
+            },
+          };
+        }}
       />
     );
   }

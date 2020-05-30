@@ -213,9 +213,11 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               this.props.market.getCurrentSymbol(value);
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
-                this.setState({
-                  currentTab: "个股",
-                });
+                // this.setState({
+                //   currentTab: "个股",
+                // });
+
+                this.props.common.setCurrentTab('个股');
               }
             }}
             notFoundContent={null}
@@ -272,22 +274,16 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                 {computedSidebar.map(item => (
                   <div
                     className={`sidebar-row ${
-                      this.state.currentTab == item.title ? "active" : ""
+                      this.props.common.currentTab == item.title ? "active" : ""
                     }`}
                     onClick={() => {
-                      this.setState(
-                        {
-                          currentTab: item.title,
-                        },
-                        () => {
-                          this.props.history.push(item.path);
-                        }
-                      );
+                      this.props.common.setCurrentTab(item.title);
+                      this.props.history.push(item.path);
                     }}
                   >
                     <img
                       src={
-                        this.state.currentTab == item.title
+                        this.props.common.currentTab == item.title
                           ? item.activeIcon
                           : item.icon
                       }
