@@ -44,6 +44,7 @@ const orderTabs = [
 @inject("market", "common")
 @observer
 export default class extends BaseReact {
+  private $symbolEditor = null;
   private selfSymbolWSConnect = null;
   private orderWSConnect = null;
   timer: any = 0;
@@ -203,7 +204,6 @@ export default class extends BaseReact {
 
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
-      // console.log('msg', msg);
       // console.log('tradeList', this.props.market?.tradeList);
 
       if (msg.type == "meta_fund") {
@@ -1195,42 +1195,48 @@ export default class extends BaseReact {
             </Col>
           </Row>
         </div>
-        <Modal
-          className={"symbol-modal"}
-          mask={false}
-          width={670}
-          style={{
-            backgroundColor: "#373e47",
-          }}
-          bodyStyle={{
-            backgroundColor: "#373e47",
-          }}
-          visible={this.props.market.orderModalVisible}
-          onCancel={() => {
-            this.props.market.toggleOrderModalVisible();
-          }}
-          closable={false}
-          footer={null}
-        >
-          <SymbolEditor
-            getTradeHistoryList={() => {
-              this.getTradeHistoryList({
-                params: this.state.historyFilter,
-              });
-            }}
-            getTradeList={() => {
-              this.getTradeList(
-                {
-                  params: {
-                    status: orderTabKey,
-                  },
-                },
-                orderTabKey
-              );
-            }}
-            orderMode={this.state.orderMode}
-          />
-        </Modal>
+        {
+          this.props.market.orderModalVisible && (
+            <Modal
+              className={"symbol-modal"}
+              mask={false}
+              width={670}
+              style={{
+                backgroundColor: "#373e47",
+              }}
+              bodyStyle={{
+                backgroundColor: "#373e47",
+              }}
+              visible={this.props.market.orderModalVisible}
+              onCancel={() => {
+                this.props.market.setCurrentOrder({}, true);
+                this.props.market.toggleOrderModalVisible();
+              }}
+              closable={false}
+              footer={null}
+            >
+              <SymbolEditor
+                onRef={ref => (this.$symbolEditor = ref)}
+                getTradeHistoryList={() => {
+                  this.getTradeHistoryList({
+                    params: this.state.historyFilter,
+                  });
+                }}
+                getTradeList={() => {
+                  this.getTradeList(
+                    {
+                      params: {
+                        status: orderTabKey,
+                      },
+                    },
+                    orderTabKey
+                  );
+                }}
+                orderMode={this.state.orderMode}
+              />
+            </Modal>
+          )
+        }
       </div>
     );
   }
