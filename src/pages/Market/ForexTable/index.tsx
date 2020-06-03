@@ -34,14 +34,14 @@ interface ForexTableState {
 @inject("common", "market")
 @observer
 export default class ForexTable extends BaseReact<
-  ForexTableProps,
-  ForexTableState
+ForexTableProps,
+ForexTableState
 > {
   constructor(props) {
     super(props);
 
     this.state = {
-      forexList: []
+      forexList: [],
     };
   }
 
@@ -50,19 +50,19 @@ export default class ForexTable extends BaseReact<
   }
 
   getSymbolTypeForex = async () => {
-    const { symbolTypeCode } = this.props;
+    const { symbolTypeCode, } = this.props;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
-        rank_type: this.$store.market.sorter
-      }
+        rank_type: this.$store.market.sorter,
+      },
     });
     this.setState({
-      forexList: res.data
+      forexList: res.data,
     });
   };
 
   getSortOrderValue = (riseKey, dropKey) => {
-    const { sorter } = this.props.market;
+    const { sorter, } = this.props.market;
 
     if (sorter === riseKey) {
       return "ascend";
@@ -85,7 +85,7 @@ export default class ForexTable extends BaseReact<
     // }
 
     const {
-      common: { stockColorMode }
+      common: { stockColorMode, },
     } = this.props;
 
     return (
@@ -110,7 +110,7 @@ export default class ForexTable extends BaseReact<
     // }
 
     const {
-      common: { stockColorMode }
+      common: { stockColorMode, },
     } = this.props;
 
     return (
@@ -129,12 +129,12 @@ export default class ForexTable extends BaseReact<
         dataIndex: "name",
         // ellipsis: true,
         // fixed: "left",
-        width: 100
+        width: 100,
       },
       {
         title: "品种代码",
         dataIndex: "symbol",
-        width: 100
+        width: 100,
       },
       {
         title: "买入价",
@@ -142,7 +142,7 @@ export default class ForexTable extends BaseReact<
         width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("buy_rise", "buy_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg)
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
 
       {
@@ -151,7 +151,7 @@ export default class ForexTable extends BaseReact<
         width: 100,
         sorter: true,
         sortOrder: this.getSortOrderValue("sell_rise", "sell_drop"),
-        render: (text, record) => this.compareToChg(text, record.chg)
+        render: (text, record) => this.compareToChg(text, record.chg),
       },
       {
         title: "涨跌额",
@@ -169,7 +169,7 @@ export default class ForexTable extends BaseReact<
           // }
 
           const {
-            common: { stockColorMode }
+            common: { stockColorMode, },
           } = this.props;
 
           return (
@@ -179,7 +179,7 @@ export default class ForexTable extends BaseReact<
               {text}
             </span>
           );
-        }
+        },
       },
       {
         title: "涨跌幅",
@@ -197,7 +197,7 @@ export default class ForexTable extends BaseReact<
           // }
 
           const {
-            common: { stockColorMode }
+            common: { stockColorMode, },
           } = this.props;
 
           return (
@@ -207,7 +207,7 @@ export default class ForexTable extends BaseReact<
               {text}
             </span>
           );
-        }
+        },
       },
       {
         title: "开盘价",
@@ -215,14 +215,14 @@ export default class ForexTable extends BaseReact<
         sorter: true,
         width: 100,
         sortOrder: this.getSortOrderValue("open_rise", "open_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "收盘价",
         dataIndex: "last_close",
         sorter: true,
         width: 100,
-        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop")
+        sortOrder: this.getSortOrderValue("last_close_rise", "last_close_drop"),
       },
       {
         title: "最高价",
@@ -230,7 +230,7 @@ export default class ForexTable extends BaseReact<
         sorter: true,
         width: 100,
         sortOrder: this.getSortOrderValue("high_rise", "high_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "最低价",
@@ -238,21 +238,21 @@ export default class ForexTable extends BaseReact<
         sorter: true,
         width: 100,
         sortOrder: this.getSortOrderValue("low_rise", "low_drop"),
-        render: (text, record) => this.compareStyle(text, record.last_close)
+        render: (text, record) => this.compareStyle(text, record.last_close),
       },
       {
         title: "成交价",
         dataIndex: "volume",
         sorter: true,
         width: 100,
-        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop")
+        sortOrder: this.getSortOrderValue("volume_rise", "volume_drop"),
       },
       {
         title: "成交金额",
         dataIndex: "amount",
         sorter: true,
         width: 100,
-        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop")
+        sortOrder: this.getSortOrderValue("amount_rise", "amount_drop"),
       }
     ];
   };
@@ -272,7 +272,7 @@ export default class ForexTable extends BaseReact<
   };
 
   render() {
-    const { forexList } = this.state;
+    const { forexList, } = this.state;
 
     return (
       <Table
@@ -289,7 +289,7 @@ export default class ForexTable extends BaseReact<
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
               }
-            }
+            },
           };
         }}
       />
