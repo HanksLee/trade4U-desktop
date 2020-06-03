@@ -29,7 +29,7 @@ export default class Market extends BaseReact<any, MarketState> {
     super(props);
     this.container = React.createRef();
     this.state = {
-      currentSymbolTypeCode: "HK",
+      currentSymbolTypeCode: undefined,
       width: 0,
       height: 0,
       symbleTypeList: [],
@@ -52,12 +52,15 @@ export default class Market extends BaseReact<any, MarketState> {
     const res = await this.$api.market.getSymbolTypeList();
 
     if (res.status == 200) {
-      this.setState({ symbleTypeList: res.data.results, });
+      this.setState({
+        symbleTypeList: res.data.results,
+        currentSymbolTypeCode: res.data.results[0].symbol_type_code,
+      });
     }
   };
 
   computeTrendGraphStyle = () => {
-    if (this.container) {
+    if (this.container.current) {
       const containerWidth = this.container.current.offsetWidth;
       const width = Math.floor(
         (containerWidth - 20) /

@@ -14,6 +14,7 @@ import logoSVG from "assets/img/logo.svg";
 import messageSVG from "assets/img/message.svg";
 import settingsSVG from "assets/img/settings.svg";
 import serviceSVG from "assets/img/service.svg";
+import logoutSVG from "assets/img/logout.svg";
 import "./index.scss";
 import { inject, observer } from "mobx-react";
 import debounce from "lodash/debounce";
@@ -275,6 +276,23 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             >
               <img src={serviceSVG} alt="" />
               联系客服
+            </span>
+            <span
+              onClick={async () => {
+                // @todo
+
+                localStorage.removeItem("MOON_DESKTOP_TOKEN");
+
+                setTimeout(() => {
+                  (window as any).location.href =
+                    process.env.NODE_ENV === "production"
+                      ? "/login"
+                      : window.location.origin + "/#/login";
+                }, 500);
+              }}
+            >
+              <img src={logoutSVG} alt="" />
+              登出
             </span>
           </p>
         </div>
