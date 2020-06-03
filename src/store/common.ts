@@ -55,6 +55,13 @@ class CommonStore extends BaseStore {
       return false;
     }
   }
+
+  @observable
+  currentTab = '个股';
+  @action
+  setCurrentTab = tab => {
+    this.currentTab = tab;
+  }
 }
 
 export default new CommonStore();

@@ -85,7 +85,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     symbolOptions: [],
     messageModalStatus: false,
     settingsModalStatus: false,
-    currentTab: "行情",
+    currentTab: "个股",
   };
 
   constructor(props) {
@@ -117,21 +117,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     };
   }
 
-  componentWillMount() {
-    // console.log(1111);
-  }
-
   async componentDidMount() {
-    const {
-      location: { pathname, },
-    } = this.props;
-    // openKeys初始化
-    // const allPaths = computedPathLevel(pathname);
-    // const openKeys = SUBMENU_ROUTES.filter((item) => allPaths.includes(item));
-    //
-    // this.setState({ openKeys, });
-
-    this.props.history.push("/dashboard/market");
+    this.props.history.push("/dashboard/symbol");
   }
 
   hideModal = () => {
@@ -227,9 +214,11 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               this.props.market.getCurrentSymbol(value);
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
-                this.setState({
-                  currentTab: "个股",
-                });
+                // this.setState({
+                //   currentTab: "个股",
+                // });
+
+                this.props.common.setCurrentTab('个股');
               }
             }}
             notFoundContent={null}
@@ -303,22 +292,16 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                 {computedSidebar.map(item => (
                   <div
                     className={`sidebar-row ${
-                      this.state.currentTab == item.title ? "active" : ""
+                      this.props.common.currentTab == item.title ? "active" : ""
                     }`}
                     onClick={() => {
-                      this.setState(
-                        {
-                          currentTab: item.title,
-                        },
-                        () => {
-                          this.props.history.push(item.path);
-                        }
-                      );
+                      this.props.common.setCurrentTab(item.title);
+                      this.props.history.push(item.path);
                     }}
                   >
                     <img
                       src={
-                        this.state.currentTab == item.title
+                        this.props.common.currentTab == item.title
                           ? item.activeIcon
                           : item.icon
                       }

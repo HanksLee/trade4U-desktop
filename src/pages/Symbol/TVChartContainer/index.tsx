@@ -46,6 +46,7 @@ export default class TVChartContainer extends React.PureComponent<TVChartContain
     this.tvWidget = new window.TradingView.widget(widgetOptions);
     this.tvWidget.onChartReady(() => {
       this.isReady = true;
+      this.tvWidget.activeChart().setTimezone('Asia/Shanghai');
     });
   }
 

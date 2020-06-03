@@ -45,6 +45,13 @@ export default class SymbolEditor extends BaseReact {
     orderOperateType: "update",
   };
 
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+
+  componentWillUnmount() {
+  }
+
   renderActionButtons = () => {
     const {
       orderMode,
@@ -96,6 +103,7 @@ export default class SymbolEditor extends BaseReact {
               if (res.status == 200) {
                 this.$msg.success("订单平仓成功~");
                 this.props.getTradeList();
+                this.props.market.toggleOrderModalVisible();
               }
             } catch (err) {
               this.$msg.error(err?.response?.data?.message);
@@ -285,6 +293,7 @@ export default class SymbolEditor extends BaseReact {
     return (
       <div className={"editor symbol-editor"}>
         <div className={'symbol-editor-close'} onClick={() => {
+          this.props.market.setCurrentOrder({}, true);
           this.props.market.toggleOrderModalVisible();
         }}>
           <img src={closeSVG} alt=""/>

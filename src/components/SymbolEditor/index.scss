@@ -18,6 +18,13 @@
   .symbol-editor-price {
     text-align: center;
     font-size: 48px;
+
+    span {
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      -ms-user-select:none;
+      user-select:none;
+    }
   }
 
   .order-future-btn {

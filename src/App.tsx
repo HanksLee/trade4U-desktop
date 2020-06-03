@@ -32,7 +32,7 @@ class App extends BaseReact {
           <Switch>
             <Route exact path="/">
               {key ? (
-                <Redirect to="/dashboard/market" />
+                <Redirect to="/dashboard/symbol" />
               ) : (
                 <Redirect to="/login" />
               )}
