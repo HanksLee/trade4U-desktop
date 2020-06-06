@@ -53,7 +53,7 @@ ForexTableState
     const { symbolTypeCode, } = this.props;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
-        forex_type: this.$store.market.sorter,
+        rank_type: this.$store.market.sorter,
       },
     });
     this.setState({
@@ -285,7 +285,7 @@ ForexTableState
           return {
             onDoubleClick: () => {
               this.props.market.getCurrentSymbol(record.id);
-              this.props.common.setCurrentTab('个股');
+              this.props.common.setCurrentTab("个股");
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
               }

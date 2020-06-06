@@ -68,7 +68,7 @@ ISettingsModalState
     phoneDisplay: "",
     currentTab: "account",
     currentItem: null,
-    modelTitle: "設定",
+    modelTitle: "设定",
     smsKey: null,
     verifyPass: false,
   };
