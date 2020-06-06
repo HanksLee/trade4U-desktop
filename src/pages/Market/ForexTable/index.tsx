@@ -284,7 +284,7 @@ ForexTableState
         onRow={record => {
           return {
             onDoubleClick: () => {
-              this.props.market.getCurrentSymbol(record.symbol);
+              this.props.market.getCurrentSymbol(record.id);
               this.props.common.setCurrentTab('个股');
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");

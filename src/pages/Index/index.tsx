@@ -6,6 +6,7 @@ import { PAGE_ROUTES, SUBMENU_ROUTES } from "constant";
 import { withRouter } from "react-router-dom";
 import MessageModal from "components/MessageModal";
 import SettingsModal from "components/SettingsModal";
+import GuideModal from 'components/GuideModal';
 // import messageIcon from "assets/img/message-icon.svg";
 // import settingsIcon from "assets/img/settings-icon.svg";
 // import MessageModal from "components/MessageModal";
@@ -17,7 +18,7 @@ import serviceSVG from "assets/img/service.svg";
 import "./index.scss";
 import { inject, observer } from "mobx-react";
 import debounce from "lodash/debounce";
-
+import ws from "utils/ws";
 const { Header, Sider, Content, } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
@@ -74,6 +75,7 @@ function exactFromSidebarPath(pathlist) {
 @inject("common", "market")
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
+  wsConnect = null;
   // 保存折叠前展开的subMenu
   preOpenKeys = [];
   state = {
@@ -118,6 +120,23 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   async componentDidMount() {
     this.props.history.push("/dashboard/symbol");
+    this.props.common.getUserInfo();
+    this.connectWebsocket();
+  }
+
+  connectWebsocket = () => {
+    this.wsConnect = ws('/account/status');
+
+    this.wsConnect.onmessage = evt => {
+      const data = evt.data;
+      this.props.common.setUserInfo(data);
+    };
+  }
+
+  componentWillUnmount() {
+    if (this.wsConnect) {
+      this.wsConnect = null;
+    }
   }
 
   hideModal = () => {
@@ -172,8 +191,10 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
       settingsModalStatus,
     } = this.state;
     const { location, } = this.props;
-    const { computedSidebar, } = this.props.common;
-
+    const {
+      computedUserInfo,
+      toggleGuideModalVisible,
+      computedSidebar, guideModalVisible, settingsModalVisible, } = this.props.common;
     return (
       <div className={"home"}>
         <div className="home-header">
@@ -248,15 +269,31 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             </span>
             <span
               onClick={() => {
-                this.showSettingsModal();
+                // this.showSettingsModal();
+                this.props.common.toggleSettingsModalVisible();
               }}
             >
               <img src={settingsSVG} alt="" />
               设定
-              {settingsModalStatus && (
-                <SettingsModal onCancel={this.hideModal}></SettingsModal>
+              {settingsModalVisible && (
+                <SettingsModal onCancel={(evt) => {
+                  evt.stopPropagation();
+                  this.props.common.toggleSettingsModalVisible();
+                }}></SettingsModal>
               )}
             </span>
+            <span onClick={() => {
+              this.props.common.toggleGuideModalVisible();
+            }}>
+              <img src={settingsSVG} alt="" />
+              指引
+            </span>
+            {guideModalVisible && (
+              <GuideModal onCancel={(evt) => {
+                evt.stopPropagation();
+                this.props.common.toggleGuideModalVisible();
+              }}></GuideModal>
+            )}
             <span
               onClick={() => {
                 // @todo
@@ -277,6 +314,11 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                       this.props.common.currentTab == item.title ? "active" : ""
                     }`}
                     onClick={() => {
+                      if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
+                        // 未入金
+                        return toggleGuideModalVisible();
+                      }
+
                       this.props.common.setCurrentTab(item.title);
                       this.props.history.push(item.path);
                     }}

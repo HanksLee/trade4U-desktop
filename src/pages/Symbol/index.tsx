@@ -106,7 +106,8 @@ export default class extends BaseReact {
     } = this.props;
 
     if (utils.isEmpty(currentSymbol)) {
-      this.props.market.getCurrentSymbol(selfSelectSymbolList[0].symbol);
+      let tmp = selfSelectSymbolList[0]?.symbol;
+      tmp && this.props.market.getCurrentSymbol(tmp);
     }
   };
 
@@ -382,6 +383,15 @@ export default class extends BaseReact {
   };
 
   onDoubleClick = (item?) => {
+    const {
+      computedUserInfo,
+      toggleGuideModalVisible,
+    } = this.props.common;
+
+    if (computedUserInfo?.user_status != 3) {
+      return toggleGuideModalVisible();
+    }
+
     clearTimeout(this.timer);
 
     this.prevent = true;

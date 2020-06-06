@@ -10,9 +10,12 @@ const login = async (config) => moonAPI.post('/trader/login', config);
 
 const getConstantByKey = async (key) => moonAPI.get(`/constant/${key}`);
 
+const getUserInfo = async config => moonAPI.get('/trader/account', config);
+
 export default {
   uploadFile,
   getCodeImg,
   login,
   getConstantByKey,
+  getUserInfo,
 };
