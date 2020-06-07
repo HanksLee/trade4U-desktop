@@ -82,7 +82,7 @@ export default class API implements IAPI {
 const apiMap = {
   dev: "/api/moon/api",
   qa: "http://api.cangshu360.com/api",
-  prod: "http://api.cangshu360.com/api",
+  prod: "http://api.trading8a.com/api",
 };
 
 export const moonAPI = new API({
