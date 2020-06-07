@@ -1,7 +1,7 @@
 import gt from 'utils/gettext';
 import locales from 'locales';
 import isEmpty from 'lodash/isEmpty';
-import { PAGE_ROUTES } from 'constant';
+import { PAGE_ROUTES, STOCK_COLOR_MAP } from 'constant';
 import PromiseFileReader from 'promise-file-reader';
 import commonAPI from 'services/common';
 import NProgress from 'nprogress';
@@ -182,6 +182,16 @@ function spliceQuery(params) {
   return query;
 }
 
+function getStockChangeClass(change, colorMode) {
+  const ret = change > 0
+    ? "up"
+    : change == 0
+      ? "balance"
+      : "down";
+
+  return STOCK_COLOR_MAP[colorMode][ret];
+}
+
 export default {
   setRootFontSizeFromClient,
   initI18n,
@@ -199,4 +209,5 @@ export default {
   delSomeKeys,
   spliceQuery,
   getFileInfo,
+  getStockChangeClass,
 };

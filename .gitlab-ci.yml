@@ -12,12 +12,18 @@ stages:
 
 build job:
   stage: build
+  only:
+    refs:
+      - develop
   script:
     - npm install
     - npm run build:qa
 
 deploy job:
   stage: deploy
+  only:
+    refs:
+      - develop
   script:
     - apt-get update -y
     - apt-get -y install rsync
@@ -26,3 +32,27 @@ deploy job:
     - mkdir "${HOME}/.ssh"
     - echo "${SSH_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync -hrvz --delete -e "ssh -i id_rsa" dist/qa/* root@47.75.61.170:/www/wwwroot/desktop.cangshu360.com
+
+
+build prod_job:
+  stage: build
+  only:
+    refs:
+      - master
+  script:
+    - npm install
+    - npm run build:prod
+
+deploy_prod_job:
+  stage: deploy
+  only:
+    refs:
+      - master
+  script:
+    - apt-get update -y
+    - apt-get -y install rsync
+    - echo "$PROD_SSH_PRIVATE_KEY" > id_rsa
+    - chmod 700 id_rsa
+    - mkdir "${HOME}/.ssh"
+    - echo "${PROD_SSH_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync -hrvz --delete -e "ssh -i id_rsa" dist/prod/* root@47.52.157.137:/www/wwwroot/desktop.trading8a.com

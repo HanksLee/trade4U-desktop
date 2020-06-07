@@ -1,0 +1,19 @@
+diff --git a/src/pages/Symbol/index.tsx b/src/pages/Symbol/index.tsx
+index 45ce6ea..2bd9194 100644
+--- a/src/pages/Symbol/index.tsx
++++ b/src/pages/Symbol/index.tsx
+@@ -1,3 +1,4 @@
++import WithRoute from 'components/@shared/WithRoute';
+ import * as React from "react";
+ import { BaseReact } from "components/@shared/BaseReact";
+ import {
+@@ -26,7 +27,8 @@ const orderTabs = [
+   }
+ ];
+ 
+-
++/* eslint new-cap: "off" */
++@WithRoute("/dashboard/symbol")
+ export default class extends BaseReact {
+   timer = 0;
+   delay = 200;

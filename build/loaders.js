@@ -3,6 +3,8 @@ const config = require("./config"),
   tsImportPluginFactory = require('ts-import-plugin'),
   { resolve } = require("./utils");
 
+const {getThemeVariables} = require('antd/dist/theme');
+
 const setLoaderSourceMap = (loader, options, isProd) => {
   return { loader, options: { ...options, sourceMap: isProd ? false : true } };
 };
@@ -64,6 +66,10 @@ const getStyleRule = (
             globalVars: {
               "@assetsPath": s(config.assetsPath)
             },
+            modifyVars: getThemeVariables({
+              dark: true, // 开启暗黑模式
+              compact: true, // 开启紧凑模式
+            }),
             javascriptEnabled: true
           },
           opt.isProd
@@ -134,8 +140,7 @@ const scriptLoaders = [
           getCustomTransformers: () => ({
             before: [tsImportPluginFactory({
               libraryName: 'antd',
-              libraryDirectory: 'lib',
-              style: 'css'
+              libraryDirectory: 'lib'
             })]
           }),
           compilerOptions: {

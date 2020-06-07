@@ -1,0 +1,28 @@
+.tv-search-row { position: relative; display: flex; width: 100%; cursor: default; border-bottom: 1px solid; border-bottom-color: #dadde0; }
+html.theme-dark .tv-search-row { border-bottom-color: #363c4e; }
+.tv-search-row__input { box-sizing: border-box; width: 100%; height: 50px; min-height: 50px; padding: 9px 50px 9px 60px; margin: 0; background-color: #fff; border: none; }
+html.theme-dark .tv-search-row__input { background-color: #1e222d; }
+
+@media screen and (max-width: 767px) {
+  .tv-search-row__input { height: 34px; min-height: 34px; padding-right: 40px; padding-left: 50px; }
+  .feature-mobiletouch .tv-search-row__input { height: 50px; min-height: 50px; }
+}
+.tv-search-row--without-controls .tv-search-row__input { padding-right: 30px; padding-left: 30px; }
+
+@media screen and (max-width: 767px) { .tv-search-row--without-controls .tv-search-row__input { padding-right: 20px; padding-left: 20px; } }
+.tv-search-row__input-reset { position: absolute; top: 0; right: 16px; bottom: 0; width: 36px; text-align: center; cursor: pointer; opacity: 0.5; transition: opacity 0.35s ease; }
+.tv-search-row__input-reset::after { display: inline-block; height: 100%; vertical-align: middle; content: ""; }
+
+@media (any-hover: hover), (min--moz-device-pixel-ratio: 0), (min-width: 0\0) { .tv-search-row__input-reset:hover { opacity: 1; transition-duration: 0.06s; } }
+.tv-search-row__input-reset svg { display: inline-block; width: 9px; height: 9px; vertical-align: middle; fill: #4a4a4a; }
+html.theme-dark .tv-search-row__input-reset svg { fill: #c5cbce; }
+
+@media screen and (max-width: 767px) { .tv-search-row__input-reset { right: 10px; } }
+.tv-search-row__search-icon { position: absolute; top: 50%; left: 30px; display: block; margin-top: -9px; pointer-events: none; opacity: 0.8; transition: opacity 0.35s ease; }
+
+@media screen and (max-width: 767px) { .tv-search-row__search-icon { left: 20px; } }
+.tv-search-row__search-icon svg { display: block; width: 18px; height: 18px; overflow: visible; fill: #adaeb0; }
+html.theme-dark .tv-search-row__search-icon svg { fill: #4f5966; }
+
+.tv-search-row--without-controls .tv-search-row__input-reset,
+.tv-search-row--without-controls .tv-search-row__search-icon { display: none; }

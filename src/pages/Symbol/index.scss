@@ -1,0 +1,195 @@
+.symbol-page {
+  color: white;
+  height: calc(100vh - 56px);
+  display: flex;
+  padding-left: 10px;
+  padding-top: 10px;
+  //border: 1px solid white;
+  overflow: hidden;
+
+  .symbol-left {
+    //border: 1px solid red;
+    width: 370px;
+    background-color: $primary-color;
+    //overflow-y: scroll;
+
+    //margin: 0 10px;
+    //border: 1px solid white;
+
+    .custom-table-body {
+      height: calc(100vh - 45px - 22px - 43px);
+      overflow-y: scroll;
+    }
+
+    .symbol-filter {
+      display: flex;
+      //justify-content: space-around;
+      color: white;
+      padding-left: 10px;
+
+      .symbol-filter-item {
+        margin-right: 30px;
+        cursor: pointer;
+        &.active {
+          color: $active-color;
+        }
+      }
+    }
+
+    .symbol-sidebar {
+      color: white;
+      text-align: center;
+      //height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
+      width: 370px;
+      //overflow-y: scroll;
+
+
+    .symbol-sidebar-info {
+        //padding-top: 10px;
+        height: 0;
+        overflow: hidden;
+        transition: height .3s;
+
+        &.active {
+          height: 140px;
+
+        }
+
+        .symbol-item-info {
+          display: flex;
+          justify-content: space-between;
+          margin: 10px;
+        }
+      }
+    }
+
+    .self-select-buy-block,
+    .self-select-sell-block {
+      padding: 13px 4px;
+      position: relative;
+      top: 1px;
+    }
+  }
+
+  .symbol-right {
+    //height: 100vh;
+    width: calc(100vw - 60px - 10px - 370px);
+    //border: 1px solid green;
+    overflow: hidden;
+    flex: 1;
+
+    >.ant-row {
+      padding-left: 10px;
+    }
+
+    .symbol-chart {
+      background-color: $primary-color;
+      border-bottom: 1px solid #333;
+      //margin-left: 10px;
+
+      .symbol-chart-info {
+        padding: 0 10px;
+      }
+
+      .symbol-chart-title {
+        padding: 10px;
+
+        span {
+          margin-right: 10px;
+        }
+
+        .symbol-chart-title-status {
+          border: 1px solid $active-color;
+          border-radius: 2px;
+          padding: 2px 6px;
+          font-size: 12px;
+          color: $active-color;
+        }
+      }
+
+      .fold-chart {
+        height: calc(100vh - 56px - 45px - 554px - 20px);
+      }
+
+      .unfold-chart {
+        height: calc(100vh - 56px - 45px - 56px - 20px);
+      }
+    }
+
+    .symbol-order {
+      margin-top: 10px;
+      background-color: $primary-color;
+
+      &.unfold-tabs {
+        //height: (45px + 57px + 55px + 260px);
+        //overflow-y: scroll;
+      }
+
+      &.fold-tabs {
+        height: 56px;
+        overflow: hidden;
+      }
+
+      .rect-dock {
+        display: inline-block;
+        background-image: url('../../assets/img/rect-dock.png');
+        width:23px;
+        height:20px;
+        border-radius:2px;
+        background-size: cover;
+        cursor: pointer;
+      }
+
+      .symbol-order-info {
+        color: $text-color;
+        text-align: center;
+
+        strong {
+          color: white;
+          font-size: 16px;
+          margin-bottom: 10px;
+          display: block;
+        }
+      }
+
+      .symbol-order-table-row {
+        cursor: pointer;
+      }
+    }
+
+    .symbol-order-favorite {
+      .symbol-order-btn {
+        background-color: $active-color;
+        color: #232C37;
+        font-size: 16px;
+        padding: 2px 16px;
+        display: inline-block;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .ant-spin-container {
+    background-color: #232c37;
+  }
+
+  .ant-table-cell ant-table-cell-fix-right ant-table-cell-fix-right-first,
+  .ant-table-cell-fix-left, .ant-table-cell-fix-right
+  {
+    background-color: #232c37 !important;
+    transition: unset !important;
+  }
+}
+
+.symbol-modal {
+  padding-bottom: 0;
+
+  .symbol-modal-chart {
+    border: 1px solid white;
+  }
+
+  .symbol-modal-form {
+    border: 1px solid white;
+  }
+}

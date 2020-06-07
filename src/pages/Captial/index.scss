@@ -1,0 +1,105 @@
+.captial-page {
+  height: calc(100vh - 100px);
+  position: relative;
+  color: white;
+  background-color: $primary-color;
+  margin: 10px;
+  padding: 10px;
+
+  .ant-tabs, .ant-tabs-content {
+    height: 100%;
+
+    .ant-tabs-tabpane {
+      height: 100%;
+      overflow: scroll;
+    }
+  }
+}
+
+.deposit-panel {
+  position: relative;
+  height: 100%;
+  position: relative;
+  padding-top: 40px;
+  padding-left: 90px;
+
+  .withdrawable-balance {
+    color: $active-color;
+  }
+
+  .expect-amount-tips {
+    font-size: 10px;
+    padding-left: 5px;
+  }
+
+  .paying-dialog {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:rgb(31, 41, 52);
+
+    .paying-dialog-close {
+      position: absolute;
+      left: 11px;
+      top: 11px;
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+    }
+
+    .paying-dialog-content {
+      width: 50px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+    }
+  }
+}
+
+.panel-btn-group {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  width: 500px;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  .ant-btn {
+    width: 90px;
+    height: 40px;
+  }
+}
+
+.transaction-panel {
+  height: 100%;
+
+  .transaction-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 42px 90px;
+
+    > div {
+      font-size: 16px;
+      font-weight: 500;
+
+      span {
+        display: block;
+        color: #fff;
+      }
+
+      span:last-child {
+        color: $active-color;
+      }
+    }
+  }
+}

@@ -1,34 +1,84 @@
-.layout {
-  height: 100vh;
+.home {
+  height: 100%;
+  //overflow-y: scroll;
+  //border: 1px solid red;
 
-  .header {
+  .home-header {
     // background: #fff;
-     padding: 0;
-    box-shadow: 0px 1px 4px 0px rgba(0, 21, 41, 0.12);
+    //padding: 0;
+    //box-shadow: 0px 1px 4px 0px rgba(0, 21, 41, 0.12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $navbar-color;
+    height: 56px;
+
+    img {
+      width: 22px;
+      height: 17px;
+      margin-right: 10px;
+    }
 
     h2 {
-      color: #FFF;
+      color: #fff;
     }
 
-    input {
-      background:rgba(0,0,0,0.25);
-      border: none;
-    }
-
-    .header-right {
+    .home-header-right {
       margin-right: 30px;
+      font-size: 15px;
+
       span {
-        margin-left: 15px;
+        cursor: pointer;
+        margin-right: 14px;
+
+        img {
+          margin-right: 12px;
+        }
       }
+    }
+
+    .ant-select-selector {
+      background-color: #17283e !important;
     }
   }
 
-  .content {
-    // margin: 24px 16px;
-    // min-height: 100vh;
-    margin-top: 1px;
-    // max-width: 1580px;
-    // min-width: 1580px;
-    // overflow: scroll;
+  .home-content {
+    display: flex;
+    //height: calc(100vh - 56px);
+    //overflow-y: scroll;
+
+    .home-sidebar {
+      width: 60px;
+      display: flex;
+      padding: 0 10px;
+      flex-direction: column;
+      align-items: center;
+      background-color: $sidebar-color;
+    }
+
+    .home-panel {
+      flex: 1;
+      height: calc(100vh - 56px);
+      width: calc(100vw - 60px);
+      overflow-y: scroll;
+    }
+  }
+
+  .sidebar-row {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    cursor: pointer;
+    text-align: center;
+
+    &.active {
+      color: $active-color;
+    }
+
+    img {
+      width: 35px;
+      height: 35px;
+      margin-bottom: 10px;
+    }
   }
 }
