@@ -126,10 +126,13 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   }
 
   connectWebsocket = () => {
-    this.wsConnect = ws('/account/status');
+    this.wsConnect = ws('account/status');
+
 
     this.wsConnect.onmessage = evt => {
-      const data = evt.data;
+      const message = evt.data;
+      const data = JSON.parse(message).data;
+
       this.props.common.setUserInfo(data);
     };
   }
