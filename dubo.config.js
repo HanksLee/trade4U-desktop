@@ -4,7 +4,7 @@ const
   path = require('path'),
   isProd = process.env.NODE_ENV === 'production';
 
-const STATIC_URL = '/assets/';
+const STATIC_URL = '/';
 
 /**
  * @warning baseConfig cannot be delete, use for dubo-cli to create new page or component
