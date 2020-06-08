@@ -44,19 +44,19 @@ interface ISettingsModalState {
 const country = [
   {
     label: "HongKong",
-    value: "hk"
+    value: "hk",
   },
   {
     label: "China",
-    value: "china"
+    value: "china",
   }
 ];
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 }
+  labelCol: { span: 8, },
+  wrapperCol: { span: 16, },
 };
-const { Step } = Steps;
+const { Step, } = Steps;
 
 const STATUS = 3;
 
@@ -83,7 +83,7 @@ const getDomMap = self => {
         >
           去填写
         </Button>
-      ]
+      ],
     },
     0: {
       // cover: flowAccountPng,
@@ -106,7 +106,7 @@ const getDomMap = self => {
         >
           去填写
         </Button>
-      ]
+      ],
     },
     1: {
       // cover: flowAuditPng,
@@ -121,7 +121,7 @@ const getDomMap = self => {
         >
           返回
         </Button>
-      ]
+      ],
     },
     2: {
       // cover: flowCapitalPng,
@@ -145,7 +145,7 @@ const getDomMap = self => {
         >
           入金
         </Button>
-      ]
+      ],
     },
     3: {
       // cover: flowExchangePng,
@@ -169,8 +169,8 @@ const getDomMap = self => {
         >
           选股去
         </Button>
-      ]
-    }
+      ],
+    },
   };
 
   return domMap;
@@ -181,8 +181,8 @@ const getDomMap = self => {
 @inject("common")
 @observer
 export default class GuideModal extends BaseReact<
-  ISettingsModalProps,
-  ISettingsModalState
+ISettingsModalProps,
+ISettingsModalState
 > {
   state = {
     userInfo: [],
@@ -194,7 +194,7 @@ export default class GuideModal extends BaseReact<
     currentItem: null,
     modelTitle: "审核流程",
     smsKey: null,
-    verifyPass: false
+    verifyPass: false,
   };
 
   formRef = React.createRef<HTMLInputElement>();
@@ -207,14 +207,14 @@ export default class GuideModal extends BaseReact<
       currentItem: null,
       modelTitle: "設定",
       smsKey: null,
-      verifyPass: false
+      verifyPass: false,
     });
   };
 
   renderSteps = () => {
-    const { computedUserInfo } = this.props.common;
+    const { computedUserInfo, } = this.props.common;
 
-    const customDot = (dot, { status, index }) =>
+    const customDot = (dot, { status, index, }) =>
       status == "finish" ? (
         <div className={"progress-circle"}></div>
       ) : (
@@ -237,7 +237,7 @@ export default class GuideModal extends BaseReact<
   };
 
   renderTip = () => {
-    const { computedUserInfo } = this.props.common;
+    const { computedUserInfo, } = this.props.common;
     const domMap = getDomMap(this);
     const domInfo = domMap[computedUserInfo?.user_status] || {};
     // const domInfo = domMap[STATUS] || {};
@@ -259,10 +259,10 @@ export default class GuideModal extends BaseReact<
   };
 
   render() {
-    const { currentTab, modelTitle, currentItem } = this.state;
+    const { currentTab, modelTitle, currentItem, } = this.state;
     const {
       onCancel,
-      common: { computedUserInfo }
+      common: { computedUserInfo, },
     } = this.props;
     const domMap = getDomMap(this);
     const domInfo = domMap[computedUserInfo?.user_status] || {};
