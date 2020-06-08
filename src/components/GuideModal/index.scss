@@ -3,7 +3,6 @@
 }
 
 .guide-modal {
-
   .guide-modal-steps {
     width: 320px;
     padding-top: 20px;
@@ -16,7 +15,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background-color: #F2E205;
+      background-color: #f2e205;
     }
 
     .anticon {
@@ -27,13 +26,14 @@
     }
 
     .ant-steps-item-tail,
-    .ant-steps-dot.ant-steps-small
-    .ant-steps-item-tail {
+    .ant-steps-dot.ant-steps-small .ant-steps-item-tail {
       top: 8px !important;
     }
 
-    .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
-      background-color: #F2E205;
+    .ant-steps-item-finish
+      > .ant-steps-item-container
+      > .ant-steps-item-tail::after {
+      background-color: #f2e205;
     }
 
     .ant-steps-item-content {
@@ -51,7 +51,7 @@
     img {
       width: 80px;
       height: 80px;
-      background-color: #CCC;
+      // background-color: #CCC;
       margin-top: 113px;
     }
 
@@ -62,7 +62,7 @@
     }
 
     p {
-      color: #F2E205;
+      color: #f2e205;
       font-size: 12px;
       margin-top: 20px;
     }
@@ -77,22 +77,19 @@
         margin: 0 67px;
 
         &:last-child {
-          color: #21212B;
-          background-color: #F2E205;
+          color: #21212b;
+          background-color: #f2e205;
           border: none;
         }
 
         &:first-child {
-          color: #838D9E;
+          color: #838d9e;
           background-color: #fff;
           border: none;
         }
-
-
       }
     }
   }
-
 }
 
 .ant-modal-content {
