@@ -10,6 +10,6 @@ export default function ws(path) {
   const token = utils.getLStorage("MOON_DESKTOP_TOKEN");
 
   return new WebSocket(
-    `ws://stock-${wsMap[process.env.MODE]}/ws/trader/${path}?token=${token}`
+    `ws://stock-ws.${wsMap[process.env.MODE]}/ws/trader/${path}?token=${token}`
   );
 }
