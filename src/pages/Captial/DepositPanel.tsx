@@ -67,7 +67,7 @@ export default class DepositPanel extends BaseReact {
     const res = await this.$api.captial.checkDepositStatus({
       params: { order_number: this.state.orderNumber, },
     });
-    if (res.status === 200) {
+    if (res.data.status === 1) {
       this.getWithdrawableBalance();
       clearInterval(this.timer);
       this.paymentWindow.close();
