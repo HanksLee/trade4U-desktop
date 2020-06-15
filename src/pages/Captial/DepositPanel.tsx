@@ -15,7 +15,7 @@ export default class DepositPanel extends BaseReact {
     paymentMethods: [],
     isPaying: false,
     orderNumber: "",
-    showLoading: false
+    showLoading: false,
   };
 
   componentDidMount() {
@@ -26,14 +26,14 @@ export default class DepositPanel extends BaseReact {
   getWithdrawableBalance = async () => {
     const res = await this.$api.captial.getWithdrawableBalance();
     this.setState({
-      withdrawableBalance: res.data.withdrawable_balance
+      withdrawableBalance: res.data.withdrawable_balance,
     });
   };
 
   getPaymentMethods = async () => {
     const res = await this.$api.captial.getPaymentMethods();
     this.setState({
-      paymentMethods: res.data
+      paymentMethods: res.data,
     });
   };
 
@@ -42,13 +42,13 @@ export default class DepositPanel extends BaseReact {
       try {
         const res = await this.$api.captial.deposit({
           payment: values.payment,
-          expect_amount: Number(values.expect_amount)
+          expect_amount: Number(values.expect_amount),
         });
         if (res.status === 201 && res.data.gopayurl) {
           this.setState({
             isPaying: true,
             orderNumber: res.data.order_number,
-            showLoading: true
+            showLoading: true,
           });
           this.paymentWindow = window.open(res.data.gopayurl);
           this.checkDepositStatus();
@@ -65,7 +65,7 @@ export default class DepositPanel extends BaseReact {
 
   checkDepositStatus = async () => {
     const res = await this.$api.captial.checkDepositStatus({
-      params: { order_number: this.state.orderNumber }
+      params: { order_number: this.state.orderNumber, },
     });
     if (res.status === 200) {
       this.getWithdrawableBalance();
@@ -75,7 +75,7 @@ export default class DepositPanel extends BaseReact {
       this.setState({
         isPaying: false,
         orderNumber: "",
-        showLoading: false
+        showLoading: false,
       });
       this.resetForm();
     } else {
@@ -89,12 +89,12 @@ export default class DepositPanel extends BaseReact {
 
   hideLoading = () => {
     this.setState({
-      showLoading: false
+      showLoading: false,
     });
   };
 
   render() {
-    const { withdrawableBalance, paymentMethods, showLoading } = this.state;
+    const { withdrawableBalance, paymentMethods, showLoading, } = this.state;
 
     return (
       <div className="deposit-panel">
@@ -110,9 +110,9 @@ export default class DepositPanel extends BaseReact {
           <Form.Item
             name="payment"
             label="选择支付通道"
-            rules={[{ required: true, message: "请输入支付通道" }]}
+            rules={[{ required: true, message: "请输入支付通道", }]}
           >
-            <Select className="line-selector" style={{ width: "500px" }}>
+            <Select className="line-selector" style={{ width: "500px", }}>
               {paymentMethods.map(item => {
                 return (
                   <Select.Option value={item.id}>{item.name}</Select.Option>
@@ -130,12 +130,12 @@ export default class DepositPanel extends BaseReact {
                 </span>
               </>
             }
-            rules={[{ required: true, message: "请输入金额" }]}
+            rules={[{ required: true, message: "请输入金额", }]}
           >
             <Input
               className="line-input"
               placeholder="输入金额"
-              style={{ width: "500px" }}
+              style={{ width: "500px", }}
             />
           </Form.Item>
           <div className="panel-btn-group">

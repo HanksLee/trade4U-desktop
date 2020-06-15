@@ -7,7 +7,7 @@ export default class WithdrawPanel extends BaseReact {
   formRef = React.createRef();
 
   state = {
-    withdrawableBalance: 0
+    withdrawableBalance: 0,
   };
 
   componentDidMount() {
@@ -17,7 +17,7 @@ export default class WithdrawPanel extends BaseReact {
   getWithdrawableBalance = async () => {
     const res = await this.$api.captial.getWithdrawableBalance();
     this.setState({
-      withdrawableBalance: res.data.withdrawable_balance
+      withdrawableBalance: res.data.withdrawable_balance,
     });
   };
 
@@ -33,7 +33,7 @@ export default class WithdrawPanel extends BaseReact {
   };
 
   render() {
-    const { withdrawableBalance } = this.state;
+    const { withdrawableBalance, } = this.state;
 
     return (
       <div className="deposit-panel">
@@ -51,7 +51,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="account_name"
                 label="姓名"
-                rules={[{ required: true, message: "请输入姓名" }]}
+                rules={[{ required: true, message: "请输入姓名", }]}
               >
                 <Input className="line-input" placeholder="输入姓名" />
               </Form.Item>
@@ -60,7 +60,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="sub_branch"
                 label="支行"
-                rules={[{ required: true, message: "请输入支行" }]}
+                rules={[{ required: true, message: "请输入支行", }]}
               >
                 <Input className="line-input" placeholder="输入支行" />
               </Form.Item>
@@ -71,7 +71,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="province"
                 label="省份"
-                rules={[{ required: true, message: "请输入省份" }]}
+                rules={[{ required: true, message: "请输入省份", }]}
               >
                 <Input className="line-input" placeholder="输入省份" />
               </Form.Item>
@@ -80,7 +80,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="card_number"
                 label="银行卡号"
-                rules={[{ required: true, message: "请输入银行卡号" }]}
+                rules={[{ required: true, message: "请输入银行卡号", }]}
               >
                 <Input className="line-input" placeholder="输入银行卡号" />
               </Form.Item>
@@ -91,7 +91,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="city"
                 label="城市"
-                rules={[{ required: true, message: "请输入城市" }]}
+                rules={[{ required: true, message: "请输入城市", }]}
               >
                 <Input className="line-input" placeholder="输入城市" />
               </Form.Item>
@@ -100,7 +100,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="expect_amount"
                 label="提取金额"
-                rules={[{ required: true, message: "请输入提取金额" }]}
+                rules={[{ required: true, message: "请输入提取金额", }]}
               >
                 <Input className="line-input" placeholder="输入提取金额" />
               </Form.Item>
@@ -111,7 +111,7 @@ export default class WithdrawPanel extends BaseReact {
               <Form.Item
                 name="bank"
                 label="开户行"
-                rules={[{ required: true, message: "请输入开户行" }]}
+                rules={[{ required: true, message: "请输入开户行", }]}
               >
                 <Input className="line-input" placeholder="输入开户行" />
               </Form.Item>

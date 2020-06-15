@@ -3,7 +3,7 @@ import utils from "utils";
 const wsMap = {
   dev: "cangshu360.com",
   qa: "cangshu360.com",
-  prod: "trading8a.com"
+  prod: "trading8a.com",
 };
 
 let wsProtocol = "";
