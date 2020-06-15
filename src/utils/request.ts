@@ -31,13 +31,15 @@ export default class API implements IAPI {
         return config;
       },
       (err: AxiosError) => {
-        const { response: { data, status, }, } = err;
+        const {
+          response: { data, status, },
+        } = err;
 
         if (status == 400) {
           message.error(data.message);
         } else if (status == 401) {
-          localStorage.removeItem('MOON_DESKTOP_TOKEN');
-          window.location.href = '/login';
+          localStorage.removeItem("MOON_DESKTOP_TOKEN");
+          window.location.href = "/login";
         }
 
         NProgress.done();
@@ -81,8 +83,8 @@ export default class API implements IAPI {
 
 const apiMap = {
   dev: "/api/moon/api",
-  qa: "http://api.cangshu360.com/api",
-  prod: "http://api.trading8a.com/api",
+  qa: `${window.location.origin.replace(/\/\/(.*?)\./, "//api.")}/api`,
+  prod: `${window.location.origin.replace(/\/\/(.*?)\./, "//api.")}/api`,
 };
 
 export const moonAPI = new API({

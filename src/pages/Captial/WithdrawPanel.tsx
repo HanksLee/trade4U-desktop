@@ -1,43 +1,48 @@
-import * as React from 'react';
-import { BaseReact } from 'components/@shared/BaseReact';
-import { Form, Input, Select, Button, Row, Col, message } from 'antd';
-import './index.scss';
+import * as React from "react";
+import { BaseReact } from "components/@shared/BaseReact";
+import { Form, Input, Select, Button, Row, Col, message } from "antd";
+import "./index.scss";
 
 export default class WithdrawPanel extends BaseReact {
   formRef = React.createRef();
 
   state = {
     withdrawableBalance: 0,
-  }
+  };
 
   componentDidMount() {
     this.getWithdrawableBalance();
   }
 
-  getWithdrawableBalance = async () =>{
+  getWithdrawableBalance = async () => {
     const res = await this.$api.captial.getWithdrawableBalance();
     this.setState({
       withdrawableBalance: res.data.withdrawable_balance,
     });
-  }
+  };
 
-  withdraw = async (values) => {
+  withdraw = async values => {
     await this.$api.captial.withdraw(values);
     this.getWithdrawableBalance();
-    message.success('提取成功');
+    message.success("提取成功");
     this.resetForm();
-  }
+  };
 
   resetForm = () => {
     this.formRef.current.resetFields();
-  }
+  };
 
   render() {
     const { withdrawableBalance, } = this.state;
 
     return (
       <div className="deposit-panel">
-        <Form layout="vertical" onFinish={this.withdraw} hideRequiredMark={true} ref={this.formRef}>
+        <Form
+          layout="vertical"
+          onFinish={this.withdraw}
+          hideRequiredMark={true}
+          ref={this.formRef}
+        >
           <Form.Item name="balance" label="可提余额">
             <span className="withdrawable-balance">{withdrawableBalance}</span>
           </Form.Item>
@@ -111,14 +116,14 @@ export default class WithdrawPanel extends BaseReact {
                 <Input className="line-input" placeholder="输入开户行" />
               </Form.Item>
             </Col>
-            <Col span={10}>
+            {/* <Col span={10}>
               <Form.Item
                 name="remarks"
                 label="备注"
               >
                 <Input className="line-input" placeholder="输入备注" />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <div className="panel-btn-group">
             <Button onClick={this.resetForm}>清除资料</Button>
