@@ -49,9 +49,10 @@ export default class DepositPanel extends BaseReact {
             isPaying: true,
             orderNumber: res.data.order_number,
             showLoading: true,
+          }, () => {
+            this.paymentWindow = window.open(res.data.gopayurl);
+            this.checkDepositStatus();
           });
-          this.paymentWindow = window.open(res.data.gopayurl);
-          this.checkDepositStatus();
         } else {
           throw new Error();
         }
@@ -64,10 +65,11 @@ export default class DepositPanel extends BaseReact {
   };
 
   checkDepositStatus = async () => {
+    if (!this.state.showLoading) return;
     const res = await this.$api.captial.checkDepositStatus({
       params: { order_number: this.state.orderNumber, },
     });
-    if (res.status === 200) {
+    if (res.data.status === 1) {
       this.getWithdrawableBalance();
       clearInterval(this.timer);
       this.paymentWindow.close();
