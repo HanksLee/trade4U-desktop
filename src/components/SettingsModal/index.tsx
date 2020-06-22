@@ -347,7 +347,7 @@ ISettingsModalState
           {...layout}
           ref={this.formRef}
           onFinish={this.handleAccountSubmit}
-          // onFinishFailed={onFinishFailed}
+        // onFinishFailed={onFinishFailed}
         >
           <Form.Item label="名字" name="first_name">
             <Input />

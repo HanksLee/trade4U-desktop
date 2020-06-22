@@ -466,7 +466,7 @@ export default class extends BaseReact {
           hasMore={hasMore}
           loader={
             <div className="custom-table-loadmore" key={0}>
-              <Spin/>
+              <Spin />
             </div>
           }
         >
@@ -518,7 +518,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.spread}
                       </span>
                     </Col>
-                    <Col span={6}>
+                    <Col span={6} className={"self-select-sell-container"}>
                       <span
                         className={`
                       ${
@@ -537,7 +537,7 @@ export default class extends BaseReact {
                         {item?.product_details?.sell}
                       </span>
                     </Col>
-                    <Col span={6}>
+                    <Col span={6} className={"self-select-buy-container"}>
                       <span
                         className={`
                         ${
@@ -798,7 +798,7 @@ export default class extends BaseReact {
         }
       ];
 
-      const columnsWidth = columns.reduce(function(total, cur) {
+      const columnsWidth = columns.reduce(function (total, cur) {
         return total + cur.width;
       }, 0);
 
@@ -815,7 +815,7 @@ export default class extends BaseReact {
               }}
             >
               <Col span={24}>
-                <RangePicker onChange={this.onDateRangeChanged}/>
+                <RangePicker onChange={this.onDateRangeChanged} />
               </Col>
             </Row>
             <Row type={"flex"} justify={"space-between"}>
@@ -1089,11 +1089,11 @@ export default class extends BaseReact {
                     >
                       {currentSymbol?.product_details?.sell}
                       {sell_open_change == "up" ? (
-                        <IconFont type={"icon-arrow-up"}/>
+                        <IconFont type={"icon-arrow-up"} />
                       ) : sell_open_change == "down" ? (
-                        <IconFont type={"icon-arrow-down"}/>
+                        <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined/>
+                        <MinusOutlined />
                       )}
                     </span>
                     <span
@@ -1166,7 +1166,7 @@ export default class extends BaseReact {
             >
               <Tabs
                 tabBarExtraContent={
-                  <span onClick={this.toggleFoldTabs} className="rect-dock"/>
+                  <span onClick={this.toggleFoldTabs} className="rect-dock" />
                 }
                 tabBarStyle={{
                   padding: "0 10px",
