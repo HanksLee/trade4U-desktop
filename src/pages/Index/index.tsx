@@ -26,7 +26,7 @@ const MenuItem = Menu.Item;
 const Option = Select.Option;
 const OptGroup = Select.OptGroup;
 
-export interface IIndexProps {}
+export interface IIndexProps { }
 
 export interface IIndexState {
   collapsed: boolean;
@@ -145,7 +145,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   hideModal = () => {
     this.setState({}, () => {
-      this.setState({ messageModalStatus: false, settingsModalStatus: false, });
+      this.setState({ messageModalStatus: false });
     });
   };
 
@@ -282,7 +282,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               {settingsModalVisible && (
                 <SettingsModal onCancel={(evt) => {
                   evt.stopPropagation();
-                  this.props.common.toggleSettingsModalVisible();
+                  // this.props.common.toggleSettingsModalVisible();
                 }}></SettingsModal>
               )}
             </span>
@@ -333,7 +333,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                   <div
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
@@ -359,9 +359,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             )}
           <div className={"home-panel"}>
             {location.pathname === "/dashboard" ||
-            location.pathname === "/dashboard/" ? (
+              location.pathname === "/dashboard/" ? (
                 <p style={{ fontSize: 30, fontWeight: 500, margin: 20, }}>
-                Welcome to WeTrade 桌面端
+                  Welcome to WeTrade 桌面端
                 </p>
               ) : null}
             <AppRouter />

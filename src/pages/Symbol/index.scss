@@ -63,6 +63,11 @@
       }
     }
 
+    .self-select-buy-container,
+    .self-select-sell-container {
+      text-align: right;
+    }
+
     .self-select-buy-block,
     .self-select-sell-block {
       padding: 13px 4px;
@@ -109,6 +114,7 @@
 
       .fold-chart {
         height: calc(100vh - 56px - 45px - 554px - 20px);
+        min-height: 275px;
       }
 
       .unfold-chart {

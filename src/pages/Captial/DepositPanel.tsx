@@ -37,6 +37,10 @@ export default class DepositPanel extends BaseReact {
     });
   };
 
+  selectCurrentPayment = value => {
+
+  }
+
   deposit = async values => {
     if (!this.state.isPaying) {
       try {
@@ -114,7 +118,7 @@ export default class DepositPanel extends BaseReact {
             label="选择支付通道"
             rules={[{ required: true, message: "请输入支付通道", }]}
           >
-            <Select className="line-selector" style={{ width: "500px", }}>
+            <Select className="line-selector" style={{ width: "500px", }} onChange={}>
               {paymentMethods.map(item => {
                 return (
                   <Select.Option value={item.id}>{item.name}</Select.Option>
