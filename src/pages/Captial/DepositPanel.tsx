@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
-import { Form, Input, Select, Button, message, Spin } from "antd";
+import { Form, Input, Select, Button, message, Spin, InputNumber } from "antd";
 import closeModalIcon from "assets/img/close-modal-icon.svg";
 import { LoadingOutlined } from "@ant-design/icons";
 import "./index.scss";
@@ -16,6 +16,7 @@ export default class DepositPanel extends BaseReact {
     isPaying: false,
     orderNumber: "",
     showLoading: false,
+    currentPayment: undefined,
   };
 
   componentDidMount() {
@@ -38,7 +39,15 @@ export default class DepositPanel extends BaseReact {
   };
 
   selectCurrentPayment = value => {
+    const { paymentMethods, } = this.state;
 
+    {
+      paymentMethods.map(item => {
+        if (item.id == value) {
+          this.setState({ currentPayment: item, });
+        }
+      });
+    }
   }
 
   deposit = async values => {
@@ -100,7 +109,7 @@ export default class DepositPanel extends BaseReact {
   };
 
   render() {
-    const { withdrawableBalance, paymentMethods, showLoading, } = this.state;
+    const { withdrawableBalance, paymentMethods, showLoading, currentPayment, } = this.state;
 
     return (
       <div className="deposit-panel">
@@ -118,7 +127,7 @@ export default class DepositPanel extends BaseReact {
             label="选择支付通道"
             rules={[{ required: true, message: "请输入支付通道", }]}
           >
-            <Select className="line-selector" style={{ width: "500px", }} onChange={}>
+            <Select className="line-selector" style={{ width: "500px", }} onChange={this.selectCurrentPayment}>
               {paymentMethods.map(item => {
                 return (
                   <Select.Option value={item.id}>{item.name}</Select.Option>
@@ -126,24 +135,26 @@ export default class DepositPanel extends BaseReact {
               })}
             </Select>
           </Form.Item>
-          <Form.Item
+          {currentPayment && <Form.Item
             name="expect_amount"
             label={
               <>
                 金额{" "}
                 <span className="expect-amount-tips">
-                  ＊提示：手續費0%，入金上限 200,000 / 下線 1,000＊
+                  ＊提示：手续费{currentPayment.fee}%，入金上限 {currentPayment.max_deposit} / 下限 {currentPayment.min_deposit} ＊
                 </span>
               </>
             }
             rules={[{ required: true, message: "请输入金额", }]}
           >
-            <Input
+            <InputNumber
+              min={currentPayment.min_deposit}
+              max={currentPayment.max_deposit}
               className="line-input"
               placeholder="输入金额"
               style={{ width: "500px", }}
             />
-          </Form.Item>
+          </Form.Item>}
           <div className="panel-btn-group">
             <Button onClick={this.resetForm}>清除资料</Button>
             <Button htmlType="submit">充值</Button>
