@@ -145,7 +145,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   hideModal = () => {
     this.setState({}, () => {
-      this.setState({ messageModalStatus: false, });
+      this.setState({ messageModalStatus: false, settingsModalStatus: false, });
     });
   };
 
@@ -272,8 +272,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               )}
             </span>
             <span
-              onClick={() => {
+              onClick={(evt) => {
                 // this.showSettingsModal();
+                if (settingsModalVisible) return false;
                 this.props.common.toggleSettingsModalVisible();
               }}
             >
@@ -282,7 +283,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               {settingsModalVisible && (
                 <SettingsModal onCancel={(evt) => {
                   evt.stopPropagation();
-                  // this.props.common.toggleSettingsModalVisible();
+                  this.props.common.toggleSettingsModalVisible();
+                  // this.hideModal()
                 }}></SettingsModal>
               )}
             </span>

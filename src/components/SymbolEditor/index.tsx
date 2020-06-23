@@ -218,7 +218,7 @@ export default class SymbolEditor extends BaseReact {
 
         if (res.status == 201) {
           const modal = Modal.info({
-            icon: <CheckCircleFilled/>,
+            icon: <CheckCircleFilled />,
             content: <div>
               <h2>
                 买入完成
@@ -296,7 +296,7 @@ export default class SymbolEditor extends BaseReact {
           this.props.market.setCurrentOrder({}, true);
           this.props.market.toggleOrderModalVisible();
         }}>
-          <img src={closeSVG} alt=""/>
+          <img src={closeSVG} alt="" />
         </div>
         <Row>
           {/*<Col className={"symbol-editor-chart"} span={12}>*/}
@@ -400,7 +400,7 @@ export default class SymbolEditor extends BaseReact {
                             setCurrentOrder({
                               open_price: evt.target.value,
                             });
-                          }}/>
+                          }} />
                         <section className={'input-number-up-down'}>
                           <UpOutlined onClick={() => {
                             if (!currentShowOrder.open_price) {
@@ -412,7 +412,7 @@ export default class SymbolEditor extends BaseReact {
                                 open_price: +(currentShowOrder.open_price + price_step).toFixed(decimals_place),
                               });
                             }
-                          } } />
+                          }} />
                           <DownOutlined onClick={() => {
                             if (!currentShowOrder.open_price) {
                               setCurrentOrder({
@@ -423,7 +423,7 @@ export default class SymbolEditor extends BaseReact {
                                 open_price: +(currentShowOrder.open_price - price_step).toFixed(decimals_place),
                               });
                             }
-                          }}/>
+                          }} />
                         </section>
                       </FormItem>
                     </Col>
@@ -435,13 +435,13 @@ export default class SymbolEditor extends BaseReact {
                     label={"数量"}>
                     <Input
                       value={
-                        currentShowOrder?.lots || undefined}
+                        currentShowOrder?.lots.toFixed(2) || undefined}
                       step={currentSymbol?.symbol_display?.lots_step}
                       min={currentSymbol?.symbol_display?.min_lots} type={"number"} onChange={evt => {
                         setCurrentOrder({
-                          lots: +evt.target.value,
+                          lots: +Number(evt.target.value).toFixed(2),
                         });
-                      }}/>
+                      }} />
                     <section className={'input-number-up-down'}>
                       <UpOutlined onClick={() => {
                         if (!currentShowOrder.lots) {
@@ -453,7 +453,7 @@ export default class SymbolEditor extends BaseReact {
                             lots: currentShowOrder.lots + currentSymbol?.symbol_display?.lots_step,
                           });
                         }
-                      } } />
+                      }} />
                       <DownOutlined onClick={() => {
                         if (!currentShowOrder.lots
                           || (currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step < currentSymbol?.symbol_display?.min_lots)
@@ -464,7 +464,7 @@ export default class SymbolEditor extends BaseReact {
                             lots: currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step,
                           });
                         }
-                      }}/>
+                      }} />
                     </section>
                   </FormItem>
                 </Col>
@@ -476,7 +476,7 @@ export default class SymbolEditor extends BaseReact {
                       setCurrentOrder({
                         stop_loss: +evt.target.value,
                       });
-                    }}/>
+                    }} />
                     <section className={'input-number-up-down'}>
                       <UpOutlined onClick={() => {
                         if (!currentShowOrder.stop_loss) {
@@ -488,7 +488,7 @@ export default class SymbolEditor extends BaseReact {
                             stop_loss: +(currentShowOrder.stop_loss + price_step).toFixed(decimals_place),
                           });
                         }
-                      } } />
+                      }} />
                       <DownOutlined onClick={() => {
                         if (!currentShowOrder.stop_loss) {
                           setCurrentOrder({
@@ -499,7 +499,7 @@ export default class SymbolEditor extends BaseReact {
                             stop_loss: +(currentShowOrder.stop_loss - price_step).toFixed(decimals_place),
                           });
                         }
-                      }}/>
+                      }} />
                     </section>
                   </FormItem>
                 </Col>
@@ -509,7 +509,7 @@ export default class SymbolEditor extends BaseReact {
                       setCurrentOrder({
                         take_profit: +evt.target.value,
                       });
-                    }}/>
+                    }} />
                     <section className={'input-number-up-down'}>
                       <UpOutlined onClick={() => {
                         if (!currentShowOrder.take_profit) {
@@ -521,7 +521,7 @@ export default class SymbolEditor extends BaseReact {
                             take_profit: +(currentShowOrder.take_profit + price_step).toFixed(decimals_place),
                           });
                         }
-                      } } />
+                      }} />
                       <DownOutlined onClick={() => {
                         if (!currentShowOrder.take_profit) {
                           setCurrentOrder({
@@ -532,7 +532,7 @@ export default class SymbolEditor extends BaseReact {
                             take_profit: +(currentShowOrder.take_profit - price_step).toFixed(decimals_place),
                           });
                         }
-                      }}/>
+                      }} />
                     </section>
                   </FormItem>
                 </Col>

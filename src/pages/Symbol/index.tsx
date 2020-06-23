@@ -698,7 +698,8 @@ export default class extends BaseReact {
         {
           title: "品种",
           dataIndex: "symbol_name",
-          width: 80,
+          width: 100,
+          fixed: "left",
         },
         {
           title: "品种代码",
@@ -708,21 +709,21 @@ export default class extends BaseReact {
         {
           title: "开仓价",
           dataIndex: "open_price",
-          width: 80,
+          width: 150,
         },
         {
           title: "平仓价",
           dataIndex: "close_price",
-          width: 80,
+          width: 150,
         },
         {
           title: "交易手数",
           dataIndex: "lots",
-          width: 80,
+          width: 100,
         },
         {
           title: "止盈/止损",
-          width: 80,
+          width: 100,
           render: (text, record) => {
             return (
               <div>
@@ -735,27 +736,27 @@ export default class extends BaseReact {
         {
           title: "订单号",
           dataIndex: "order_number",
-          width: 80,
+          width: 220,
         },
         {
           title: "库存费",
           dataIndex: "swaps",
-          width: 80,
+          width: 150,
         },
         {
           title: "税费",
           dataIndex: "taxes",
-          width: 80,
+          width: 150,
         },
         {
           title: "手续费",
           dataIndex: "fee",
-          width: 80,
+          width: 150,
         },
         {
           title: "盈亏",
           dataIndex: "profit",
-          width: 80,
+          width: 150,
           render: (text, record) => (
             <span
               className={`
@@ -769,15 +770,15 @@ export default class extends BaseReact {
         {
           title: "开仓时间",
           dataIndex: "create_time",
-          width: 80,
+          width: 220,
           render: (text, record) =>
             moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
         },
         {
           title: "平仓时间",
           dataIndex: "close_time",
-          width: 120,
-          fixed: "right",
+          width: 220,
+          // fixed: "right",
           render: (text, record) =>
             moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
         }
@@ -865,7 +866,9 @@ export default class extends BaseReact {
       {
         title: "品种",
         dataIndex: "symbol_name",
-        width: 80,
+        width: 100,
+        fixed: "left",
+        ellipsis: true,
       },
       {
         title: "品种代码",
@@ -875,17 +878,21 @@ export default class extends BaseReact {
       {
         title: "开仓价",
         dataIndex: "open_price",
+        width: 150,
       },
       {
         title: "交易手数",
         dataIndex: "lots",
+        width: 100,
       },
       {
         title: "订单号",
         dataIndex: "order_number",
+        width: 220,
       },
       {
         title: "止盈/止损",
+        width: 150,
         render: (text, record) => {
           return (
             <div>
@@ -898,18 +905,22 @@ export default class extends BaseReact {
       {
         title: "库存费",
         dataIndex: "swaps",
+        width: 100,
       },
       {
         title: "税费",
         dataIndex: "taxes",
+        width: 100,
       },
       {
         title: "手续费",
         dataIndex: "fee",
+        width: 150,
       },
       {
         title: "盈亏",
         dataIndex: "profit",
+        width: 150,
         render: (text, record) => (
           <span
             className={`
@@ -923,6 +934,7 @@ export default class extends BaseReact {
       {
         title: "开仓时间",
         dataIndex: "create_time",
+        width: 220,
         render: (text, record) =>
           moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
       }

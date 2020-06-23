@@ -199,7 +199,7 @@ ISettingsModalState
 
   formRef = React.createRef<HTMLInputElement>();
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   closeModal = () => {
     this.setState({
