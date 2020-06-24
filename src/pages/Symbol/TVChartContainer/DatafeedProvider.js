@@ -130,9 +130,9 @@ export default class DatafeedProvider {
     onHistoryCallback(bars, { noData: !bars.length });
 
     this.connectWebsocket();
-    setInterval(function () {
-      this.connectWebsocket();
-    }, 3000);
+    // setInterval(function () {
+    //   this.connectWebsocket();
+    // }, 3000);
 
   };
 
