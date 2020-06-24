@@ -194,9 +194,10 @@ export default class SymbolEditor extends BaseReact {
     } = this.props;
 
     const lots = currentOrder?.lots || currentSymbol?.symbol_display?.min_lots;
+    const decimals_place = currentSymbol?.symbol_display?.decimals_place;
 
     const payload: any = {
-      trading_volume: lots * currentSymbol?.symbol_display?.contract_size,
+      trading_volume: (Number(lots) * Number(currentSymbol?.symbol_display?.contract_size)).toFixed(decimals_place),
       lots,
       symbol: currentSymbol.id,
       take_profit: currentOrder?.take_profit,
@@ -435,11 +436,11 @@ export default class SymbolEditor extends BaseReact {
                     label={"数量"}>
                     <Input
                       value={
-                        currentShowOrder?.lots.toFixed(2) || undefined}
+                        currentShowOrder?.lots || undefined}
                       step={currentSymbol?.symbol_display?.lots_step}
                       min={currentSymbol?.symbol_display?.min_lots} type={"number"} onChange={evt => {
                         setCurrentOrder({
-                          lots: +Number(evt.target.value).toFixed(2),
+                          lots: +evt.target.value,
                         });
                       }} />
                     <section className={'input-number-up-down'}>
@@ -450,18 +451,21 @@ export default class SymbolEditor extends BaseReact {
                           });
                         } else {
                           setCurrentOrder({
-                            lots: currentShowOrder.lots + currentSymbol?.symbol_display?.lots_step,
+                            lots: (Number(currentShowOrder.lots) +
+                              Number(currentSymbol?.symbol_display?.lots_step)).toFixed(decimals_place),
                           });
                         }
                       }} />
                       <DownOutlined onClick={() => {
                         if (!currentShowOrder.lots
-                          || (currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step < currentSymbol?.symbol_display?.min_lots)
+                          || (currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step <
+                            currentSymbol?.symbol_display?.min_lots)
                         ) {
                           return;
                         } else {
                           setCurrentOrder({
-                            lots: currentShowOrder.lots - currentSymbol?.symbol_display?.lots_step,
+                            lots: (Number(currentShowOrder.lots) -
+                              Number(currentSymbol?.symbol_display?.lots_step)).toFixed(decimals_place),
                           });
                         }
                       }} />

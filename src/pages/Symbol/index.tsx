@@ -85,6 +85,7 @@ export default class extends BaseReact {
       "in_transaction"
     );
     this.connnetWebsocket();
+    setInterval(this.connnetWebsocket, 3000);
   }
 
   componentWillUnmount() {
@@ -854,7 +855,7 @@ export default class extends BaseReact {
             columns={columns}
             scroll={{
               x: columnsWidth,
-              y: 260,
+              y: 'calc(24vh - 56px)',
             }}
             dataSource={tradeHistoryList}
           ></Table>
@@ -997,7 +998,7 @@ export default class extends BaseReact {
         </div>
         <Table
           rowClassName={"symbol-order-table-row"}
-          scroll={{ y: 260, }}
+          scroll={{ y: 'calc(30vh - 56px)', }}
           onRow={record => {
             return {
               onDoubleClick: async evt => {

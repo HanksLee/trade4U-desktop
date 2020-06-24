@@ -64,7 +64,7 @@ export default class Market extends BaseReact<any, MarketState> {
       const containerWidth = this.container.current.offsetWidth;
       const width = Math.floor(
         (containerWidth - 20) /
-          symbolTypeMap[this.state.currentSymbolTypeCode].length
+        symbolTypeMap[this.state.currentSymbolTypeCode].length
       );
       const height = width;
       this.setState({
@@ -109,7 +109,7 @@ export default class Market extends BaseReact<any, MarketState> {
             <RankTable symbolTypeCode={currentSymbolTypeCode} />
           </>
         )}
-        {currentSymbolTypeCode === "MT" && (
+        {currentSymbolTypeCode && currentSymbolTypeCode !== "HK" && (
           <>
             <ForexTable symbolTypeCode={currentSymbolTypeCode} />
           </>

@@ -140,10 +140,10 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
       <div className='login'>
         <div className='form-wrapper'>
           <img src={logo} alt="logo" />
-          <h1>MetaTrader 4</h1>
+          <h1>Trade4U</h1>
           <div className='form'>
             {
-              isLogin ? this.renderBrokerChoosePanel() :  this.renderLoginPanel()
+              isLogin ? this.renderBrokerChoosePanel() : this.renderLoginPanel()
             }
           </div>
         </div>

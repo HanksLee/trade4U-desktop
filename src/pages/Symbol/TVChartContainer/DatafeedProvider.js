@@ -61,6 +61,38 @@ export default class DatafeedProvider {
     }));
   };
 
+  connectWebsocket = () => {
+    if (this.wsConnect) this.wsConnect.close();
+    this.wsConnect = ws(
+      `symbol/${symbolInfo.ticker}/trend/${resolutionMap[resolution]}`
+    );
+    this.wsConnect.onmessage = event => {
+      const message = event.data;
+      const data = JSON.parse(message).data;
+      const formatData = {
+        time: data.timestamp * 1000, //TradingView requires bar time in ms
+        low: data.low,
+        high: data.high,
+        open: data.open,
+        close: data.sell,
+        volume: data.volume
+      };
+
+      this.subscriberList = this.subscriberList || [];
+      for (const sub of this.subscriberList) {
+        if (
+          sub.symbolName !== this.lastSymbolName ||
+          sub.resolution !== this.lastResolution
+        ) {
+          this.kChartData = [];
+        } else {
+          if (typeof sub.callback !== "function") return;
+          sub.callback(formatData);
+        }
+      }
+    };
+  }
+
   getBars = async function (
     symbolInfo,
     resolution,
@@ -97,35 +129,11 @@ export default class DatafeedProvider {
     this.kChartData = bars;
     onHistoryCallback(bars, { noData: !bars.length });
 
-    if (this.wsConnect) this.wsConnect.close();
-    this.wsConnect = ws(
-      `symbol/${symbolInfo.ticker}/trend/${resolutionMap[resolution]}`
-    );
-    this.wsConnect.onmessage = event => {
-      const message = event.data;
-      const data = JSON.parse(message).data;
-      const formatData = {
-        time: data.timestamp * 1000, //TradingView requires bar time in ms
-        low: data.low,
-        high: data.high,
-        open: data.open,
-        close: data.sell,
-        volume: data.volume
-      };
+    this.connectWebsocket();
+    setInterval(function () {
+      this.connectWebsocket();
+    }, 3000);
 
-      this.subscriberList = this.subscriberList || [];
-      for (const sub of this.subscriberList) {
-        if (
-          sub.symbolName !== this.lastSymbolName ||
-          sub.resolution !== this.lastResolution
-        ) {
-          this.kChartData = [];
-        } else {
-          if (typeof sub.callback !== "function") return;
-          sub.callback(formatData);
-        }
-      }
-    };
   };
 
   subscribeBars = (

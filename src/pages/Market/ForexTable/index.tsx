@@ -28,6 +28,7 @@ interface ForexTableProps {
 
 interface ForexTableState {
   forexList: Forex[];
+  symbolTypeCode: string;
 }
 
 @withRouter
@@ -39,9 +40,11 @@ ForexTableState
 > {
   constructor(props) {
     super(props);
+    const { symbolTypeCode, } = this.props;
 
     this.state = {
       forexList: [],
+      symbolTypeCode,
     };
   }
 
@@ -49,8 +52,18 @@ ForexTableState
     this.getSymbolTypeForex();
   }
 
+
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({
+      symbolTypeCode: nextProps.symbolTypeCode,
+    }, () => {
+      this.getSymbolTypeForex();
+    });
+  }
+
+
   getSymbolTypeForex = async () => {
-    const { symbolTypeCode, } = this.props;
+    const { symbolTypeCode, } = this.state;
     const res = await this.$api.market.getSymbolTypeRank(symbolTypeCode, {
       params: {
         rank_type: this.$store.market.sorter,
