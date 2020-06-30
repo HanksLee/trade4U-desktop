@@ -129,11 +129,11 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   connectWebsocket = () => {
     this.wsConnect = ws('account/status');
-    const that = this
+    const that = this;
 
     setInterval(function () {
       that.wsConnect.send(`{"type":"ping"}`);
-    }, 3000)
+    }, 3000);
 
 
     this.wsConnect.onmessage = evt => {
@@ -353,7 +353,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                   <div
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                      }`}
+                    }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金

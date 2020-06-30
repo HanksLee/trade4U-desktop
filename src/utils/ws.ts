@@ -24,7 +24,7 @@ export default function ws(path) {
 
   return new WebSocket(
     `${wsProtocol}://stock-ws.${
-    wsMap[process.env.MODE]
+      wsMap[process.env.MODE]
     }/ws/trader/${path}?token=${token}`
   );
 }
