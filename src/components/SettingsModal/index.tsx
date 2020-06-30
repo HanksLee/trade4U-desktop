@@ -37,6 +37,7 @@ interface ISettingsModalState {
   modelTitle: string;
   smsKey: any;
   verifyPass: boolean;
+  inputDisabled: boolean;
 }
 
 const country = [
@@ -57,9 +58,9 @@ const layout = {
 // @ts-ignore
 
 export default class EditSettingsModal extends BaseReact<
-ISettingsModalProps,
-ISettingsModalState
-> {
+  ISettingsModalProps,
+  ISettingsModalState
+  > {
   state = {
     userInfo: [],
     id_card_front: "",
@@ -71,6 +72,7 @@ ISettingsModalState
     modelTitle: "设定",
     smsKey: null,
     verifyPass: false,
+    inputDisabled: false,
   };
 
   formRef = React.createRef<HTMLInputElement>();
@@ -105,6 +107,10 @@ ISettingsModalState
         getPhone.substring(0, 3) +
         hidePhone +
         getPhone.substring(phoneLength - 3, phoneLength);
+
+      if (res.data.inspect_status === 2 || res.data.inspect_status === 1) {
+        this.setState({ inputDisabled: true })
+      }
 
       this.setState(
         {
@@ -298,20 +304,20 @@ ISettingsModalState
         )}
         {(userInfo["inspect_status"] === 2 ||
           userInfo["inspect_status"] === 3) && (
-          <div className="info-status">
-            <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
-              {"信息审核中"}
-            </p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={successIcon} alt="success-icon" />
+              <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
+                {"信息审核中"}
+              </p>
+            </div>
+          )}
         {(userInfo["inspect_status"] === 0 ||
           userInfo["inspect_status"] === 1) && (
-          <div className="info-status">
-            <img src={unfinishedIcon} alt="unfinished-icon" />
-            <p className="ant-upload-text">{"信息待审核"}</p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={unfinishedIcon} alt="unfinished-icon" />
+              <p className="ant-upload-text">{"信息待审核"}</p>
+            </div>
+          )}
         {userInfo["inspect_status"] === 2 && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
@@ -333,15 +339,15 @@ ISettingsModalState
   };
 
   renderAccount = () => {
-    const { id_card_front, id_card_back, userInfo, } = this.state;
+    const { id_card_front, id_card_back, userInfo, inputDisabled } = this.state;
 
     return (
       <>
         {this.renderStatus()}
         {!utils.isEmpty(userInfo["reason"]) &&
           userInfo["inspect_status"] === 3 && (
-          <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
-        )}
+            <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
+          )}
         <Form
           name="basic"
           {...layout}
@@ -350,11 +356,11 @@ ISettingsModalState
         // onFinishFailed={onFinishFailed}
         >
           <Form.Item label="名字" name="first_name">
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item label="姓氏" name="last_name">
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item name="birth" label="出生日期">
@@ -362,6 +368,7 @@ ISettingsModalState
               placeholder="请选择出生日期"
               style={{ width: "100%", }}
               disabledDate={this.disabledDate}
+              disabled={inputDisabled}
             />
           </Form.Item>
 
@@ -378,7 +385,7 @@ ISettingsModalState
               }
             ]}
           >
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           {/* <div className="id-card-title">{"身分证照片"}</div> */}
@@ -388,6 +395,7 @@ ISettingsModalState
               listType="picture-card"
               showUploadList={false}
               beforeUpload={this.beforeIdCardFrontUpload}
+              disabled={inputDisabled}
             >
               {id_card_front ? (
                 <div className="upload-image-preview">
@@ -398,19 +406,20 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证正面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证正面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
             <Upload
               accept="image/*"
               listType="picture-card"
               showUploadList={false}
               beforeUpload={this.beforeIdCardBackUpload}
+              disabled={inputDisabled}
             >
               {id_card_back ? (
                 <div className="upload-image-preview">
@@ -421,13 +430,13 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证反面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证反面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
           </div>
 
@@ -444,23 +453,23 @@ ISettingsModalState
               }
             ]}
           >
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item label="国籍" name="nationality">
-            <Cascader options={country} placeholder="请选择国籍" />
+            <Cascader options={country} placeholder="请选择国籍" disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item label="居住国" name="country_of_residence">
-            <Cascader options={country} placeholder="请选择居住国" />
+            <Cascader options={country} placeholder="请选择居住国" disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item label="街道" name="street">
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item label="城市" name="city">
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item
@@ -476,7 +485,7 @@ ISettingsModalState
               }
             ]}
           >
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           <Form.Item
@@ -490,15 +499,15 @@ ISettingsModalState
               }
             ]}
           >
-            <Input />
+            <Input disabled={inputDisabled} />
           </Form.Item>
 
           {userInfo["inspect_status"] !== 2 && (
             <Form.Item className="submit-container">
               {(userInfo["inspect_status"] === 0 ||
                 userInfo["inspect_status"] === 3) && (
-                <Button htmlType="submit">{"送出"}</Button>
-              )}
+                  <Button htmlType="submit">{"送出"}</Button>
+                )}
               {userInfo["inspect_status"] === 1 && (
                 <Button htmlType="submit" style={{ cursor: "default", }}>
                   {"审核中"}
@@ -574,51 +583,51 @@ ISettingsModalState
               </div>
             </Form>
           ) : (
-            <Form onFinish={this.handleResetPwdSubmit}>
-              <div className="pwd-container">
-                <div>
-                  <Form.Item
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "新密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "新密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="请输入新的密码" />
-                  </Form.Item>
-                </div>
-                <div>
-                  <Form.Item
-                    name="check-password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "确认密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "确认密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="再次确认新的密码" />
-                  </Form.Item>
-                </div>
+              <Form onFinish={this.handleResetPwdSubmit}>
+                <div className="pwd-container">
+                  <div>
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "新密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "新密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="请输入新的密码" />
+                    </Form.Item>
+                  </div>
+                  <div>
+                    <Form.Item
+                      name="check-password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "确认密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "确认密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="再次确认新的密码" />
+                    </Form.Item>
+                  </div>
 
-                <Form.Item>
-                  <Button htmlType="submit" style={{ cursor: "default", }}>
-                    {"确认"}
-                  </Button>
-                </Form.Item>
-              </div>
-            </Form>
-          ))}
+                  <Form.Item>
+                    <Button htmlType="submit" style={{ cursor: "default", }}>
+                      {"确认"}
+                    </Button>
+                  </Form.Item>
+                </div>
+              </Form>
+            ))}
       </>
     );
   };
@@ -650,8 +659,8 @@ ISettingsModalState
                   {currentTab !== "account" ? (
                     <img src={accountIcon} alt="account-icon" />
                   ) : (
-                    <img src={accountActiveIcon} alt="account-icon" />
-                  )}
+                      <img src={accountActiveIcon} alt="account-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "account" ? "" : "active"}>
@@ -668,8 +677,8 @@ ISettingsModalState
                   {currentTab !== "settings" ? (
                     <img src={settingsIcon} alt="settings-icon" />
                   ) : (
-                    <img src={settingsActiveIcon} alt="settings-icon" />
-                  )}
+                      <img src={settingsActiveIcon} alt="settings-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "settings" ? "" : "active"}>

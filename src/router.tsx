@@ -11,9 +11,9 @@ const routes: any[] = [
   {
     component: loadable(() => import(/* webpackChunkName: "captial" */ './pages/Captial')),
   },
-  {
-    component: loadable(() => import(/* webpackChunkName: "market" */ './pages/Market')),
-  }
+  // {
+  //   component: loadable(() => import(/* webpackChunkName: "market" */ './pages/Market')),
+  // }
 ];
 
 export default function AppRouter(props) {

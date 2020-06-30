@@ -11,7 +11,7 @@ export default class TransactionPanel extends BaseReact {
     totalData: {},
     transactionList: [],
   }
-  
+
   componentDidMount() {
     this.getTransactionList();
   }
@@ -43,20 +43,20 @@ export default class TransactionPanel extends BaseReact {
         dataIndex: 'status',
         key: 'status',
         align: 'center',
-        render: (text) => {
-          switch (text) {
-            case 'recharge_success':
-              return '充值成功';
-            case 'withdraw_pending':
-              return '财务审核';
-            case 'withdraw_failed':
-              return '出金驳回';
-            case 'withdraw_success':
-              return '提款成功';
-            default:
-              return '其他';
-          }
-        },
+        // render: (text) => {
+        //   switch (text) {
+        //     case 'recharge_success':
+        //       return '充值成功';
+        //     case 'withdraw_pending':
+        //       return '财务审核';
+        //     case 'withdraw_failed':
+        //       return '出金驳回';
+        //     case 'withdraw_success':
+        //       return '提款成功';
+        //     default:
+        //       return '其他';
+        //   }
+        // },
       },
       {
         title: '金额',
@@ -86,7 +86,7 @@ export default class TransactionPanel extends BaseReact {
       create_time_end: value && value[1] ? value[1].unix() : undefined,
     });
   }
-  
+
   render() {
     const { totalData, transactionList, } = this.state;
     return (

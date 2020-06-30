@@ -42,12 +42,12 @@ export const PAGE_ROUTES = [
     icon: symbolSVG,
     activeIcon: symbolActiveSVG,
   },
-  {
-    title: '行情',
-    path: '/dashboard/market',
-    icon: marketSVG,
-    activeIcon: marketActiveSVG,
-  },
+  // {
+  //   title: '行情',
+  //   path: '/dashboard/market',
+  //   icon: marketSVG,
+  //   activeIcon: marketActiveSVG,
+  // },
   {
     title: '资金',
     path: '/dashboard/captial',

@@ -47,6 +47,8 @@ export default class extends BaseReact {
   private $symbolEditor = null;
   private selfSymbolWSConnect = null;
   private orderWSConnect = null;
+  private selfSymbolInterval = null;
+  private orderInterval = null;
   timer: any = 0;
   delay = 200;
   prevent = false;
@@ -84,8 +86,8 @@ export default class extends BaseReact {
       },
       "in_transaction"
     );
-    this.connnetWebsocket();
-    // setInterval(this.connnetWebsocket, 3000);
+    this.connnetSelfSymbolWebsocket();
+    this.connectOrderWebsocket();
   }
 
   componentWillUnmount() {
@@ -112,141 +114,176 @@ export default class extends BaseReact {
     }
   };
 
-  connnetWebsocket = () => {
+  connnetSelfSymbolWebsocket = () => {
     // 建立自选个股 ws
+    const that = this;
 
     this.selfSymbolWSConnect = ws("self-select-symbol");
+
+    setInterval(function () {
+      that.selfSymbolWSConnect.send(`{"type":"ping"}`);
+    }, 3000)
+
     this.selfSymbolWSConnect.onmessage = event => {
       const message = event.data;
       const data = JSON.parse(message).data;
-      const {
-        selfSelectSymbolList,
-        currentSymbol,
-        setCurrentSymbol,
-      } = this.props.market;
-      const newSelfSelectSymbolList = selfSelectSymbolList.map(
-        (item, index) => {
-          const newItem = cloneDeep(item);
-          if (
-            newItem?.product_details?.symbol == data.symbol &&
-            Number(newItem?.product_details?.timestamp) < Number(data.timestamp)
-          ) {
-            const payload = {
-              ...data,
-              buy_change:
-                data.buy - newItem.product_details.buy > 0
-                  ? "up"
-                  : data.buy - newItem.product_details.buy == 0
-                    ? "balance"
-                    : "down",
-              sell_change:
-                data.sell - newItem.product_details.sell > 0
-                  ? "up"
-                  : data.sell - newItem.product_details.sell == 0
-                    ? "balance"
-                    : "down",
-              sell_open_change:
-                data.sell - data.close > 0
-                  ? "up"
-                  : data.sell - newItem.close == 0
-                    ? "balance"
-                    : "down",
-              new_price_change:
-                data.new_price - newItem.product_details.new_price > 0
-                  ? "up"
-                  : data.new_price - newItem.product_details.new_price == 0
-                    ? "balance"
-                    : "down",
-              change_change:
-                data.change - newItem.product_details.change > 0
-                  ? "up"
-                  : data.change - newItem.product_details.change == 0
-                    ? "balance"
-                    : "down",
-              chg_change:
-                data.change - newItem.product_details.change > 0
-                  ? "up"
-                  : data.change - newItem.product_details.change == 0
-                    ? "balance"
-                    : "down",
-            };
+      if (message.type === 'pong') {
+        clearInterval(this.selfSymbolInterval);
 
-            // 同步到 currentSymbol
-
+        // 如果一定时间没有调用clearInterval，则执行重连
+        this.selfSymbolInterval = setInterval(function () {
+          that.connnetSelfSymbolWebsocket();
+        }, 1000);
+      }
+      if (message.type && message.type !== 'pong') { // 消息推送
+        // code ...      
+        const {
+          selfSelectSymbolList,
+          currentSymbol,
+          setCurrentSymbol,
+        } = this.props.market;
+        const newSelfSelectSymbolList = selfSelectSymbolList.map(
+          (item, index) => {
+            const newItem = cloneDeep(item);
             if (
-              currentSymbol?.product_details?.symbol == data.symbol &&
-              Number(currentSymbol?.product_details?.timestamp) <
-              Number(data.timestamp)
+              newItem?.product_details?.symbol == data.symbol &&
+              Number(newItem?.product_details?.timestamp) < Number(data.timestamp)
             ) {
-              const symbol = {
-                ...currentSymbol,
-                product_details: {
-                  ...currentSymbol.product_details,
-                  ...payload,
-                },
+              const payload = {
+                ...data,
+                buy_change:
+                  data.buy - newItem.product_details.buy > 0
+                    ? "up"
+                    : data.buy - newItem.product_details.buy == 0
+                      ? "balance"
+                      : "down",
+                sell_change:
+                  data.sell - newItem.product_details.sell > 0
+                    ? "up"
+                    : data.sell - newItem.product_details.sell == 0
+                      ? "balance"
+                      : "down",
+                sell_open_change:
+                  data.sell - data.close > 0
+                    ? "up"
+                    : data.sell - newItem.close == 0
+                      ? "balance"
+                      : "down",
+                new_price_change:
+                  data.new_price - newItem.product_details.new_price > 0
+                    ? "up"
+                    : data.new_price - newItem.product_details.new_price == 0
+                      ? "balance"
+                      : "down",
+                change_change:
+                  data.change - newItem.product_details.change > 0
+                    ? "up"
+                    : data.change - newItem.product_details.change == 0
+                      ? "balance"
+                      : "down",
+                chg_change:
+                  data.change - newItem.product_details.change > 0
+                    ? "up"
+                    : data.change - newItem.product_details.change == 0
+                      ? "balance"
+                      : "down",
               };
 
-              setCurrentSymbol(symbol);
+              // 同步到 currentSymbol
+
+              if (
+                currentSymbol?.product_details?.symbol == data.symbol &&
+                Number(currentSymbol?.product_details?.timestamp) <
+                Number(data.timestamp)
+              ) {
+                const symbol = {
+                  ...currentSymbol,
+                  product_details: {
+                    ...currentSymbol.product_details,
+                    ...payload,
+                  },
+                };
+
+                setCurrentSymbol(symbol);
+              }
+
+              newItem.product_details = {
+                ...newItem.product_details,
+                ...payload,
+              };
             }
-
-            newItem.product_details = {
-              ...newItem.product_details,
-              ...payload,
-            };
+            return newItem;
           }
+        );
+        this.props.market.setSelfSelectSymbolList(newSelfSelectSymbolList);
+      }
 
-          return newItem;
-        }
-      );
-      this.props.market.setSelfSelectSymbolList(newSelfSelectSymbolList);
     };
+  };
 
+  connectOrderWebsocket = () => {
     this.orderWSConnect = ws("order");
     const { setTradeList, } = this.props.market;
+    const that = this
+
+    setInterval(function () {
+      that.orderWSConnect.send(`{"type":"ping"}`);
+    }, 3000)
 
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
       // console.log('tradeList', this.props.market?.tradeList);
+      // if (msg.type === 'pong') {
+      //   clearInterval(this.orderInterval);
 
-      if (msg.type == "meta_fund") {
-        this.updateTradeInfo({
-          balance: msg.data.balance,
-          margin: msg.data.margin,
-        });
-      } else {
-        let list = cloneDeep(this.props.market?.tradeList);
-        let futureList = cloneDeep(this.props.market?.futureTradeList);
-
-        if (msg.type == "order_open") {
-          list = [msg.data, ...list];
-        } else if (msg.type == "order_profit") {
-          list = list.map(item => {
-            if (
-              item.order_number == msg.data.order_number &&
-              msg.data.timestamp > item.timestamp
-            ) {
-              item = msg.data;
-            }
-            return item;
+      //   // 如果一定时间没有调用clearInterval，则执行重连
+      //   this.orderInterval = setInterval(function () {
+      //     that.connectOrderWebsocket();
+      //   }, 1000);
+      // }
+      if (msg.type && msg.type !== 'pong') { // 消息推送
+        // code ...
+        if (msg.type == "meta_fund") {
+          this.updateTradeInfo({
+            balance: msg.data.balance,
+            margin: msg.data.margin,
           });
-        } else if (msg.type == "order_close") {
-          list = list.filter(
-            item => item.order_number != msg.data.order_number
-          );
-        } else if (msg.type == "pending_order_close") {
-          futureList = futureList.filter(
-            item => item.order_number != msg.data.order_number
-          );
+        } else {
+          let list = cloneDeep(this.props.market?.tradeList);
+          let futureList = cloneDeep(this.props.market?.futureTradeList);
+
+          if (msg.type == "order_open") {
+            list = [msg.data, ...list];
+          } else if (msg.type == "order_profit") {
+            list = list.map(item => {
+              if (
+                item.order_number == msg.data.order_number &&
+                msg.data.timestamp > item.timestamp
+              ) {
+                item = msg.data;
+              }
+              return item;
+            });
+          } else if (msg.type == "order_close") {
+            list = list.filter(
+              item => item.order_number != msg.data.order_number
+            );
+          } else if (msg.type == "pending_order_close") {
+            futureList = futureList.filter(
+              item => item.order_number != msg.data.order_number
+            );
+          }
+          setTradeList(list);
+          setTradeList(futureList, "future");
+          this.updateTradeInfo({
+            balance: this.props.market.tradeInfo.balance,
+            margin: this.props.market.tradeInfo.margin,
+          });
         }
-        setTradeList(list);
-        setTradeList(futureList, "future");
-        this.updateTradeInfo({
-          balance: this.props.market.tradeInfo.balance,
-          margin: this.props.market.tradeInfo.margin,
-        });
       }
+
     };
-  };
+  }
 
   getTradeList = async (config, type) => {
     this.setState(
@@ -354,7 +391,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -523,16 +560,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -542,16 +579,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
                               ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -562,7 +599,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -708,6 +745,27 @@ export default class extends BaseReact {
           width: 100,
         },
         {
+          title: "方向",
+          dataIndex: "action",
+          width: 100,
+          render: (text) => {
+            switch (text) {
+              case '0':
+                return '做多';
+              case '1':
+                return '做空';
+              case '2':
+                return '限价买';
+              case '3':
+                return '限价卖';
+              case '4':
+                return '突破买';
+              case '5':
+                return '突破卖';
+            }
+          },
+        },
+        {
           title: "开仓价",
           dataIndex: "open_price",
           width: 150,
@@ -733,11 +791,6 @@ export default class extends BaseReact {
               </div>
             );
           },
-        },
-        {
-          title: "订单号",
-          dataIndex: "order_number",
-          width: 220,
         },
         {
           title: "库存费",
@@ -782,7 +835,12 @@ export default class extends BaseReact {
           // fixed: "right",
           render: (text, record) =>
             moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
-        }
+        },
+        {
+          title: "订单号",
+          dataIndex: "order_number",
+          width: 220,
+        },
       ];
 
       const orderInfo = [
@@ -855,7 +913,7 @@ export default class extends BaseReact {
             columns={columns}
             scroll={{
               x: columnsWidth,
-              y: 'calc(24vh - 56px)',
+              y: 'calc(22vh - 56px)',
             }}
             dataSource={tradeHistoryList}
           ></Table>
@@ -877,6 +935,27 @@ export default class extends BaseReact {
         width: 100,
       },
       {
+        title: "方向",
+        dataIndex: "action",
+        width: 100,
+        render: (text) => {
+          switch (text) {
+            case '0':
+              return '做多';
+            case '1':
+              return '做空';
+            case '2':
+              return '限价买';
+            case '3':
+              return '限价卖';
+            case '4':
+              return '突破买';
+            case '5':
+              return '突破卖';
+          }
+        },
+      },
+      {
         title: "开仓价",
         dataIndex: "open_price",
         width: 150,
@@ -885,11 +964,6 @@ export default class extends BaseReact {
         title: "交易手数",
         dataIndex: "lots",
         width: 100,
-      },
-      {
-        title: "订单号",
-        dataIndex: "order_number",
-        width: 220,
       },
       {
         title: "止盈/止损",
@@ -938,7 +1012,12 @@ export default class extends BaseReact {
         width: 220,
         render: (text, record) =>
           moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
-      }
+      },
+      {
+        title: "订单号",
+        dataIndex: "order_number",
+        width: 220,
+      },
     ];
     const {
       market: { tradeList, futureTradeList, tradeInfo, setCurrentOrder, },
@@ -998,7 +1077,7 @@ export default class extends BaseReact {
         </div>
         <Table
           rowClassName={"symbol-order-table-row"}
-          scroll={{ y: 'calc(30vh - 56px)', }}
+          scroll={{ y: 'calc(28vh - 56px)', }}
           onRow={record => {
             return {
               onDoubleClick: async evt => {
@@ -1094,10 +1173,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1106,16 +1185,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1123,10 +1202,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1175,7 +1254,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={

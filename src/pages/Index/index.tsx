@@ -14,6 +14,7 @@ import GuideModal from 'components/GuideModal';
 import logoSVG from "assets/img/logo.svg";
 import messageSVG from "assets/img/message.svg";
 import settingsSVG from "assets/img/settings.svg";
+import guideSVG from "assets/img/guide-icon.svg";
 import serviceSVG from "assets/img/service.svg";
 import logoutSVG from "assets/img/logout.svg";
 import "./index.scss";
@@ -77,6 +78,7 @@ function exactFromSidebarPath(pathlist) {
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
   wsConnect = null;
+  interval = null;
   // 保存折叠前展开的subMenu
   preOpenKeys = [];
   state = {
@@ -123,18 +125,33 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     this.props.history.push("/dashboard/symbol");
     this.props.common.getUserInfo();
     this.connectWebsocket();
-    // setInterval(this.connectWebsocket, 3000);
   }
 
   connectWebsocket = () => {
     this.wsConnect = ws('account/status');
+    const that = this
+
+    setInterval(function () {
+      that.wsConnect.send(`{"type":"ping"}`);
+    }, 3000)
 
 
     this.wsConnect.onmessage = evt => {
       const message = evt.data;
       const data = JSON.parse(message).data;
+      if (message.type === 'pong') {
+        clearInterval(this.interval);
 
-      this.props.common.setUserInfo(data);
+        // 如果一定时间没有调用clearInterval，则执行重连
+        this.interval = setInterval(function () {
+          this.connnetWebsocket();
+        }, 1000);
+      }
+      if (message.type && message.type !== 'pong') { // 消息推送
+        // code ...    
+
+        this.props.common.setUserInfo(data);
+      }
     };
   }
 
@@ -292,7 +309,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             <span onClick={() => {
               this.props.common.toggleGuideModalVisible();
             }}>
-              <img src={settingsSVG} alt="" />
+              <img src={guideSVG} alt="" />
               指引
             </span>
             {guideModalVisible && (
@@ -336,7 +353,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                   <div
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
