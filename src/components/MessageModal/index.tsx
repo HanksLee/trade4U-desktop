@@ -26,9 +26,9 @@ interface IMessageModalState {
 // @ts-ignore
 
 export default class EditMessageModal extends BaseReact<
-  IMessageModalProps,
-  IMessageModalState
-  > {
+IMessageModalProps,
+IMessageModalState
+> {
   state = {
     messageList: [],
     messageType: "notify",
@@ -151,7 +151,7 @@ export default class EditMessageModal extends BaseReact<
                             // item.content.length > 100
                             //   ? `${item.content.substring(0, 100)}...`
                             //   : item.content,
-                            item.content
+                            item.content,
                         }}
                         className="content"
                       ></p>
@@ -174,23 +174,23 @@ export default class EditMessageModal extends BaseReact<
                   );
                 })
               ) : (
-                  <div className="detail-content">
-                    <strong>{detailContent.title}</strong>
-                    <p>
-                      <span>
-                        {moment(detailContent.create_time * 1000).format(
-                          "YYYY.MM.DD HH:mm:ss"
-                        )}
-                      </span>
-                    </p>
-                    <p
-                      dangerouslySetInnerHTML={{
-                        __html: detailContent.content,
-                      }}
-                      className="content"
-                    ></p>
-                  </div>
-                )}
+                <div className="detail-content">
+                  <strong>{detailContent.title}</strong>
+                  <p>
+                    <span>
+                      {moment(detailContent.create_time * 1000).format(
+                        "YYYY.MM.DD HH:mm:ss"
+                      )}
+                    </span>
+                  </p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: detailContent.content,
+                    }}
+                    className="content"
+                  ></p>
+                </div>
+              )}
             </ul>
             {!detailContent && (
               <Pagination

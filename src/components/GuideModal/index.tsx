@@ -218,8 +218,8 @@ ISettingsModalState
       status == "finish" ? (
         <div className={"progress-circle"}></div>
       ) : (
-          <PlusCircleFilled />
-        );
+        <PlusCircleFilled />
+      );
 
     return (
       <Steps

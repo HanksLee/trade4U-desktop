@@ -78,7 +78,7 @@ export default class SymbolEditor extends BaseReact {
                 open_price: currentShowOrder.open_price,
                 take_profit: currentShowOrder.take_profit,
                 stop_loss: currentShowOrder.stop_loss,
-                lots: currentShowOrder.lots
+                lots: currentShowOrder.lots,
               };
               const res = await this.$api.market.updateOrder(currentShowOrder?.order_number, payload);
 
