@@ -63,8 +63,8 @@ module.exports = {
     hot: true,
     proxy: {
       '/api/moon': {
-        target: 'http://api.cangshu360.com',
-        // target: 'http://api.trading8a.com',
+        // target: 'http://api.cangshu360.com',
+        target: 'http://api.trading8a.com',
         pathRewrite: { '^/api/moon': '', },
         secure: false,
         changeOrigin: true,

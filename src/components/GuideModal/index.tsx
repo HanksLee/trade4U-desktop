@@ -167,7 +167,7 @@ const getDomMap = self => {
             self.props.common.setCurrentTab("个股");
           }}
         >
-          选股去
+          交易去
         </Button>
       ],
     },
@@ -218,8 +218,8 @@ ISettingsModalState
       status == "finish" ? (
         <div className={"progress-circle"}></div>
       ) : (
-        <PlusCircleFilled />
-      );
+          <PlusCircleFilled />
+        );
 
     return (
       <Steps

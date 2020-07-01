@@ -69,9 +69,11 @@ export default class DatafeedProvider {
       `symbol/${symbolInfo.ticker}/trend/${resolutionMap[resolution]}`
     );
 
-    setInterval(function () {
-      that.wsConnect.send(`{"type":"ping"}`);
-    }, 3000)
+    if (this.wsConnect && this.wsConnect.readyState === 1) {
+      setInterval(function () {
+        that.wsConnect.send(`{"type":"ping"}`);
+      }, 3000)
+    }
 
     this.wsConnect.onmessage = event => {
       const message = event.data;
@@ -110,6 +112,11 @@ export default class DatafeedProvider {
       }
 
     };
+
+    // this.wsConnect.onclose = (evt) => {
+    //   setInterval(function () { that.connectWebsocket() }, 3000)
+    // }
+
   }
 
   getBars = async function (

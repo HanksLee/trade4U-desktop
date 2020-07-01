@@ -1,16 +1,16 @@
 import utils from "utils";
 
-const wsMap = {
-  dev: "cangshu360.com",
-  qa: "cangshu360.com",
-  prod: "trading8a.com",
-};
-
 // const wsMap = {
-//   dev: "trading8a.com",
-//   qa: "trading8a.com",
+//   dev: "cangshu360.com",
+//   qa: "cangshu360.com",
 //   prod: "trading8a.com",
 // };
+
+const wsMap = {
+  dev: "trading8a.com",
+  qa: "trading8a.com",
+  prod: "trading8a.com",
+};
 
 let wsProtocol = "";
 if (window.location.protocol === "http:") {
@@ -24,7 +24,7 @@ export default function ws(path) {
 
   return new WebSocket(
     `${wsProtocol}://stock-ws.${
-      wsMap[process.env.MODE]
+    wsMap[process.env.MODE]
     }/ws/trader/${path}?token=${token}`
   );
 }

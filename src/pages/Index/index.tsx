@@ -131,10 +131,11 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     this.wsConnect = ws('account/status');
     const that = this;
 
-    setInterval(function () {
-      that.wsConnect.send(`{"type":"ping"}`);
-    }, 3000);
-
+    if (this.wsConnect && this.wsConnect.readyState === 1) {
+      setInterval(function () {
+        that.wsConnect.send(`{"type":"ping"}`);
+      }, 3000);
+    }
 
     this.wsConnect.onmessage = evt => {
       const message = evt.data;
@@ -153,6 +154,10 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
         this.props.common.setUserInfo(data);
       }
     };
+
+    // this.wsConnect.onclose = (evt) => {
+    //   setInterval(function () { that.connectWebsocket() }, 3000)
+    // }
   }
 
   componentWillUnmount() {
@@ -353,7 +358,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                   <div
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金

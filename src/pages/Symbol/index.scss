@@ -38,21 +38,20 @@
 
     .symbol-sidebar {
       color: white;
-      text-align: center;
+      padding: 10px;
+      // text-align: center;
       //height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
       width: 370px;
       //overflow-y: scroll;
 
-
-    .symbol-sidebar-info {
+      .symbol-sidebar-info {
         //padding-top: 10px;
         height: 0;
         overflow: hidden;
-        transition: height .3s;
+        transition: height 0.3s;
 
         &.active {
           height: 140px;
-
         }
 
         .symbol-item-info {
@@ -60,6 +59,10 @@
           justify-content: space-between;
           margin: 10px;
         }
+      }
+
+      .symbol-order-favorite {
+        text-align: right;
       }
     }
 

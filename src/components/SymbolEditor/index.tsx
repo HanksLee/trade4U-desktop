@@ -78,6 +78,7 @@ export default class SymbolEditor extends BaseReact {
                 open_price: currentShowOrder.open_price,
                 take_profit: currentShowOrder.take_profit,
                 stop_loss: currentShowOrder.stop_loss,
+                lots: currentShowOrder.lots
               };
               const res = await this.$api.market.updateOrder(currentShowOrder?.order_number, payload);
 
@@ -114,13 +115,14 @@ export default class SymbolEditor extends BaseReact {
         );
       } else if (orderOperateType == "delete") {
         return (
-          <div className={"bg-own custom-btn"} onClick={async () => {
+          <div className={"bg-orange custom-btn"} onClick={async () => {
             try {
-              const res = await this.$api.market.closeTrade(currentShowOrder.order_number);
+              const res = await this.$api.market.closeOrder(currentShowOrder.order_number);
 
               if (res.status == 200) {
-                this.$msg.success("订单删除成功~");
+                this.$msg.success("挂单删除成功~");
                 this.props.getTradeList();
+                this.props.market.toggleOrderModalVisible();
               }
             } catch (err) {
               this.$msg.error(err?.response?.data?.message);
@@ -340,12 +342,14 @@ export default class SymbolEditor extends BaseReact {
                 && (
                   <FormItem label={"类型"}>
                     <Select
+                      disabled={orderMode == "update"}
                       placeholder={"请选择类型"}
                       onChange={val => {
                         setCurrentOrder({
                           action: +val,
                         });
                       }}
+                      value={tradeFutureTypeOptions[`${currentShowOrder.action - 2}`].name}
                     >
                       {
                         tradeFutureTypeOptions.map(item => {
