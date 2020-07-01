@@ -26,9 +26,9 @@ interface IMessageModalState {
 // @ts-ignore
 
 export default class EditMessageModal extends BaseReact<
-IMessageModalProps,
-IMessageModalState
-> {
+  IMessageModalProps,
+  IMessageModalState
+  > {
   state = {
     messageList: [],
     messageType: "notify",
@@ -138,7 +138,7 @@ IMessageModalState
             </div>
           )}
 
-          <div className="message-content">
+          <div className="message-content" style={detailContent ? { height: "628.8px" } : {}}>
             <ul className="message-list">
               {!detailContent ? (
                 messageList.map(item => {
@@ -153,7 +153,7 @@ IMessageModalState
                             //   : item.content,
                             item.content,
                         }}
-                        className="content"
+                        className="content content-list"
                       ></p>
                       <p className="more-info">
                         <span className="create-time">
@@ -174,23 +174,23 @@ IMessageModalState
                   );
                 })
               ) : (
-                <div className="detail-content">
-                  <strong>{detailContent.title}</strong>
-                  <p>
-                    <span>
-                      {moment(detailContent.create_time * 1000).format(
-                        "YYYY.MM.DD HH:mm:ss"
-                      )}
-                    </span>
-                  </p>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: detailContent.content,
-                    }}
-                    className="content"
-                  ></p>
-                </div>
-              )}
+                  <div className="detail-content">
+                    <strong>{detailContent.title}</strong>
+                    <p>
+                      <span>
+                        {moment(detailContent.create_time * 1000).format(
+                          "YYYY.MM.DD HH:mm:ss"
+                        )}
+                      </span>
+                    </p>
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: detailContent.content,
+                      }}
+                      className="content"
+                    ></p>
+                  </div>
+                )}
             </ul>
             {!detailContent && (
               <Pagination
