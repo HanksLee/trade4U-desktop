@@ -382,11 +382,19 @@ export default class extends BaseReact {
       },
       async () => {
         // @todo 调取 symbol-list 接口
-        await this.props.market.getSelfSelectSymbolList({
-          params: {
-            type__name: id == "自选" ? undefined : id,
-          },
-        });
+        if (id === "自选") {
+          await this.props.market.getSelfSelectSymbolList({
+            params: {
+              type__name: id == "自选" ? undefined : id,
+            },
+          });
+        } else {
+          await this.props.market.getSymbolList({
+            params: {
+              type__name: id,
+            },
+          });
+        }
       }
     );
   };
@@ -401,7 +409,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -413,7 +421,13 @@ export default class extends BaseReact {
   };
 
   getCurrentSymbol = item => {
-    this.props.market.getCurrentSymbol(item.symbol);
+    const { currentFilter, } = this.state;
+
+    if (currentFilter === "自选") {
+      this.props.market.getCurrentSymbol(item.symbol);
+    } else {
+      this.props.market.getCurrentSymbol(item.id);
+    }
   };
 
   onSingleClick = item => {
@@ -461,7 +475,7 @@ export default class extends BaseReact {
   };
 
   renderSymbolTable = () => {
-    const { hasMore, openSymbolId, } = this.state;
+    const { hasMore, openSymbolId, currentFilter, } = this.state;
     const columns = [
       {
         title: "品种",
@@ -496,7 +510,7 @@ export default class extends BaseReact {
       // }
     ];
 
-    const { selfSelectSymbolList, currentSymbol, } = this.props.market;
+    const { selfSelectSymbolList, symbolList, currentSymbol, } = this.props.market;
     const {
       common: { stockColorMode, },
     } = this.props;
@@ -524,7 +538,7 @@ export default class extends BaseReact {
             </div>
           }
         >
-          {selfSelectSymbolList.map(item => {
+          {currentFilter === "自选" ? selfSelectSymbolList.map(item => {
             return (
               <Row
                 style={
@@ -629,7 +643,163 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
+                  span={24}
+                >
+                  <Row type={"flex"} justify={"space-around"}>
+                    <Col span={12}>
+                      <div className={"symbol-item-info"}>
+                        <span>小数点位</span>
+                        <span>{item?.symbol_display?.decimals_place}</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>点差</span>
+                        <span>浮动</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>获利货币</span>
+                        <span>
+                          {item?.symbol_display?.profit_currency_display}
+                        </span>
+                      </div>
+
+                      <div className={"symbol-item-info"}>
+                        <span>最大交易手数</span>
+                        <span>{item?.symbol_display?.max_lots}</span>
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <div className={"symbol-item-info"}>
+                        <span>合约大小</span>
+                        <span>{item?.symbol_display?.contract_size}</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>预付款货币</span>
+                        <span>
+                          {item?.symbol_display?.margin_currency_display}
+                        </span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>交易数步长</span>
+                        <span>
+                          {item?.symbol_display?.lots_step?.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>最小交易手数</span>
+                        <span>{item?.symbol_display?.min_lots}</span>
+                      </div>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            );
+          }) : symbolList.map(item => {
+            return (
+              <Row
+                style={
+                  {
+                    // backgroundColor: item.symbol == currentSymbol.id ? 'rgba(0, 0, 0, .4)' : undefined,
+                  }
+                }
+                className={"custom-table-item"}
+                key={item.id}
+                type={"flex"}
+                justify={"space-between"}
+                onClick={e => {
+                  this.onSingleClick(item);
+                }}
+                onDoubleClick={e => {
+                  this.onDoubleClick();
+                }}
+              >
+                <Col span={24}>
+                  <Row type={"flex"} justify={"space-between"}>
+                    <Col span={11}>
+                      <span
+                        style={{
+                          color: "#838D9E",
+                        }}
+                      >
+                        {item?.symbol_display?.name}
+                      </span>
+                    </Col>
+                    <Col span={11}>
+                      <span
+                        style={{
+                          color: "#FFF",
+                        }}
+                      >
+                        {item?.symbol_display?.product_display?.symbol}
+                      </span>
+                    </Col>
+                    <Col span={2}>
+                      <div className={"symbol-order-favorite"}>
+                        <StarFilled
+                          onClick={this.togggleFavorite}
+                          style={{
+                            color:
+                              currentSymbol?.is_self_select == 1
+                                ? "#f2e205"
+                                : "white",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </div>
+                    </Col>
+                    {/* <Col span={2}>
+                      <span
+                        style={{
+                          color: "#838D9E",
+                        }}
+                      >
+                        {item?.symbol_display?.spread}
+                      </span>
+                    </Col>
+                    <Col span={6} className={"self-select-sell-container"}>
+                      <span
+                        className={`
+                      ${
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
+                        ${
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
+                      self-select-sell-block`}
+                      >
+                        {item?.product_details?.sell}
+                      </span>
+                    </Col>
+                    <Col span={6} className={"self-select-buy-container"}>
+                      <span
+                        className={`
+                        ${
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
+                              ${
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
+                        self-select-buy-block`}
+                      >
+                        {item?.product_details?.buy}
+                      </span>
+                    </Col> */}
+                  </Row>
+                </Col>
+                <Col
+                  className={`symbol-sidebar-info ${
+                    openSymbolId == item.id ? "active" : ""
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -1203,10 +1373,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1215,16 +1385,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1232,10 +1402,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1284,7 +1454,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
