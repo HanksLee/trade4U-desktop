@@ -669,6 +669,10 @@ export default class extends BaseReact {
                         <span>最大交易手数</span>
                         <span>{item?.symbol_display?.max_lots}</span>
                       </div>
+                      <div className={"symbol-item-info"}>
+                        <span>买入库存费</span>
+                        <span>{item?.symbol_display?.purchase_fee}</span>
+                      </div>
                     </Col>
                     <Col span={12}>
                       <div className={"symbol-item-info"}>
@@ -690,6 +694,10 @@ export default class extends BaseReact {
                       <div className={"symbol-item-info"}>
                         <span>最小交易手数</span>
                         <span>{item?.symbol_display?.min_lots}</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>卖出库存费</span>
+                        <span>{item?.symbol_display?.selling_fee}</span>
                       </div>
                     </Col>
                   </Row>
@@ -825,6 +833,10 @@ export default class extends BaseReact {
                         <span>最大交易手数</span>
                         <span>{item?.symbol_display?.max_lots}</span>
                       </div>
+                      <div className={"symbol-item-info"}>
+                        <span>买入库存费</span>
+                        <span>{item?.symbol_display?.purchase_fee}</span>
+                      </div>
                     </Col>
                     <Col span={12}>
                       <div className={"symbol-item-info"}>
@@ -846,6 +858,10 @@ export default class extends BaseReact {
                       <div className={"symbol-item-info"}>
                         <span>最小交易手数</span>
                         <span>{item?.symbol_display?.min_lots}</span>
+                      </div>
+                      <div className={"symbol-item-info"}>
+                        <span>卖出库存费</span>
+                        <span>{item?.symbol_display?.selling_fee}</span>
                       </div>
                     </Col>
                   </Row>
