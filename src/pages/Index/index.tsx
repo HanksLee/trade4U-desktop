@@ -131,15 +131,16 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     this.wsConnect = ws('account/status');
     const that = this;
 
-    if (this.wsConnect && this.wsConnect.readyState === 1) {
+    setTimeout(function () {
       setInterval(function () {
         that.wsConnect.send(`{"type":"ping"}`);
       }, 3000);
-    }
+    }, 30000);
+
 
     this.wsConnect.onmessage = evt => {
-      const message = evt.data;
-      const data = JSON.parse(message).data;
+      const message = JSON.parse(evt.data);
+      const data = message.data;
       if (message.type === 'pong') {
         clearInterval(this.interval);
 

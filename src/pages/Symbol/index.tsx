@@ -120,15 +120,16 @@ export default class extends BaseReact {
 
     this.selfSymbolWSConnect = ws("self-select-symbol");
 
-    if (this.selfSymbolWSConnect && this.selfSymbolWSConnect.readyState === 1) {
+    setTimeout(function () {
       setInterval(function () {
         that.selfSymbolWSConnect.send(`{"type":"ping"}`);
       }, 3000);
-    }
+    }, 30000);
+
 
     this.selfSymbolWSConnect.onmessage = event => {
-      const message = event.data;
-      const data = JSON.parse(message).data;
+      const message = JSON.parse(event.data);
+      const data = message.data;
       if (message.type === 'pong') {
         clearInterval(this.selfSymbolInterval);
 
@@ -231,11 +232,12 @@ export default class extends BaseReact {
     const { setTradeList, } = this.props.market;
     const that = this;
 
-    if (this.orderWSConnect && this.orderWSConnect.readyState === 1) {
+
+    setTimeout(function () {
       setInterval(function () {
         that.orderWSConnect.send(`{"type":"ping"}`);
       }, 3000);
-    }
+    }, 30000);
 
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
@@ -409,7 +411,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -643,7 +645,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -799,7 +801,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -1373,10 +1375,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1385,16 +1387,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1402,10 +1404,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1454,7 +1456,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
