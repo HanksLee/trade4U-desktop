@@ -359,7 +359,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                   <div
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                      }`}
+                    }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
