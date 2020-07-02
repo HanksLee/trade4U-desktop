@@ -90,7 +90,7 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
     const { brokerList, } = this.state;
     return (
       <Form ref={this.formRef} layout="vertical" onFinish={this.chooseBroker} hideRequiredMark={true}>
-        <Form.Item name="token" label="请选择券商" rules={[{ required: true, message: "请选择券商", }]}>
+        <Form.Item name="token" label="请选择交易商" rules={[{ required: true, message: "请选择交易商", }]}>
           <Select
             showSearch
             optionFilterProp="children"

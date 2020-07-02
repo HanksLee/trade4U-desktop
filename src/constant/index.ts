@@ -37,7 +37,7 @@ export const STOCK_COLOR_GIF_MAP = {
 
 export const PAGE_ROUTES = [
   {
-    title: '个股',
+    title: '产品',
     path: '/dashboard/symbol',
     icon: symbolSVG,
     activeIcon: symbolActiveSVG,

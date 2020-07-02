@@ -486,7 +486,7 @@ export default class extends BaseReact {
         align: 'left',
       },
       {
-        title: "品种代号",
+        title: "产品代码",
         dataIndex: "code",
         col: 11,
         align: 'left',
