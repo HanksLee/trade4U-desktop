@@ -654,7 +654,7 @@ export default class extends BaseReact {
                       </div>
                       <div className={"symbol-item-info"}>
                         <span>点差</span>
-                        <span>浮动</span>
+                        <span>{item?.symbol_display?.spread_mode_display}</span>
                       </div>
                       <div className={"symbol-item-info"}>
                         <span>获利货币</span>
@@ -810,7 +810,7 @@ export default class extends BaseReact {
                       </div>
                       <div className={"symbol-item-info"}>
                         <span>点差</span>
-                        <span>浮动</span>
+                        <span>{item?.symbol_display?.spread_mode_display}</span>
                       </div>
                       <div className={"symbol-item-info"}>
                         <span>获利货币</span>
