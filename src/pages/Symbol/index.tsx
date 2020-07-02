@@ -86,7 +86,7 @@ export default class extends BaseReact {
       },
       "in_transaction"
     );
-    this.connnetSelfSymbolWebsocket();
+    this.connectSelfSymbolWebsocket();
     this.connectOrderWebsocket();
   }
 
@@ -114,7 +114,7 @@ export default class extends BaseReact {
     }
   };
 
-  connnetSelfSymbolWebsocket = () => {
+  connectSelfSymbolWebsocket = () => {
     // 建立自选个股 ws
     const that = this;
 
@@ -135,8 +135,8 @@ export default class extends BaseReact {
 
         // 如果一定时间没有调用clearInterval，则执行重连
         this.selfSymbolInterval = setInterval(function () {
-          that.connnetSelfSymbolWebsocket();
-        }, 1000);
+          that.connectSelfSymbolWebsocket();
+        }, 4000);
       }
       if (message.type && message.type !== 'pong') { // 消息推送
         // code ...      
@@ -242,14 +242,14 @@ export default class extends BaseReact {
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
       // console.log('tradeList', this.props.market?.tradeList);
-      // if (msg.type === 'pong') {
-      //   clearInterval(this.orderInterval);
+      if (msg.type === 'pong') {
+        clearInterval(this.orderInterval);
 
-      //   // 如果一定时间没有调用clearInterval，则执行重连
-      //   this.orderInterval = setInterval(function () {
-      //     that.connectOrderWebsocket();
-      //   }, 1000);
-      // }
+        // 如果一定时间没有调用clearInterval，则执行重连
+        this.orderInterval = setInterval(function () {
+          that.connectOrderWebsocket();
+        }, 4000);
+      }
       if (msg.type && msg.type !== 'pong') { // 消息推送
         // code ...
         if (msg.type == "meta_fund") {
@@ -411,7 +411,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -645,7 +645,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -801,7 +801,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -1375,10 +1375,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1387,16 +1387,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1404,10 +1404,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1456,7 +1456,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
