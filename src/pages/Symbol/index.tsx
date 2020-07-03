@@ -394,6 +394,7 @@ export default class extends BaseReact {
           await this.props.market.getSymbolList({
             params: {
               type__name: id,
+              exclude_self_select: true
             },
           });
         }
@@ -411,7 +412,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -628,16 +629,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -647,16 +648,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
                               ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -665,12 +666,15 @@ export default class extends BaseReact {
                     <Col span={2}>
                       <div className={"symbol-order-favorite"}>
                         <StarFilled
-                          onClick={this.togggleFavorite}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            this.toggleFavorite(item)
+                          }}
                           style={{
-                            color:
-                              currentSymbol?.is_self_select == 1
-                                ? "#f2e205"
-                                : "white",
+                            color: "#f2e205",
+                            // item?.is_self_select == 1
+                            //   ? "#f2e205"
+                            //   : "white",
                             cursor: "pointer",
                           }}
                         />
@@ -681,7 +685,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -782,10 +786,13 @@ export default class extends BaseReact {
                     <Col span={2}>
                       <div className={"symbol-order-favorite"}>
                         <StarFilled
-                          onClick={this.togggleFavorite}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            this.toggleFavorite(item)
+                          }}
                           style={{
                             color:
-                              currentSymbol?.is_self_select == 1
+                              item?.is_self_select == 1
                                 ? "#f2e205"
                                 : "white",
                             cursor: "pointer",
@@ -845,7 +852,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -864,7 +871,7 @@ export default class extends BaseReact {
                           {item?.symbol_display?.profit_currency_display}
                         </span>
                       </div>
-                      <div>
+                      <div className={"symbol-item-info"}>
                         <span>最大交易手数</span>
                         <span>{item?.symbol_display?.max_lots}</span>
                       </div>
@@ -939,43 +946,81 @@ export default class extends BaseReact {
     setTradeInfo(payload);
   };
 
-  togggleFavorite = async () => {
+  toggleFavorite = async (itemSymbol?) => {
+    const { currentFilter } = this.state
     const {
       market: { currentSymbol, setCurrentSymbol, },
     } = this.props;
 
     try {
-      if (currentSymbol.is_self_select == 1) {
-        const res = await this.$api.market.deleteSelfSelectSymbolList({
-          data: {
-            symbol: [currentSymbol?.id],
-          },
-        });
-
-        if (res.status == 204) {
-          this.$msg.success(
-            `${currentSymbol?.symbol_display?.name}成功移除自选`
-          );
-          setCurrentSymbol({
-            is_self_select: 0,
+      if (!utils.isEmpty(itemSymbol)) {
+        if (itemSymbol.is_self_select == 1) {
+          const res = await this.$api.market.deleteSelfSelectSymbolList({
+            data: {
+              symbol: [itemSymbol?.symbol],
+            },
           });
-          this.getSelfSymbolList();
+
+          if (res.status == 204) {
+            this.$msg.success(
+              `${itemSymbol?.symbol_display?.name}成功移除自选`
+            );
+            setCurrentSymbol({
+              is_self_select: 0,
+            });
+            // this.getSelfSymbolList();
+            this.onFilterChange(currentFilter);
+
+          }
+        } else {
+          const res = await this.$api.market.addSelfSelectSymbolList({
+            symbol: [itemSymbol?.id],
+          });
+
+          if (res.status == 201) {
+            this.$msg.success(
+              `${itemSymbol?.symbol_display?.name}成功添加到自选`
+            );
+            setCurrentSymbol({
+              is_self_select: 1,
+            });
+            // this.getSelfSymbolList();
+            this.onFilterChange(currentFilter);
+          }
         }
       } else {
-        const res = await this.$api.market.addSelfSelectSymbolList({
-          symbol: [currentSymbol?.id],
-        });
-
-        if (res.status == 201) {
-          this.$msg.success(
-            `${currentSymbol?.symbol_display?.name}成功添加到自选`
-          );
-          setCurrentSymbol({
-            is_self_select: 1,
+        if (currentSymbol.is_self_select == 1) {
+          const res = await this.$api.market.deleteSelfSelectSymbolList({
+            data: {
+              symbol: [currentSymbol?.id],
+            },
           });
-          this.getSelfSymbolList();
+
+          if (res.status == 204) {
+            this.$msg.success(
+              `${currentSymbol?.symbol_display?.name}成功移除自选`
+            );
+            setCurrentSymbol({
+              is_self_select: 0,
+            });
+          }
+        } else {
+          const res = await this.$api.market.addSelfSelectSymbolList({
+            symbol: [currentSymbol?.id],
+          });
+
+          if (res.status == 201) {
+            this.$msg.success(
+              `${currentSymbol?.symbol_display?.name}成功添加到自选`
+            );
+            setCurrentSymbol({
+              is_self_select: 1,
+            });
+            this.getSelfSymbolList();
+          }
         }
       }
+
     } catch (err) {
       this.$msg.error(err?.response?.data);
     }
@@ -1427,10 +1472,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1439,16 +1484,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1456,10 +1501,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1478,7 +1523,10 @@ export default class extends BaseReact {
                       下单
                     </span>
                     <StarFilled
-                      onClick={this.togggleFavorite}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.toggleFavorite({})
+                      }}
                       style={{
                         color:
                           currentSymbol?.is_self_select == 1
@@ -1508,7 +1556,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
