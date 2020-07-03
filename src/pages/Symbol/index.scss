@@ -64,16 +64,21 @@
       .symbol-order-favorite {
         text-align: right;
       }
+
+      .text-right {
+        text-align: right;
+      }
     }
 
     .self-select-buy-container,
-    .self-select-sell-container {
+    .self-select-sell-container,
+    .self-select-dot-container {
       text-align: right;
     }
 
     .self-select-buy-block,
     .self-select-sell-block {
-      padding: 13px 4px;
+      padding: 13px 0;
       position: relative;
       top: 1px;
     }

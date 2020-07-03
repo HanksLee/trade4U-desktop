@@ -411,7 +411,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -478,39 +478,75 @@ export default class extends BaseReact {
 
   renderSymbolTable = () => {
     const { hasMore, openSymbolId, currentFilter, } = this.state;
-    const columns = [
-      {
-        title: "品种",
-        dataIndex: "market",
-        col: 11,
-        align: 'left',
-      },
-      {
-        title: "品种代号",
-        dataIndex: "code",
-        col: 11,
-        align: 'left',
-      },
-      {
-        col: 2,
-      }
-
-      // {
-      //   title: "点差",
-      //   dataIndex: "dots",
-      //   col: 2,
-      // },
-      // {
-      //   title: "卖出",
-      //   dataIndex: "sell",
-      //   col: 6,
-      // },
-      // {
-      //   title: "买入",
-      //   dataIndex: "buy",
-      //   col: 6,
-      // }
-    ];
+    let columns;
+    currentFilter === "自选" ?
+      columns = [
+        {
+          title: "品种",
+          dataIndex: "market",
+          col: 4,
+          align: 'left',
+        },
+        {
+          title: "品种代号",
+          dataIndex: "code",
+          col: 4,
+          align: 'left',
+        },
+        {
+          title: "点差",
+          dataIndex: "dots",
+          col: 3,
+          className: "text-right"
+        },
+        {
+          title: "卖出",
+          dataIndex: "sell",
+          col: 5,
+          className: "text-right"
+        },
+        {
+          title: "买入",
+          dataIndex: "buy",
+          col: 5,
+          className: "text-right"
+        },
+        {
+          col: 2,
+        }
+      ] :
+      columns = [
+        {
+          title: "品种",
+          dataIndex: "market",
+          col: 11,
+          align: 'left',
+        },
+        {
+          title: "品种代号",
+          dataIndex: "code",
+          col: 11,
+          align: 'left',
+        },
+        //         {
+        //   title: "点差",
+        //   dataIndex: "dots",
+        //   col: 2,
+        // },
+        // {
+        //   title: "卖出",
+        //   dataIndex: "sell",
+        //   col: 5,
+        // },
+        // {
+        //   title: "买入",
+        //   dataIndex: "buy",
+        //   col: 5,
+        // },
+        {
+          col: 2,
+        }
+      ];
 
     const { selfSelectSymbolList, symbolList, currentSymbol, } = this.props.market;
     const {
@@ -526,7 +562,7 @@ export default class extends BaseReact {
           justify={"space-between"}
         >
           {columns.map(item => {
-            return <Col span={item.col || itemWidth}>{item.title}</Col>;
+            return <Col span={item.col || itemWidth} className={item?.className}>{item.title}</Col>;
           })}
         </Row>
         <InfiniteScroll
@@ -561,7 +597,7 @@ export default class extends BaseReact {
               >
                 <Col span={24}>
                   <Row type={"flex"} justify={"space-between"}>
-                    <Col span={11}>
+                    <Col span={4}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -570,7 +606,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.name}
                       </span>
                     </Col>
-                    <Col span={11}>
+                    <Col span={4}>
                       <span
                         style={{
                           color: "#FFF",
@@ -579,21 +615,7 @@ export default class extends BaseReact {
                         {item?.product_details?.symbol}
                       </span>
                     </Col>
-                    <Col span={2}>
-                      <div className={"symbol-order-favorite"}>
-                        <StarFilled
-                          onClick={this.togggleFavorite}
-                          style={{
-                            color:
-                              currentSymbol?.is_self_select == 1
-                                ? "#f2e205"
-                                : "white",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </div>
-                    </Col>
-                    {/* <Col span={2}>
+                    <Col span={3} className={"self-select-dot-container"}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -602,7 +624,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.spread}
                       </span>
                     </Col>
-                    <Col span={6} className={"self-select-sell-container"}>
+                    <Col span={5} className={"self-select-sell-container"}>
                       <span
                         className={`
                       ${
@@ -621,7 +643,7 @@ export default class extends BaseReact {
                         {item?.product_details?.sell}
                       </span>
                     </Col>
-                    <Col span={6} className={"self-select-buy-container"}>
+                    <Col span={5} className={"self-select-buy-container"}>
                       <span
                         className={`
                         ${
@@ -639,13 +661,27 @@ export default class extends BaseReact {
                       >
                         {item?.product_details?.buy}
                       </span>
-                    </Col> */}
+                    </Col>
+                    <Col span={2}>
+                      <div className={"symbol-order-favorite"}>
+                        <StarFilled
+                          onClick={this.togggleFavorite}
+                          style={{
+                            color:
+                              currentSymbol?.is_self_select == 1
+                                ? "#f2e205"
+                                : "white",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </div>
+                    </Col>
                   </Row>
                 </Col>
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -664,7 +700,6 @@ export default class extends BaseReact {
                           {item?.symbol_display?.profit_currency_display}
                         </span>
                       </div>
-
                       <div className={"symbol-item-info"}>
                         <span>最大交易手数</span>
                         <span>{item?.symbol_display?.max_lots}</span>
@@ -801,7 +836,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -1375,10 +1410,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1387,16 +1422,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1404,10 +1439,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1456,7 +1491,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
