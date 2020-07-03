@@ -22,7 +22,7 @@ export default class Captial extends BaseReact {
           <TabPane tab="出金" key="withdraw">
             <WithdrawPanel />
           </TabPane>
-          <TabPane tab="资金名细" key="transaction">
+          <TabPane tab="资金明细" key="transaction">
             <TransactionPanel />
           </TabPane>
         </Tabs>
