@@ -4,7 +4,7 @@ import {
 } from 'axios';
 
 const getSelfSelectSymbolList = (config) =>
-  API.get("/trader/self_select_symbol", config);
+  API.get(`/trader/self_select_symbol?page=${config.page}&page_size=${config.page_size}`, config);
 
 const addSelfSelectSymbolList = (config) =>
   API.post("/trader/self_select_symbol", config);
@@ -19,7 +19,7 @@ const getSymbolTypeList = (config) =>
   API.get("/trader/symbol_type", config);
 
 const getSymbolList = (config) =>
-  API.get("/trader/symbol", config);
+  API.get(`/trader/symbol?page=${config.page}&page_size=${config.page_size}`, config);
 
 const getCurrentSymbol = (id, config = {}) => API.get(`/trader/symbol/${id}`, config);
 

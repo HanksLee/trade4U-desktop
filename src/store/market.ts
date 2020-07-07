@@ -7,16 +7,29 @@ class MarketStore extends BaseStore {
   selfSelectSymbolList = [];
   @observable
   currentSelfSelectSymbol = {};
+  @observable
+  selfSelectSymbolPage = 1;
+  @observable
+  selfSelectSymbolPageSize = 20;
+  @observable
+  selfSelectSymbolCount = 0;
 
   @action
-  getSelfSelectSymbolList = async config => {
+  getSelfSelectSymbolList = async (config) => {
     const res = await api.market.getSelfSelectSymbolList(config);
+    this.selfSelectSymbolPage = config.page;
+    this.selfSelectSymbolPageSize = config.page_size;
+    this.selfSelectSymbolCount = res.data.count;
     this.setSelfSelectSymbolList(res.data.results);
   };
 
   @action
   setSelfSelectSymbolList = data => {
-    this.selfSelectSymbolList = data;
+    if (this.selfSelectSymbolPage !== 1) {
+      this.selfSelectSymbolList = [...this.selfSelectSymbolList, ...data];
+    } else {
+      this.selfSelectSymbolList = data;
+    }
   }
 
   @action
@@ -24,35 +37,48 @@ class MarketStore extends BaseStore {
     this.currentSelfSelectSymbol = symbol;
   }
 
-  @action
-  updateSelfSelectSymbolList = async config => {
-    const res = await api.market.getSelfSelectSymbolList(config);
-    const results = res.data.results;
-    const newResults = results.map(item => {
-      for (let i = 0; i < this.selfSelectSymbolList.length; i++) {
-        if (item.symbol === this.selfSelectSymbolList[i].symbol) {
-          return this.selfSelectSymbolList[i];
-        }
-      }
-      return item;
-    });
-    this.setSelfSelectSymbolList(newResults);
-  };
+  // @action
+  // updateSelfSelectSymbolList = async config => {
+  //   const res = await api.market.getSelfSelectSymbolList(config,this.);
+  //   const results = res.data.results;
+  //   const newResults = results.map(item => {
+  //     for (let i = 0; i < this.selfSelectSymbolList.length; i++) {
+  //       if (item.symbol === this.selfSelectSymbolList[i].symbol) {
+  //         return this.selfSelectSymbolList[i];
+  //       }
+  //     }
+  //     return item;
+  //   });
+  //   this.setSelfSelectSymbolList(newResults);
+  // };
 
   @observable
   symbolList = [];
   @observable
   currentSymbol = {};
+  @observable
+  symbolPage = 1;
+  @observable
+  symbolPageSize = 20;
+  @observable
+  symbolCount = 0;
 
   @action
   getSymbolList = async config => {
     const res = await this.$api.market.getSymbolList(config);
+    this.symbolPage = config.page;
+    this.symbolPageSize = config.page_size;
+    this.symbolCount = res.data.count;
     this.setSymbolList(res.data.results);
   };
 
   @action
   setSymbolList = data => {
-    this.symbolList = data;
+    if (this.symbolPage !== 1) {
+      this.selfSelectSymbolList = [...this.symbolList, ...data];
+    } else {
+      this.symbolList = data;
+    }
   }
 
   @action

@@ -17,7 +17,7 @@
     //border: 1px solid white;
 
     .custom-table-body {
-      height: calc(100vh - 45px - 22px - 43px);
+      height: calc(100vh - 56px - 20px - 60px - 22px - 43px);
       overflow-y: scroll;
     }
 
@@ -81,6 +81,11 @@
       padding: 13px 0;
       position: relative;
       top: 1px;
+    }
+
+    .ant-spin.ant-spin-spinning {
+      display: block;
+      padding: 10px;
     }
   }
 

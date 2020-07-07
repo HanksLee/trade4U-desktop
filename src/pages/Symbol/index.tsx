@@ -1,6 +1,7 @@
 import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
 import { Col, Row, Tabs, Table, Spin, Modal, DatePicker } from "antd";
+import axios from "axios";
 import { StarFilled, createFromIconfontCN } from "@ant-design/icons";
 import WithRoute from "components/@shared/WithRoute";
 import InfiniteScroll from "react-infinite-scroller";
@@ -15,10 +16,12 @@ import { STOCK_COLOR_MAP, STOCK_COLOR_GIF_MAP } from "constant";
 import TVChartContainer from "./TVChartContainer";
 import { toJS } from "mobx";
 import utils from "utils";
-import { MinusOutlined } from "@ant-design/icons";
+import { MinusOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
+let CancelToken = axios.CancelToken;
+let cancel;
 
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
@@ -69,6 +72,13 @@ export default class extends BaseReact {
       page: 1,
       page_size: 5,
     },
+    symbolFilter: {
+      page: 1,
+      page_size: 20,
+      error: false,
+      hasMore: true,
+      dataLoading: false,
+    },
     orderMode: "add",
     foldTabs: false,
   };
@@ -76,7 +86,7 @@ export default class extends BaseReact {
   async componentDidMount() {
     (window as any).$market = this.props.common;
 
-    this.getSelfSymbolList();
+    this.getSymbolList();
     this.getSymbolTypeList();
     this.getTradeList(
       {
@@ -102,15 +112,47 @@ export default class extends BaseReact {
     }
   }
 
-  getSelfSymbolList = async () => {
-    await this.props.market.getSelfSelectSymbolList();
-    const {
-      market: { selfSelectSymbolList, currentSymbol, },
-    } = this.props;
+  getSymbolList = async () => {
+    const { page, page_size, dataLoading, } = this.state.symbolFilter;
+    const { currentFilter, } = this.state;
+    if (currentFilter === "自选") {
+      await this.props.market.getSelfSelectSymbolList({
+        params: {
+          type__name: currentFilter == "自选" ? undefined : currentFilter,
+        }, page, page_size,
+      });
+      const {
+        market: { selfSelectSymbolList, currentSymbol, },
+      } = this.props;
 
-    if (utils.isEmpty(currentSymbol)) {
-      let tmp = selfSelectSymbolList[0]?.symbol;
-      tmp && this.props.market.getCurrentSymbol(tmp);
+      if (utils.isEmpty(currentSymbol)) {
+        let tmp = selfSelectSymbolList[0]?.symbol;
+        tmp && this.props.market.getCurrentSymbol(tmp);
+      }
+    } else {
+      await this.props.market.getSymbolList({
+        params: {
+          type__name: currentFilter,
+          exclude_self_select: true,
+        }, page, page_size,
+      });
+    }
+
+    if (dataLoading) {
+      this.setState(prevState => ({
+        symbolFilter: {
+          ...prevState.symbolFilter,
+          dataLoading: false,
+        },
+      }), () => {
+        const { selfSelectSymbolList, selfSelectSymbolCount, symbolList, symbolCount, } = this.props.market;
+        this.setState(prevState => ({
+          symbolFilter: {
+            ...prevState.symbolFilter,
+            hasMore: currentFilter === "自选" ? (selfSelectSymbolList.length < selfSelectSymbolCount) : (symbolList.length < symbolCount),
+          },
+        }));
+      });
     }
   };
 
@@ -378,26 +420,42 @@ export default class extends BaseReact {
   };
 
   onFilterChange = async id => {
-    this.setState(
-      {
-        currentFilter: id,
+    this.setState(prevState => ({
+      currentFilter: id,
+      symbolFilter: {
+        ...prevState.symbolFilter,
+        page: 1,
+        // hasMore: true
       },
+    }),
       async () => {
         // @todo 调取 symbol-list 接口
-        if (id === "自选") {
-          await this.props.market.getSelfSelectSymbolList({
-            params: {
-              type__name: id == "自选" ? undefined : id,
-            },
-          });
-        } else {
-          await this.props.market.getSymbolList({
-            params: {
-              type__name: id,
-              exclude_self_select: true,
-            },
-          });
-        }
+        // const { page, page_size } = this.state.symbolFilter;
+        // if (id === "自选") {
+        //   await this.props.market.getSelfSelectSymbolList({
+        //     params: {
+        //       type__name: id == "自选" ? undefined : id,
+        //     },
+        //     page, page_size
+        //   });
+        // } else {
+        //   await this.props.market.getSymbolList({
+        //     params: {
+        //       type__name: id,
+        //       exclude_self_select: true,
+        //     },
+        //     page, page_size
+        //   });
+        // }
+
+        const { selfSelectSymbolPageSize, selfSelectSymbolCount, symbolPageSize, symbolCount, } = this.props.market;
+        const { currentFilter, } = this.state;
+        await this.setState(prevState => ({
+          symbolFilter: {
+            ...prevState.symbolFilter,
+            hasMore: currentFilter === "自选" ? (selfSelectSymbolPageSize < selfSelectSymbolCount) : (symbolPageSize < symbolCount),
+          },
+        }), () => { this.getSymbolList(); });
       }
     );
   };
@@ -412,7 +470,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -475,6 +533,33 @@ export default class extends BaseReact {
         }, this.delay);
       }
     );
+  };
+
+  productScroll = (event) => {
+    const { error, hasMore, dataLoading, } = this.state.symbolFilter;
+
+    // Bails early if:
+    // * there's an error
+    // * it's already loading
+    // * there's nothing left to load
+    if (error || dataLoading || !hasMore) return;
+    let offsetHeight = event.target.offsetHeight;
+    let scrollTop = event.target.scrollTop;
+    let scrollHeight = event.target.scrollHeight;
+
+    // Checks that the page has scrolled to the bottom
+    if (offsetHeight + scrollTop >= scrollHeight) {
+      this.setState(prevState => ({
+        symbolFilter: {
+          ...prevState.symbolFilter,
+          page: this.state.symbolFilter.page + 1,
+          dataLoading: true,
+        },
+        // }))
+      }), () => {
+        this.getSymbolList();
+      });
+    }
   };
 
   renderSymbolTable = () => {
@@ -553,6 +638,7 @@ export default class extends BaseReact {
     const {
       common: { stockColorMode, },
     } = this.props;
+    const { dataLoading, } = this.state.symbolFilter;
     const itemWidth = Math.floor(24 / columns.length);
 
     return (
@@ -569,13 +655,14 @@ export default class extends BaseReact {
         <InfiniteScroll
           pageStart={0}
           className={"custom-table-body"}
-          loadMore={this.loadMore}
+          loadMore={}
           hasMore={hasMore}
           loader={
             <div className="custom-table-loadmore" key={0}>
               <Spin />
             </div>
           }
+          onScroll={event => { this.productScroll(event); }}
         >
           {currentFilter === "自选" ? selfSelectSymbolList.map(item => {
             return (
@@ -629,16 +716,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -648,16 +735,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
                               ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -685,7 +772,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -852,7 +939,7 @@ export default class extends BaseReact {
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -912,7 +999,13 @@ export default class extends BaseReact {
               </Row>
             );
           })}
+          {dataLoading && (
+            <Spin
+              indicator={<LoadingOutlined style={{ fontSize: 24, }} spin />}
+            />
+          )}
         </InfiniteScroll>
+
       </div>
     );
   };
@@ -968,8 +1061,6 @@ export default class extends BaseReact {
             setCurrentSymbol({
               is_self_select: 0,
             });
-            // this.getSelfSymbolList();
-            this.onFilterChange(currentFilter);
           }
         } else {
           const res = await this.$api.market.addSelfSelectSymbolList({
@@ -983,8 +1074,6 @@ export default class extends BaseReact {
             setCurrentSymbol({
               is_self_select: 1,
             });
-            // this.getSelfSymbolList();
-            this.onFilterChange(currentFilter);
           }
         }
       } else {
@@ -1015,10 +1104,12 @@ export default class extends BaseReact {
             setCurrentSymbol({
               is_self_select: 1,
             });
-            this.getSelfSymbolList();
+            // this.getSymbolList();
+            this.onFilterChange(currentFilter);
           }
         }
       }
+      this.onFilterChange(currentFilter);
     } catch (err) {
       this.$msg.error(err?.response?.data);
     }
@@ -1470,10 +1561,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1482,16 +1573,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1499,10 +1590,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1554,7 +1645,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
