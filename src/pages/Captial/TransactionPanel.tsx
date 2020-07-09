@@ -96,10 +96,6 @@ export default class TransactionPanel extends BaseReact {
         </Row>
         <div className="transaction-summary">
           <div>
-            <span>净资产</span>
-            <span>{totalData.profit || 0}</span>
-          </div>
-          <div>
             <span>入金总额</span>
             <span>{totalData.topup || 0}</span>
           </div>
@@ -108,7 +104,7 @@ export default class TransactionPanel extends BaseReact {
             <span>{totalData.withdraw || 0}</span>
           </div>
           <div>
-            <span>总盈亏</span>
+            <span>净资产</span>
             <span>{totalData.balance || 0}</span>
           </div>
         </div>
