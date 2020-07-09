@@ -69,11 +69,11 @@ export default class DatafeedProvider {
       `symbol/${symbolInfo.ticker}/trend/${resolutionMap[resolution]}`
     );
 
-    setTimeout(function () {
-      setInterval(function () {
-        that.wsConnect.send(`{"type":"ping"}`);
-      }, 3000)
-    }, 30000)
+    // setTimeout(function () {
+    //   setInterval(function () {
+    //     that.wsConnect.send(`{"type":"ping"}`);
+    //   }, 3000)
+    // }, 30000)
 
     this.wsConnect.onmessage = event => {
       const message = JSON.parse(event.data);
