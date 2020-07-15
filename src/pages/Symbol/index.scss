@@ -133,6 +133,12 @@
       .unfold-chart {
         height: calc(100vh - 56px - 45px - 56px - 20px);
       }
+
+      &.select-product {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     .symbol-order {
