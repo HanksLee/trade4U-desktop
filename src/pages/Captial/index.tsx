@@ -4,6 +4,7 @@ import WithdrawPanel from './WithdrawPanel';
 import WithRoute from 'components/@shared/WithRoute';
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
+import { inject, observer } from "mobx-react";
 import { Tabs } from 'antd';
 import './index.scss';
 
@@ -11,11 +12,17 @@ const TabPane = Tabs.TabPane;
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/captial")
+@inject("captial", "common")
+@observer
 export default class Captial extends BaseReact {
+  changeTab = key => {
+    this.props.captial.setCurrentTab(key);
+  }
   render() {
+    const { currentCaptialTab, } = this.props.captial;
     return (
       <div className="captial-page">
-        <Tabs defaultActiveKey="deposit" destroyInactiveTabPane>
+        <Tabs activeKey={currentCaptialTab} destroyInactiveTabPane onChange={this.changeTab}>
           <TabPane tab="入金" key="deposit">
             <DepositPanel />
           </TabPane>

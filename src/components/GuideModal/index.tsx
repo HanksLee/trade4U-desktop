@@ -61,124 +61,241 @@ const { Step, } = Steps;
 const STATUS = 3;
 
 const getDomMap = self => {
-  const domMap = {
-    "-1": {
-      // cover: flowAccountPng,
-      cover: flowAccountSVG,
-      title: "开户去",
-      desc: "一步步验证资料·立刻体验",
-      actions: [
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          返回
-        </Button>,
-        <Button
-          onClick={() => {
-            self.props.common.toggleSettingsModalVisible();
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          去填写
-        </Button>
-      ],
-    },
-    0: {
-      // cover: flowAccountPng,
-      cover: flowAccountSVG,
-      title: "开户去",
-      desc: "一步步验证资料·立刻体验",
-      actions: [
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          返回
-        </Button>,
-        <Button
-          onClick={() => {
-            self.props.common.toggleSettingsModalVisible();
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          去填写
-        </Button>
-      ],
-    },
-    1: {
-      // cover: flowAuditPng,
-      cover: flowAuditSVG,
-      title: "系统审核",
-      desc: "资料审核中·请耐心等候",
-      actions: [
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          返回
-        </Button>
-      ],
-    },
-    2: {
-      // cover: flowCapitalPng,
-      cover: flowCapitalSVG,
-      title: "投入资金",
-      desc: "投入小笔资金·荷包赚饱饱",
-      actions: [
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          返回
-        </Button>,
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-            self.props.history.push("/dashboard/captial");
-            self.props.common.setCurrentTab("资金");
-          }}
-        >
-          入金
-        </Button>
-      ],
-    },
-    3: {
-      // cover: flowExchangePng,
-      cover: flowExchangeSVG,
-      title: "立马交易",
-      desc: "您已成功入金·可开始下单",
-      actions: [
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-          }}
-        >
-          返回
-        </Button>,
-        <Button
-          onClick={() => {
-            self.props.common.toggleGuideModalVisible();
-            self.props.history.push("/dashboard/symbol");
-            self.props.common.setCurrentTab("个股");
-          }}
-        >
-          交易去
-        </Button>
-      ],
-    },
-  };
+  const { systemConfig, } = self.props.common;
+  const userAuthentication = systemConfig[0] ? systemConfig[0]["value"] : '';
+  let domMap;
+  userAuthentication === 'withdraw_authentication'
+    ? domMap = {
+      '-1': {
+        // cover: flowCapitalPng,
+        cover: flowCapitalSVG,
+        title: "投入资金",
+        desc: "投入小笔资金·荷包赚饱饱",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+              self.props.history.push("/dashboard/captial");
+              self.props.common.setCurrentTab("资金");
+            }}
+          >
+            入金
+          </Button>
+        ],
+      },
+      0: {
+        // cover: flowCapitalPng,
+        cover: flowCapitalSVG,
+        title: "投入资金",
+        desc: "投入小笔资金·荷包赚饱饱",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+              self.props.history.push("/dashboard/captial");
+              self.props.common.setCurrentTab("资金");
+            }}
+          >
+            入金
+          </Button>
+        ],
+      },
+      1: {
+        // cover: flowAccountPng,
+        cover: flowAccountSVG,
+        title: "开户去",
+        desc: "一步步验证资料·立刻体验",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleSettingsModalVisible();
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            去填写
+          </Button>
+        ],
+      },
+      2: {
+        // cover: flowAuditPng,
+        cover: flowAuditSVG,
+        title: "系统审核",
+        desc: "资料审核中·请耐心等候",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>
+        ],
+      },
+      3: {
+        // cover: flowExchangePng,
+        cover: flowExchangeSVG,
+        title: "出金",
+        desc: "您已完善资料，可开始出金",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+              self.props.common.setCurrentTab("资金");
+              self.props.captial.setCurrentTab("withdraw");
+              self.props.history.push("/dashboard/captial");
+            }}
+          >
+            出金
+          </Button>
+        ],
+      },
+    }
+    : domMap = {
+      "-1": {
+        // cover: flowAccountPng,
+        cover: flowAccountSVG,
+        title: "开户去",
+        desc: "一步步验证资料·立刻体验",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleSettingsModalVisible();
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            去填写
+          </Button>
+        ],
+      },
+      0: {
+        // cover: flowAccountPng,
+        cover: flowAccountSVG,
+        title: "开户去",
+        desc: "一步步验证资料·立刻体验",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleSettingsModalVisible();
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            去填写
+          </Button>
+        ],
+      },
+      1: {
+        // cover: flowAuditPng,
+        cover: flowAuditSVG,
+        title: "系统审核",
+        desc: "资料审核中·请耐心等候",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>
+        ],
+      },
+      2: {
+        // cover: flowCapitalPng,
+        cover: flowCapitalSVG,
+        title: "投入资金",
+        desc: "投入小笔资金·荷包赚饱饱",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+              self.props.history.push("/dashboard/captial");
+              self.props.common.setCurrentTab("资金");
+            }}
+          >
+            入金
+          </Button>
+        ],
+      },
+      3: {
+        // cover: flowExchangePng,
+        cover: flowExchangeSVG,
+        title: "立马交易",
+        desc: "您已成功入金·可开始下单",
+        actions: [
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+            }}
+          >
+            返回
+          </Button>,
+          <Button
+            onClick={() => {
+              self.props.common.toggleGuideModalVisible();
+              self.props.history.push("/dashboard/symbol");
+              self.props.common.setCurrentTab("产品");
+            }}
+          >
+            交易去
+          </Button>
+        ],
+      },
+    };
 
   return domMap;
 };
 
 // @ts-ignore
 @withRouter
-@inject("common")
+@inject("common", "captial")
 @observer
 export default class GuideModal extends BaseReact<
 ISettingsModalProps,
@@ -212,14 +329,15 @@ ISettingsModalState
   };
 
   renderSteps = () => {
-    const { computedUserInfo, } = this.props.common;
+    const { computedUserInfo, systemConfig, } = this.props.common;
+    const userAuthentication = systemConfig[0] ? systemConfig[0]["value"] : '';
 
     const customDot = (dot, { status, index, }) =>
       status == "finish" ? (
         <div className={"progress-circle"}></div>
       ) : (
-        <PlusCircleFilled />
-      );
+          <PlusCircleFilled />
+        );
 
     return (
       <Steps
@@ -228,10 +346,11 @@ ISettingsModalState
         current={computedUserInfo.user_status}
         progressDot={customDot}
       >
+        {userAuthentication === 'withdraw_authentication' && <Step title="入金" />}
         <Step title="完善资料" />
         <Step title="审核" />
-        <Step title="入金" />
-        <Step title="交易" />
+        {(userAuthentication === 'not_required' || userAuthentication === 'deposit_authentication') && <Step title="入金" />}
+        <Step title={userAuthentication === 'withdraw_authentication' ? '出金' : '交易'} />
       </Steps>
     );
   };

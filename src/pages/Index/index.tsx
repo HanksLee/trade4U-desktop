@@ -123,6 +123,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   async componentDidMount() {
     this.props.history.push("/dashboard/symbol");
+    this.props.common.getSystemConfig();
     this.props.common.getUserInfo();
     this.connectWebsocket();
   }

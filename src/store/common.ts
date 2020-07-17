@@ -5,6 +5,21 @@ import { PAGE_ROUTES } from 'constant';
 import jwtDecode from 'jwt-decode';
 
 class CommonStore extends BaseStore {
+
+  @observable
+  systemConfig = []
+
+  @action
+  getSystemConfig = async (params) => {
+    const res = await this.$api.common.getConfig({ params, });
+    this.setSystemConfig(res.data);
+  }
+  @action
+  setSystemConfig = (systemConfig) => {
+    this.systemConfig = systemConfig;
+  }
+
+
   // 股票涨跌颜色模式，1-绿涨红跌 2-红涨绿跌
   @observable
   stockColorMode = 1;
@@ -52,6 +67,7 @@ class CommonStore extends BaseStore {
   @computed
   get computedUserInfo() {
     const obj: any = {};
+    const userAuthentication = this.systemConfig[0] ? this.systemConfig[0]["value"] : '';
 
     // 计算用户审核状态
     // 0-未完善资料，或审核资料失败
@@ -62,17 +78,32 @@ class CommonStore extends BaseStore {
       inspect_status,
       recharge_status,
     } = this.userInfo;
-    if (inspect_status == 0 || inspect_status == 3) {
-      obj.user_status = 0;
-    } else if (inspect_status == 1) {
-      obj.user_status = 1;
-    } else if (inspect_status == 2 && recharge_status == 0) {
-      obj.user_status = 2;
-    } else if (inspect_status == 2 && recharge_status == 1) {
-      obj.user_status = 3;
+    if (userAuthentication === 'withdraw_authentication') {
+      if (recharge_status == 0) {
+        obj.user_status = 0;
+      } else if (inspect_status == 0 || inspect_status == 3) {
+        obj.user_status = 1;
+      } else if (inspect_status == 1) {
+        obj.user_status = 2;
+      } else if (inspect_status == 2 && recharge_status == 1) {
+        obj.user_status = 3;
+      } else {
+        obj.user_status = -1;
+      }
     } else {
-      obj.user_status = -1;
+      if (inspect_status == 0 || inspect_status == 3) {
+        obj.user_status = 0;
+      } else if (inspect_status == 1) {
+        obj.user_status = 1;
+      } else if (inspect_status == 2 && recharge_status == 0) {
+        obj.user_status = 2;
+      } else if (inspect_status == 2 && recharge_status == 1) {
+        obj.user_status = 3;
+      } else {
+        obj.user_status = -1;
+      }
     }
+
 
     return {
       ...this.userInfo,
@@ -80,7 +111,7 @@ class CommonStore extends BaseStore {
     };
   }
   @observable
-  currentTab = '个股';
+  currentTab = '产品';
   @action
   setCurrentTab = tab => {
     this.currentTab = tab;
