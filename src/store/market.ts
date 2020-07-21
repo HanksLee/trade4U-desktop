@@ -75,7 +75,7 @@ class MarketStore extends BaseStore {
   @action
   setSymbolList = data => {
     if (this.symbolPage !== 1) {
-      this.selfSelectSymbolList = [...this.symbolList, ...data];
+      this.symbolList = [...this.symbolList, ...data];
     } else {
       this.symbolList = data;
     }

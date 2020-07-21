@@ -1,3 +1,7 @@
+*{
+  // outline: 1px solid red;
+}
+
 .symbol-page {
   color: white;
   height: calc(100vh - 56px);
@@ -9,7 +13,7 @@
 
   .symbol-left {
     //border: 1px solid red;
-    width: 370px;
+    width: 400px;
     background-color: $primary-color;
     //overflow-y: scroll;
 
@@ -41,7 +45,7 @@
       padding: 10px;
       // text-align: center;
       //height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
-      width: 370px;
+      width: 400px;
       //overflow-y: scroll;
 
       .symbol-sidebar-info {
@@ -91,7 +95,7 @@
 
   .symbol-right {
     //height: 100vh;
-    width: calc(100vw - 60px - 10px - 370px);
+    width: calc(100vw - 60px - 10px - 400px);
     //border: 1px solid green;
     overflow: hidden;
     flex: 1;
@@ -204,6 +208,10 @@
   {
     background-color: #232c37 !important;
     transition: unset !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 5px 16px;
   }
 }
 

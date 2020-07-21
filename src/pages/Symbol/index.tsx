@@ -48,6 +48,7 @@ const orderTabs = [
 @observer
 export default class extends BaseReact {
   private $symbolEditor = null;
+  private symbolWSConnect = null;
   private selfSymbolWSConnect = null;
   private orderWSConnect = null;
   private selfSymbolInterval = null;
@@ -81,6 +82,8 @@ export default class extends BaseReact {
     },
     orderMode: "add",
     foldTabs: false,
+    prevSymbol: [],
+    nextSymbol: []
   };
 
   async componentDidMount() {
@@ -96,7 +99,7 @@ export default class extends BaseReact {
       },
       "in_transaction"
     );
-    this.connectSelfSymbolWebsocket();
+    // this.connectSelfSymbolWebsocket();
     this.connectOrderWebsocket();
   }
 
@@ -118,6 +121,7 @@ export default class extends BaseReact {
     }
     const { page, page_size, dataLoading, } = this.state.symbolFilter;
     const { currentFilter, } = this.state;
+    let symbolIdAry = [];
     if (currentFilter === "自选") {
       await this.props.market.getSelfSelectSymbolList({
         params: {
@@ -136,6 +140,7 @@ export default class extends BaseReact {
         let tmp = selfSelectSymbolList[0]?.symbol;
         tmp && this.props.market.getCurrentSymbol(tmp);
       }
+      this.connectSelfSymbolWebsocket();
     } else {
       await this.props.market.getSymbolList({
         params: {
@@ -147,6 +152,16 @@ export default class extends BaseReact {
           cancel = c;
         }),
       });
+
+
+      const { symbolList } = this.props.market;
+      for (const element of symbolList) {
+        symbolIdAry.push(element.id)
+      }
+      this.setState({ nextSymbol: symbolIdAry },
+        () => {
+          // this.connectSymbolWebsocket(); 
+        })
     }
 
     if (dataLoading) {
@@ -171,7 +186,14 @@ export default class extends BaseReact {
     // 建立自选个股 ws
     const that = this;
 
-    this.selfSymbolWSConnect = ws("self-select-symbol");
+    if (this.symbolWSConnect !== null) {
+      this.symbolWSConnect.close();
+      this.symbolWSConnect = null;
+    }
+
+    if (this.selfSymbolWSConnect == null) {
+      this.selfSymbolWSConnect = ws("self-select-symbol");
+    }
 
     // setTimeout(function () {
     //   setInterval(function () {
@@ -201,72 +223,74 @@ export default class extends BaseReact {
         const newSelfSelectSymbolList = selfSelectSymbolList.map(
           (item, index) => {
             const newItem = cloneDeep(item);
-            if (
-              newItem?.product_details?.symbol == data.symbol &&
-              Number(newItem?.product_details?.timestamp) < Number(data.timestamp)
-            ) {
-              const payload = {
-                ...data,
-                buy_change:
-                  data.buy - newItem.product_details.buy > 0
-                    ? "up"
-                    : data.buy - newItem.product_details.buy == 0
-                      ? "balance"
-                      : "down",
-                sell_change:
-                  data.sell - newItem.product_details.sell > 0
-                    ? "up"
-                    : data.sell - newItem.product_details.sell == 0
-                      ? "balance"
-                      : "down",
-                sell_open_change:
-                  data.sell - data.close > 0
-                    ? "up"
-                    : data.sell - newItem.close == 0
-                      ? "balance"
-                      : "down",
-                new_price_change:
-                  data.new_price - newItem.product_details.new_price > 0
-                    ? "up"
-                    : data.new_price - newItem.product_details.new_price == 0
-                      ? "balance"
-                      : "down",
-                change_change:
-                  data.change - newItem.product_details.change > 0
-                    ? "up"
-                    : data.change - newItem.product_details.change == 0
-                      ? "balance"
-                      : "down",
-                chg_change:
-                  data.change - newItem.product_details.change > 0
-                    ? "up"
-                    : data.change - newItem.product_details.change == 0
-                      ? "balance"
-                      : "down",
-              };
-
-              // 同步到 currentSymbol
-
+            for (let wsItem of data) {
               if (
-                currentSymbol?.product_details?.symbol == data.symbol &&
-                Number(currentSymbol?.product_details?.timestamp) <
-                Number(data.timestamp)
+                newItem?.product_details?.symbol == wsItem.symbol &&
+                Number(newItem?.product_details?.timestamp) < Number(wsItem.timestamp)
               ) {
-                const symbol = {
-                  ...currentSymbol,
-                  product_details: {
-                    ...currentSymbol.product_details,
-                    ...payload,
-                  },
+                const payload = {
+                  ...wsItem,
+                  buy_change:
+                    wsItem.buy - newItem.product_details.buy > 0
+                      ? "up"
+                      : wsItem.buy - newItem.product_details.buy == 0
+                        ? "balance"
+                        : "down",
+                  sell_change:
+                    wsItem.sell - newItem.product_details.sell > 0
+                      ? "up"
+                      : wsItem.sell - newItem.product_details.sell == 0
+                        ? "balance"
+                        : "down",
+                  sell_open_change:
+                    wsItem.sell - wsItem.close > 0
+                      ? "up"
+                      : wsItem.sell - newItem.close == 0
+                        ? "balance"
+                        : "down",
+                  new_price_change:
+                    wsItem.new_price - newItem.product_details.new_price > 0
+                      ? "up"
+                      : wsItem.new_price - newItem.product_details.new_price == 0
+                        ? "balance"
+                        : "down",
+                  change_change:
+                    wsItem.change - newItem.product_details.change > 0
+                      ? "up"
+                      : wsItem.change - newItem.product_details.change == 0
+                        ? "balance"
+                        : "down",
+                  chg_change:
+                    wsItem.change - newItem.product_details.change > 0
+                      ? "up"
+                      : wsItem.change - newItem.product_details.change == 0
+                        ? "balance"
+                        : "down",
                 };
 
-                setCurrentSymbol(symbol);
-              }
+                // 同步到 currentSymbol
 
-              newItem.product_details = {
-                ...newItem.product_details,
-                ...payload,
-              };
+                if (
+                  currentSymbol?.product_details?.symbol == wsItem.symbol &&
+                  Number(currentSymbol?.product_details?.timestamp) <
+                  Number(wsItem.timestamp)
+                ) {
+                  const symbol = {
+                    ...currentSymbol,
+                    product_details: {
+                      ...currentSymbol.product_details,
+                      ...payload,
+                    },
+                  };
+
+                  setCurrentSymbol(symbol);
+                }
+
+                newItem.product_details = {
+                  ...newItem.product_details,
+                  ...payload,
+                };
+              }
             }
             return newItem;
           }
@@ -274,6 +298,148 @@ export default class extends BaseReact {
         this.props.market.setSelfSelectSymbolList(newSelfSelectSymbolList);
       }
     };
+
+    // this.selfSymbolWSConnect.onclose = (evt) => {
+    //   setInterval(function () { that.connnetSelfSymbolWebsocket() }, 3000)
+    // }
+  };
+
+  connectSymbolWebsocket = () => {
+    // 建立產品个股 ws
+
+    const { prevSymbol, nextSymbol } = this.state;
+    const that = this;
+
+    if (this.selfSymbolWSConnect !== null) {
+      this.selfSymbolWSConnect.close();
+      this.selfSymbolWSConnect = null;
+    }
+
+    if (this.symbolWSConnect == null) {
+      this.symbolWSConnect = ws("symbol");
+    }
+
+    // console.log(this.symbolWSConnect);
+    // console.log(nextSymbol)
+    // console.log(this.symbolWSConnect.readyState)
+
+    if (this.symbolWSConnect.readyState === 1) {
+      if (!utils.isEmpty(prevSymbol)) {
+        this.symbolWSConnect.send(`{"type":"unsubscribe";"data":{"symbol_id":[${prevSymbol}]}}`);
+      }
+
+      this.symbolWSConnect.send(`{"type":"subscribe";"data":{"symbol_id":[${nextSymbol}]}}`);
+    }
+
+
+
+    // setTimeout(function () {
+    //   setInterval(function () {
+    //     that.selfSymbolWSConnect.send(`{"type":"ping"}`);
+    //   }, 3000);
+    // }, 30000);
+
+    this.symbolWSConnect.onopen = event => { this.symbolWSConnect.send(`{"type":"subscribe";"data":{"symbol_id":[${nextSymbol}]}}`); };
+
+
+    this.symbolWSConnect.onmessage = event => {
+      const message = JSON.parse(event.data);
+      const data = message.data;
+      if (message.type === 'pong') {
+        clearInterval(this.selfSymbolInterval);
+
+        // 如果一定时间没有调用clearInterval，则执行重连
+        this.selfSymbolInterval = setInterval(function () {
+          that.connectSelfSymbolWebsocket();
+        }, 4000);
+      }
+      if (message.type && message.type !== 'pong') { // 消息推送
+        // code ...      
+        const {
+          symbolList,
+          currentSymbol,
+          setCurrentSymbol,
+        } = this.props.market;
+        const newSymbolList = symbolList.map(
+          (item, index) => {
+            const newItem = cloneDeep(item);
+            for (let wsItem of data) {
+              if (
+                newItem?.product_details?.symbol == wsItem.symbol &&
+                Number(newItem?.product_details?.timestamp) < Number(wsItem.timestamp)
+              ) {
+                const payload = {
+                  ...wsItem,
+                  buy_change:
+                    wsItem.buy - newItem.product_details.buy > 0
+                      ? "up"
+                      : wsItem.buy - newItem.product_details.buy == 0
+                        ? "balance"
+                        : "down",
+                  sell_change:
+                    wsItem.sell - newItem.product_details.sell > 0
+                      ? "up"
+                      : wsItem.sell - newItem.product_details.sell == 0
+                        ? "balance"
+                        : "down",
+                  sell_open_change:
+                    wsItem.sell - wsItem.close > 0
+                      ? "up"
+                      : wsItem.sell - newItem.close == 0
+                        ? "balance"
+                        : "down",
+                  new_price_change:
+                    wsItem.new_price - newItem.product_details.new_price > 0
+                      ? "up"
+                      : wsItem.new_price - newItem.product_details.new_price == 0
+                        ? "balance"
+                        : "down",
+                  change_change:
+                    wsItem.change - newItem.product_details.change > 0
+                      ? "up"
+                      : wsItem.change - newItem.product_details.change == 0
+                        ? "balance"
+                        : "down",
+                  chg_change:
+                    wsItem.change - newItem.product_details.change > 0
+                      ? "up"
+                      : wsItem.change - newItem.product_details.change == 0
+                        ? "balance"
+                        : "down",
+                };
+
+                // 同步到 currentSymbol
+
+                if (
+                  currentSymbol?.product_details?.symbol == wsItem.symbol &&
+                  Number(currentSymbol?.product_details?.timestamp) <
+                  Number(wsItem.timestamp)
+                ) {
+                  const symbol = {
+                    ...currentSymbol,
+                    product_details: {
+                      ...currentSymbol.product_details,
+                      ...payload,
+                    },
+                  };
+
+                  setCurrentSymbol(symbol);
+                }
+
+                newItem.product_details = {
+                  ...newItem.product_details,
+                  ...payload,
+                };
+              }
+            }
+            return newItem;
+          }
+        );
+        this.props.market.symbolList(newSymbolList);
+      }
+    };
+
+    this.setState({ prevSymbol: nextSymbol })
 
     // this.selfSymbolWSConnect.onclose = (evt) => {
     //   setInterval(function () { that.connnetSelfSymbolWebsocket() }, 3000)
@@ -294,6 +460,7 @@ export default class extends BaseReact {
 
     this.orderWSConnect.onmessage = evt => {
       const msg = JSON.parse(evt.data);
+      const data = msg.data;
       // console.log('tradeList', this.props.market?.tradeList);
       if (msg.type === 'pong') {
         clearInterval(this.orderInterval);
@@ -318,11 +485,13 @@ export default class extends BaseReact {
             list = [msg.data, ...list];
           } else if (msg.type == "order_profit") {
             list = list.map(item => {
-              if (
-                item.order_number == msg.data.order_number &&
-                msg.data.timestamp > item.timestamp
-              ) {
-                item = msg.data;
+              for (let wsItem of data) {
+                if (
+                  item.order_number == wsItem.order_number &&
+                  wsItem.timestamp > item.timestamp
+                ) {
+                  item = wsItem;
+                }
               }
               return item;
             });
@@ -439,35 +608,44 @@ export default class extends BaseReact {
         // hasMore: true
       },
     }),
-    async () => {
-      // @todo 调取 symbol-list 接口
-      // const { page, page_size } = this.state.symbolFilter;
-      // if (id === "自选") {
-      //   await this.props.market.getSelfSelectSymbolList({
-      //     params: {
-      //       type__name: id == "自选" ? undefined : id,
-      //     },
-      //     page, page_size
-      //   });
-      // } else {
-      //   await this.props.market.getSymbolList({
-      //     params: {
-      //       type__name: id,
-      //       exclude_self_select: true,
-      //     },
-      //     page, page_size
-      //   });
-      // }
+      async () => {
+        // @todo 调取 symbol-list 接口
+        // const { page, page_size } = this.state.symbolFilter;
+        // if (id === "自选") {
+        //   await this.props.market.getSelfSelectSymbolList({
+        //     params: {
+        //       type__name: id == "自选" ? undefined : id,
+        //     },
+        //     page, page_size
+        //   });
+        // } else {
+        //   await this.props.market.getSymbolList({
+        //     params: {
+        //       type__name: id,
+        //       exclude_self_select: true,
+        //     },
+        //     page, page_size
+        //   });
+        // }
 
-      const { selfSelectSymbolPageSize, selfSelectSymbolCount, symbolPageSize, symbolCount, } = this.props.market;
-      const { currentFilter, } = this.state;
-      await this.setState(prevState => ({
-        symbolFilter: {
-          ...prevState.symbolFilter,
-          hasMore: currentFilter === "自选" ? (selfSelectSymbolPageSize < selfSelectSymbolCount) : (symbolPageSize < symbolCount),
-        },
-      }), () => { this.getSymbolList(); });
-    }
+        const { selfSelectSymbolPageSize, selfSelectSymbolCount, symbolPageSize, symbolCount, } = this.props.market;
+        const { currentFilter, } = this.state;
+        // await this.setState(prevState => ({
+        //   symbolFilter: {
+        //     ...prevState.symbolFilter,
+        //     hasMore: currentFilter === "自选" ? (selfSelectSymbolPageSize < selfSelectSymbolCount) : (symbolPageSize < symbolCount),
+        //   },
+        // }), () => { this.getSymbolList(); });
+        await this.setState({
+          symbolFilter: {
+            hasMore: currentFilter === "自选" ? (selfSelectSymbolPageSize < selfSelectSymbolCount) : (symbolPageSize < symbolCount),
+            page: 1,
+            page_size: 20,
+            error: false,
+            dataLoading: false,
+          },
+        }, () => { this.getSymbolList(); });
+      }
     );
   };
 
@@ -481,7 +659,7 @@ export default class extends BaseReact {
             <div
               className={`symbol-filter-item ${
                 item.symbol_type_name == currentFilter ? "active" : ""
-              }`}
+                }`}
               onClick={() => this.onFilterChange(item.symbol_type_name)}
             >
               {item.symbol_type_name}
@@ -593,7 +771,7 @@ export default class extends BaseReact {
       {
         title: "点差",
         dataIndex: "dots",
-        col: 3,
+        col: 2,
         className: "text-right",
       },
       {
@@ -610,7 +788,11 @@ export default class extends BaseReact {
       },
       {
         col: 2,
+      },
+      {
+        col: 1,
       }
+
     ];
     // :
     // columns = [
@@ -714,7 +896,7 @@ export default class extends BaseReact {
                         {item?.product_details?.symbol}
                       </span>
                     </Col>
-                    <Col span={3} className={"self-select-dot-container"}>
+                    <Col span={2} className={"self-select-dot-container"}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -727,16 +909,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -746,16 +928,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
                               ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -778,12 +960,13 @@ export default class extends BaseReact {
                         />
                       </div>
                     </Col>
+                    <Col span={1}></Col>
                   </Row>
                 </Col>
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -881,7 +1064,7 @@ export default class extends BaseReact {
                         {item?.symbol_display?.product_display?.code}
                       </span>
                     </Col>
-                    <Col span={3} className={"self-select-dot-container"}>
+                    <Col span={2} className={"self-select-dot-container"}>
                       <span
                         style={{
                           color: "#838D9E",
@@ -894,16 +1077,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                       ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.sell_change, stockColorMode)
+                          }
                         ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.sell_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.sell_change || "balance"
+                          ]
+                          }
                       self-select-sell-block`}
                       >
                         {item?.product_details?.sell}
@@ -913,16 +1096,16 @@ export default class extends BaseReact {
                       <span
                         className={`
                         ${
-              STOCK_COLOR_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-  // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
-              }
+                          STOCK_COLOR_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          // utils.getStockChangeClass(item?.product_details?.buy_change, stockColorMode)
+                          }
                               ${
-              STOCK_COLOR_GIF_MAP[stockColorMode][
-                item?.product_details?.buy_change || "balance"
-              ]
-              }
+                          STOCK_COLOR_GIF_MAP[stockColorMode][
+                          item?.product_details?.buy_change || "balance"
+                          ]
+                          }
                         self-select-buy-block`}
                       >
                         {item?.product_details?.buy}
@@ -945,12 +1128,13 @@ export default class extends BaseReact {
                         />
                       </div>
                     </Col>
+                    <Col span={1}></Col>
                   </Row>
                 </Col>
                 <Col
                   className={`symbol-sidebar-info ${
                     openSymbolId == item.id ? "active" : ""
-                  }`}
+                    }`}
                   span={24}
                 >
                   <Row type={"flex"} justify={"space-around"}>
@@ -1146,7 +1330,7 @@ export default class extends BaseReact {
         {
           title: "方向",
           dataIndex: "action",
-          width: 100,
+          width: 70,
           render: (text) => {
             switch (text) {
               case '0':
@@ -1167,12 +1351,12 @@ export default class extends BaseReact {
         {
           title: "开仓价",
           dataIndex: "open_price",
-          width: 150,
+          width: 120,
         },
         {
           title: "平仓价",
           dataIndex: "close_price",
-          width: 150,
+          width: 120,
         },
         {
           title: "交易手数",
@@ -1194,12 +1378,12 @@ export default class extends BaseReact {
         {
           title: "库存费",
           dataIndex: "swaps",
-          width: 150,
+          width: 100,
         },
         {
           title: "税费",
           dataIndex: "taxes",
-          width: 150,
+          width: 100,
         },
         {
           title: "手续费",
@@ -1336,7 +1520,7 @@ export default class extends BaseReact {
       {
         title: "方向",
         dataIndex: "action",
-        width: 100,
+        width: 70,
         render: (text) => {
           switch (text) {
             case '0':
@@ -1357,7 +1541,7 @@ export default class extends BaseReact {
       {
         title: "开仓价",
         dataIndex: "open_price",
-        width: 150,
+        width: 120,
       },
       {
         title: "交易手数",
@@ -1366,7 +1550,7 @@ export default class extends BaseReact {
       },
       {
         title: "止盈/止损",
-        width: 150,
+        width: 100,
         render: (text, record) => {
           return (
             <div>
@@ -1571,10 +1755,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {currentSymbol?.product_details?.sell}
@@ -1583,16 +1767,16 @@ export default class extends BaseReact {
                       ) : sell_open_change == "down" ? (
                         <IconFont type={"icon-arrow-down"} />
                       ) : (
-                        <MinusOutlined />
-                      )}
+                            <MinusOutlined />
+                          )}
                     </span>
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {change > 0 ? "+" + change : change}
@@ -1600,10 +1784,10 @@ export default class extends BaseReact {
                     <span
                       className={`
                   ${
-      STOCK_COLOR_MAP[stockColorMode][
-        sell_open_change || "balance"
-      ]
-      }
+                        STOCK_COLOR_MAP[stockColorMode][
+                        sell_open_change || "balance"
+                        ]
+                        }
                   `}
                     >
                       {chg > 0 ? "+" + chg : chg}%
@@ -1655,7 +1839,7 @@ export default class extends BaseReact {
               span={24}
               className={`symbol-order ${
                 this.state.foldTabs ? "fold-tabs" : "unfold-tabs"
-              }`}
+                }`}
             >
               <Tabs
                 tabBarExtraContent={
