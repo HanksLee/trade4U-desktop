@@ -1,8 +1,7 @@
 import { computed, action, observable } from 'mobx';
 import BaseStore from 'store/base';
-import Cookies from 'js-cookie';
 import { PAGE_ROUTES } from 'constant';
-import jwtDecode from 'jwt-decode';
+import { STOCK_COLOR_MAP, STOCK_COLOR_GIF_MAP } from "constant";
 
 class CommonStore extends BaseStore {
 
@@ -19,6 +18,15 @@ class CommonStore extends BaseStore {
     this.systemConfig = systemConfig;
   }
 
+  @action
+  getKeyConfig(key) {
+    if(this.systemConfig.length === 0)
+      return null;
+     
+    return this.systemConfig.filter((item, i)=>{
+      return item.key === key;
+    })[0].value;
+  }
 
   // 股票涨跌颜色模式，1-绿涨红跌 2-红涨绿跌
   @observable
@@ -27,6 +35,35 @@ class CommonStore extends BaseStore {
   setStockColorMode = mode => {
     this.stockColorMode = mode;
   }
+
+  @computed
+  get getHighPriceClass() {
+    const key = "up";
+    return {
+      color:STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+    };
+  }
+
+  @computed
+  get getNormalPriceClass() {
+    const key = "balance";
+    return {
+      color:STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+    };
+  }
+
+
+  @computed
+  get getLowPriceClass() {
+    const key = "down";
+    return {
+      color:STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+    };
+  }
+
   @observable
   paginationConfig = {
     defaultCurrent: 1,
@@ -129,6 +166,18 @@ class CommonStore extends BaseStore {
     this.guideModalVisible = !this.guideModalVisible;
   }
 
+  @observable
+  count={
+    test:"",
+  }
+
+  @action
+  setCount(d) {
+    this.count = {
+      ...this.count,
+      ...d,
+    };
+  }
 }
 
 export default new CommonStore();

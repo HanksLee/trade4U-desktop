@@ -19,7 +19,7 @@ const getSymbolTypeList = (config) =>
   API.get("/trader/symbol_type", config);
 
 const getSymbolList = (config) =>
-  API.get(`/trader/symbol?page=${config.page}&page_size=${config.page_size}`, config);
+  API.get(`/trader/symbol?page=${config.page}&page_size=${config.page_size}&type__name=${config.type__name}`, config);
 
 const getCurrentSymbol = (id, config = {}) => API.get(`/trader/symbol/${id}`, config);
 

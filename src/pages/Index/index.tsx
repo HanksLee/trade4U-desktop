@@ -224,6 +224,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
       computedUserInfo,
       toggleGuideModalVisible,
       computedSidebar, guideModalVisible, settingsModalVisible, } = this.props.common;
+
     return (
       <div className={"home"}>
         <div className="home-header">
@@ -273,7 +274,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             notFoundContent={null}
           >
             {symbolOptions.map(item => (
-              <OptGroup label={item.name}>
+              <OptGroup key={item.id} label={item.name}>
                 {item.data.map(subItem => (
                   <Option key={subItem.id}>{subItem.name}</Option>
                 ))}
@@ -358,6 +359,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               <div className={"home-sidebar"}>
                 {computedSidebar.map(item => (
                   <div
+                    key={item.path}
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
                     }`}

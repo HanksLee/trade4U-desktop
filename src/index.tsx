@@ -7,7 +7,7 @@ import 'styles/index.scss';
 import 'nprogress/nprogress.css';
 import { message } from 'antd';
 
-utils.setRootFontSizeFromClient();
+//utils.setRootFontSizeFromClient();
 utils.initI18n(navigator.language);
 
 configure({ enforceActions: 'observed', });

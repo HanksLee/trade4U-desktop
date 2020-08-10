@@ -192,6 +192,20 @@ function getStockChangeClass(change, colorMode) {
   return STOCK_COLOR_MAP[colorMode][ret];
 }
 
+function resizeTabBar(ref) {
+  const tabBar = ref.querySelector(".ant-tabs-ink-bar.ant-tabs-ink-bar-animated");
+  const tabBarWidth = tabBar.clientWidth;
+  const tab = ref.querySelector(".ant-tabs-tab");
+  const tabWidth = tab.clientWidth;
+
+  if(Math.abs(tabBarWidth - tabWidth) <= 5)
+  {
+    return;
+  }
+
+  tabBar.style.width = tab.clientWidth;
+}
+
 export default {
   setRootFontSizeFromClient,
   initI18n,
@@ -210,4 +224,5 @@ export default {
   spliceQuery,
   getFileInfo,
   getStockChangeClass,
+  resizeTabBar,
 };

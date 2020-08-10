@@ -18,6 +18,10 @@ import { toJS } from "mobx";
 import utils from "utils";
 import { MinusOutlined, LoadingOutlined } from "@ant-design/icons";
 
+
+import Left from './Left';
+import Bottom from './Bottom';
+
 const { TabPane, } = Tabs;
 const { RangePicker, } = DatePicker;
 let CancelToken = axios.CancelToken;
@@ -89,18 +93,18 @@ export default class extends BaseReact {
   async componentDidMount() {
     (window as any).$market = this.props.common;
 
-    this.getSymbolList();
-    this.getSymbolTypeList();
-    this.getTradeList(
-      {
-        params: {
-          status: "in_transaction",
-        },
-      },
-      "in_transaction"
-    );
+    // this.getSymbolList();
+    // this.getSymbolTypeList();
+    // this.getTradeList(
+    //   {
+    //     params: {
+    //       status: "in_transaction",
+    //     },
+    //   },
+    //   "in_transaction"
+    // );
     // this.connectSelfSymbolWebsocket();
-    this.connectOrderWebsocket();
+    // this.connectOrderWebsocket();
   }
 
   componentWillUnmount() {
@@ -192,7 +196,7 @@ export default class extends BaseReact {
     }
 
     if (this.selfSymbolWSConnect == null) {
-      this.selfSymbolWSConnect = ws("self-select-symbol");
+      //this.selfSymbolWSConnect = ws("self-select-symbol");
     }
 
     // setTimeout(function () {
@@ -642,7 +646,7 @@ export default class extends BaseReact {
           page: 1,
           page_size: 20,
           error: false,
-          dataLoading: false,
+          dataLoading: true,
         },
       }, () => { this.getSymbolList(); });
     }
@@ -753,6 +757,7 @@ export default class extends BaseReact {
 
   renderSymbolTable = () => {
     const { hasMore, openSymbolId, currentFilter, } = this.state;
+    const quoted_price = this.props.common.getKeyConfig("quoted_price");
     let columns;
     // currentFilter === "自选" ?
     columns = [
@@ -781,19 +786,19 @@ export default class extends BaseReact {
         className: "text-right",
       },
       {
+        col: 2,
+      }
+    ];
+    
+    if(quoted_price === "two_price") {
+      columns.splice(columns.length - 2, 0, {
         title: "买入",
         dataIndex: "buy",
         col: 5,
         className: "text-right",
-      },
-      {
-        col: 2,
-      },
-      {
-        col: 1,
-      }
+      });
+    }
 
-    ];
     // :
     // columns = [
     //   {
@@ -1702,32 +1707,54 @@ export default class extends BaseReact {
     }));
   };
 
-  render() {
-    const { orderTabKey, } = this.state;
+  getPriceTmp = (sign) => {
     const {
-      market: { currentSymbol, },
-      common: { stockColorMode, },
-    } = this.props;
-    // const sell = currentSymbol?.product_details?.sell;
-    const sell_change = currentSymbol?.product_details?.sell_change;
-    const sell_open_change = currentSymbol?.product_details?.sell_open_change;
+      getHighPriceClass,
+      getNormalPriceClass,
+      getLowPriceClass,
+    } = this.props.common;
+    return sign === 1 ? 
+      getHighPriceClass : 
+      sign  === -1 ? 
+        getLowPriceClass : 
+        getNormalPriceClass;
+  };
 
-    const change = currentSymbol?.product_details?.change;
-    const change_change = currentSymbol?.product_details?.change_change;
-    const chg = currentSymbol?.product_details?.chg;
-    const chg_change = currentSymbol?.product_details?.chg_change;
+  render() {
+    // const { orderTabKey, } = this.state;
+    // const {
+    //   market: { currentSymbol, },
+    //   common: { stockColorMode, },
+    // } = this.props;
+    // // const sell = currentSymbol?.product_details?.sell;
+    // const sell_change = currentSymbol?.product_details?.sell_change;
+    // const sell_open_change = currentSymbol?.product_details?.sell_open_change;
 
-    // console.log('sell_change', sell_change);
+    // const change = currentSymbol?.product_details?.change;
+    // const change_change = currentSymbol?.product_details?.change_change;
+    // const chg = currentSymbol?.product_details?.chg;
+    // const chg_change = currentSymbol?.product_details?.chg_change;
 
-    const OrderTabs = orderTabs.map(item => (
-      <TabPane tab={item.name} key={item.id}>
-        {this.renderOrderTable(item.name)}
-      </TabPane>
-    ));
+    // // console.log('sell_change', sell_change);
 
+    // const OrderTabs = orderTabs.map(item => (
+    //   <TabPane tab={item.name} key={item.id}>
+    //     {this.renderOrderTable(item.name)}
+    //   </TabPane>
+    // ));
+    // console.log("index  redner");
     return (
       <div className={"symbol-page"}>
-        <div className={"symbol-left"}>
+  
+        <Left getPriceTmp={this.getPriceTmp} />
+        <div className={"symbol-right"}>
+          <Row style={{ height: "100%", }}>
+            <Bottom getPriceTmp={this.getPriceTmp} />
+          </Row>
+      
+        </div>
+        
+        {/* <div className={"symbol-left"}>
           <Tabs
             tabBarStyle={{
               padding: "0 10px",
@@ -1739,8 +1766,8 @@ export default class extends BaseReact {
               {this.renderSymbolTable()}
             </TabPane>
           </Tabs>
-        </div>
-        <div className={"symbol-right"}>
+        </div> */}
+        {/* <div className={"symbol-right"}>
           <Row style={{ height: "100%", }}>
             {!utils.isEmpty(currentSymbol) ? <Col span={24} className={"symbol-chart"}>
               <Row
@@ -1881,48 +1908,48 @@ export default class extends BaseReact {
               </Tabs>
             </Col>
           </Row>
-        </div>
+        </div> */}
         {
-          this.props.market.orderModalVisible && (
-            <Modal
-              className={"symbol-modal"}
-              mask={false}
-              width={670}
-              style={{
-                backgroundColor: "#373e47",
-              }}
-              bodyStyle={{
-                backgroundColor: "#373e47",
-              }}
-              visible={this.props.market.orderModalVisible}
-              onCancel={() => {
-                this.props.market.setCurrentOrder({}, true);
-                this.props.market.toggleOrderModalVisible();
-              }}
-              closable={false}
-              footer={null}
-            >
-              <SymbolEditor
-                onRef={ref => (this.$symbolEditor = ref)}
-                getTradeHistoryList={() => {
-                  this.getTradeHistoryList({
-                    params: this.state.historyFilter,
-                  });
-                }}
-                getTradeList={() => {
-                  this.getTradeList(
-                    {
-                      params: {
-                        status: orderTabKey,
-                      },
-                    },
-                    orderTabKey
-                  );
-                }}
-                orderMode={this.state.orderMode}
-              />
-            </Modal>
-          )
+          // this.props.market.orderModalVisible && (
+          //   <Modal
+          //     className={"symbol-modal"}
+          //     mask={false}
+          //     width={670}
+          //     style={{
+          //       backgroundColor: "#373e47",
+          //     }}
+          //     bodyStyle={{
+          //       backgroundColor: "#373e47",
+          //     }}
+          //     visible={this.props.market.orderModalVisible}
+          //     onCancel={() => {
+          //       this.props.market.setCurrentOrder({}, true);
+          //       this.props.market.toggleOrderModalVisible();
+          //     }}
+          //     closable={false}
+          //     footer={null}
+          //   >
+          //     <SymbolEditor
+          //       onRef={ref => (this.$symbolEditor = ref)}
+          //       getTradeHistoryList={() => {
+          //         this.getTradeHistoryList({
+          //           params: this.state.historyFilter,
+          //         });
+          //       }}
+          //       getTradeList={() => {
+          //         this.getTradeList(
+          //           {
+          //             params: {
+          //               status: orderTabKey,
+          //             },
+          //           },
+          //           orderTabKey
+          //         );
+          //       }}
+          //       orderMode={this.state.orderMode}
+          //     />
+          //   </Modal>
+          // )
         }
       </div>
     );
