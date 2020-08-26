@@ -116,7 +116,7 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
       if (!refreshChannel) return;
 
       const { path, pathKey, } = selectedChannel;
-      const refreshPath = this.checkPathValue(pathKey ,this.props , prevProps);
+      const refreshPath = this.checkPathValue(pathKey, this.props, prevProps);
       if(!refreshPath)
         return;
       const newPath = this.getNewPath(path, pathKey);
@@ -128,14 +128,14 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     }
 
     //function
-    checkPathValue = (keylist , before , old)=>{
-        let ret = false;
-        for(let key of keylist){
-          if(before[key] !== old[key]){
-            ret = true;
-          }
+    checkPathValue = (keylist, before, old)=>{
+      let ret = false;
+      for(let key of keylist) {
+        if(before[key] !== old[key]) {
+          ret = true;
         }
-        return ret;
+      }
+      return ret;
     }
     getNewPath = (path, pathKey) => {
       if (!pathKey) {

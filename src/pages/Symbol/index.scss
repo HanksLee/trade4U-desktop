@@ -123,20 +123,21 @@ $side-width:368px;
         }
 
         .symbol-chart-title-status {
+          display: none;
           border: 1px solid #FFF;
           border-radius:4px;
           width: 62px;
           height: 20px;
-         
-          display: inline-block;
           text-align: center;
           user-select: none;
           &.in_transaction{
+            display: inline-block;
             color: $active-color;
             border-color: $active-color;
           }
 
           &.closed{
+            display: inline-block;
             color:#838D9E;
             border-color: #838D9E;
           }

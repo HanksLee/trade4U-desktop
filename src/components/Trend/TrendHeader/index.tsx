@@ -9,7 +9,7 @@ import { traderStatusMap } from "constant";
 import moment from "moment";
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js"
+  scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
 });
 
 @inject("trend")
@@ -17,11 +17,8 @@ const IconFont = createFromIconfontCN({
 export default class extends React.Component<any, any> {
   state = {
     name: "----",
-    chg: 0,
-    change: 0,
     trader_status: "",
-    sell: 0,
-    btnOpen: false
+    btnOpen: false,
   };
   trend = null;
   constructor(props) {
@@ -37,7 +34,9 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name, sell, chg, change, trader_status, btnOpen } = this.state;
+    const { name, trader_status, btnOpen, } = this.state;
+    const {sell, chg, change} = this.trend.trendInfo;
+    
     const status = traderStatusMap[trader_status];
 
     const sign = Math.sign(change);
@@ -45,6 +44,7 @@ export default class extends React.Component<any, any> {
     const priceCss = priceObj ? `${priceObj.color}` : "";
 
     const btnCss = btnOpen ? "close" : "open";
+
     return (
       <Row
         className={"symbol-chart-info"}

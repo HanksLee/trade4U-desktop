@@ -388,7 +388,7 @@ class ProductStore extends BaseStore {
     return toJS(this.openSymbol.detail);
   }
   @computed 
-  get getCurrentList(){
+  get getCurrentList() {
     return toJS(this.currentList.symbolList);
   }
 

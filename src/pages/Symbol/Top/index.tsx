@@ -31,7 +31,7 @@ const WS_TrendContainer = WSConnect(
 @observer
 export default class extends BaseReact<{}, {}> {
   state = {
-    info: null
+    info: null,
   };
   trend = null;
   cancelTrackMessageListener = null;
@@ -44,8 +44,8 @@ export default class extends BaseReact<{}, {}> {
   }
 
   render() {
-    const { info } = this.state;
-    const { getPriceTmp } = this.props;
+    const { info, } = this.state;
+    const { getPriceTmp, } = this.props;
     const symbol = info ? info.nowRealID : null;
 
     return (
@@ -70,7 +70,7 @@ export default class extends BaseReact<{}, {}> {
   };
 
   messageListener = (message, reaction) => {
-    const { cmd, data } = message;
+    const { cmd, data, } = message;
     const d = toJS(data);
     switch (cmd) {
       case PRODUCT_RESFRESH:
@@ -80,22 +80,27 @@ export default class extends BaseReact<{}, {}> {
         this.setProductTrend(d);
         break;
       case PRODUCT_UPDATE:
-        this.setProductTrend(d);
+        this.updateProductTrend(d);
         break;
     }
   };
 
   setProductTrend = (d) => {
-    const {rowInfo} = d;
-    const { info } = this.state;
+    const { rowInfo, } = d;
+    const { info, } = this.state;
 
     const newInfo = {
       ...info,
-      ...rowInfo
-    }
+      ...rowInfo,
+    };
     this.setState({
-      info: newInfo
+      info: newInfo,
     });
   };
+
+  updateProductTrend = (d)=>{
+    const { rowInfo, } = d;
+    this.trend.setTrendInfo(rowInfo);
+  }
 
 }

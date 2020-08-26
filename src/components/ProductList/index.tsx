@@ -359,22 +359,21 @@ export default class ProductList extends BaseReact {
 
   broadcastMsg = (buffer)=>{
     const { product, } = this.props;
-    const {getCurrentList , openSymbol} = product;
+    const { getCurrentList, openSymbol, } = product;
     const selectedItem =  getCurrentList.filter((item)=>{
       return item.id === openSymbol.id;
     });
 
-    if(selectedItem.length === 0){
+    if(selectedItem.length === 0) {
       return;
     }
     const i  = buffer.list.findIndex((item)=>{
       return item.symbol === selectedItem[0].rowInfo.symbol;
     });
 
-    if(i !== -1){
+    if(i !== -1) {
       this.props.sendBroadcastMessage(PRODUCT_UPDATE, selectedItem[0]);
     }
-
   }
 
 

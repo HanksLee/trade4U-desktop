@@ -9,34 +9,32 @@ class TrendStore extends BaseStore {
   trendList = [];
 
   @action
-  fetchTrendList = async (id, unit)=>{
+  fetchTrendList = async (id, unit) => {
     const res = await api.market.getProductTrend(id, {
       params: {
-        unit: unit,
-      },
+        unit: unit
+      }
     });
 
-    if(res.status === 200) {
+    if (res.status === 200) {
       this.setTrendList(res.data.trend);
     }
-  }
+  };
 
   @action
-  setTrendList = (list)=>{
+  setTrendList = list => {
     const newList = this.converTrendList(list, 0, 1);
     this.trendList = [...newList];
-  }
-
+  };
 
   @observable
   trendUpdateList = [];
 
   @action
-  setTrendUpdateList = (list)=>{
+  setTrendUpdateList = list => {
     const newList = this.converTrendList(list, "time", "sell");
     this.trendUpdateList = [...newList];
   };
-
 
   converTrendList = (list, key1, key2) => {
     return list.map(item => {
@@ -44,11 +42,28 @@ class TrendStore extends BaseStore {
       const sell = item[key2];
       return {
         time: date,
-        value: sell,
+        value: sell
       };
     });
   };
 
+  @observable
+  trendInfo = {
+    name: "----",
+    chg: 0,
+    change: 0,
+    trader_status: "",
+    sell: 0,
+    btnOpen: false
+  };
+
+  @action
+  setTrendInfo = d => {
+    this.trendInfo = {
+        ...this.trendInfo ,
+        ...d
+    };
+  };
 }
 
 export default new TrendStore();
