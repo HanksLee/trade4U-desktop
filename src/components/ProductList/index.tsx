@@ -18,7 +18,7 @@ import {
   REFRESH,
   SCROLL
 } from "pages/Symbol/Left/config/symbolTypeStatus";
-import { PRODUCT_RESFRESH } from "pages/Symbol/config/messageCmd";
+import { PRODUCT_RESFRESH, PRODUCT_UPDATE } from "pages/Symbol/config/messageCmd";
 
 @inject("product")
 @observer
@@ -174,7 +174,7 @@ export default class ProductList extends BaseReact {
   setOpenItem = id => {
     this.props.product.setOpenSymbol(id);
 
-    this.props.sendMessage(PRODUCT_RESFRESH, this.props.product.getNowSymbolDetail);
+    this.props.sendBroadcastMessage(PRODUCT_RESFRESH, this.props.product.getNowSymbolDetail);
   };
 
   receviceMsgLinter = d => {
@@ -197,6 +197,7 @@ export default class ProductList extends BaseReact {
     }
 
     this.updateContent(buffer);
+    this.broadcastMsg(buffer);
   };
 
   statusChangListener = (before, next) => {
@@ -352,20 +353,30 @@ export default class ProductList extends BaseReact {
     const { product, } = this.props;
     product.updateCurrentSymbolList(buffer.list);
 
-    //const {getOpenSymbolDetail} = product;
-    // const {rowInfo} = getOpenSymbolDetail;
-
-    // const i  = buffer.list.findIndex((item)=>{
-    //   return item.symbol === rowInfo.symbol;
-    // });
-
-    // if(i !== -1){
-    //   this.props.product.setopenSymbol.id(product.openSymbol.id);
-    // }
-
 
     this.buffer = this.initBuffer();
   };
+
+  broadcastMsg = (buffer)=>{
+    const { product, } = this.props;
+    const {getCurrentList , openSymbol} = product;
+    const selectedItem =  getCurrentList.filter((item)=>{
+      return item.id === openSymbol.id;
+    });
+
+    if(selectedItem.length === 0){
+      return;
+    }
+    const i  = buffer.list.findIndex((item)=>{
+      return item.symbol === selectedItem[0].rowInfo.symbol;
+    });
+
+    if(i !== -1){
+      this.props.sendBroadcastMessage(PRODUCT_UPDATE, selectedItem[0]);
+    }
+
+  }
+
 
   filterBufferlList(list) {
     return list.filter((item, i, all) => {

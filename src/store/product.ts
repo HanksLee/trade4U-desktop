@@ -387,7 +387,11 @@ class ProductStore extends BaseStore {
   get getNowSymbolDetail() {
     return toJS(this.openSymbol.detail);
   }
-  
+  @computed 
+  get getCurrentList(){
+    return toJS(this.currentList.symbolList);
+  }
+
   getOpenSymbolDetail(id) {
     const ret = this.currentList.symbolList.filter((item)=>{
       return item.id === id;

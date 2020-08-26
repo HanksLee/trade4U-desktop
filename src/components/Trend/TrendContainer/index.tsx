@@ -19,6 +19,7 @@ import utils from "utils";
 export default class extends BaseReact<{}, {}> {
   state = {
     nowRealID: null,
+    unit: ""
   };
 
   buffer = {};
@@ -26,7 +27,7 @@ export default class extends BaseReact<{}, {}> {
   chartRef = null;
   chartOption = {
     width: 0,
-    height: 500,
+    height: 500
   };
   constructor(props) {
     super(props);
@@ -39,40 +40,54 @@ export default class extends BaseReact<{}, {}> {
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
       ...prevState,
-      ...nextProps,
+      ...nextProps
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { nowRealID, unit } = this.state;
+    const nextNowRealID = nextState.nowRealID;
+    const nextUnit = nextState.unitl
+    return nowRealID !== nextNowRealID || unit !== nextUnit;
+  }
+
   render() {
-    const { trendList, trendUpdateList, } = this.trend;
-    const { nowRealID, } = this.state;
+    const { trendList, trendUpdateList } = this.trend;
+    const { nowRealID } = this.state;
     return (
       <div
         ref={ref => (this.chartRef = ref)}
         className="symbol-chart-container"
       >
         <BasicChart chartOption={this.chartOption}>
-          <AreaSeries symbol={nowRealID} initList={trendList} updateList={trendUpdateList} />
+          <AreaSeries
+            symbol={nowRealID}
+            initList={trendList}
+            updateList={trendUpdateList}
+          />
         </BasicChart>
       </div>
     );
   }
 
   componentDidMount() {
-    const { setReceviceMsgLinter, setStatusChangeListener, } = this.props;
+    const { setReceviceMsgLinter, setStatusChangeListener } = this.props;
     setReceviceMsgLinter(this.receviceMsgLinter);
     setStatusChangeListener(this.statusChangListener);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { nowRealID, } = this.state;
-    if (!nowRealID || nowRealID === prevState.nowRealID) return;
+    const { nowRealID, unit } = this.state;
+    if (
+      !nowRealID ||
+      (nowRealID === prevState.nowRealID && unit === prevState.unit)
+    )
+      return;
     this.chartOption = {
       width: this.chartRef.clientWidth,
-      height: this.chartRef.clientHeight - 50,
+      height: this.chartRef.clientHeight - 50
     };
 
-    const { unit, } = this.props;
     this.clearBuffer();
     this.trend.fetchTrendList(nowRealID, unit);
   }
@@ -80,11 +95,11 @@ export default class extends BaseReact<{}, {}> {
   //function
 
   receviceMsgLinter = d => {
-    const { nowRealID, } = this.state;
-    const { data, } = d;
+    const { nowRealID } = this.state;
+    const { data } = d;
 
-    const { buffer, } = this;
-    const { timeId, BUFFER_TIME, list, } = buffer;
+    const { buffer } = this;
+    const { timeId, BUFFER_TIME, list } = buffer;
     const receviceTime = moment().valueOf();
     buffer.list.push(data);
 
@@ -99,14 +114,11 @@ export default class extends BaseReact<{}, {}> {
     this.updateContent(buffer);
   };
 
-  statusChangListener = (before, next) => {
-
-  };
-
+  statusChangListener = (before, next) => {};
 
   //buffer
   checkBuffer(buffer, receviceTime) {
-    const { list, lastCheckUpdateTime, BUFFER_MAXCOUNT, BUFFER_TIME, } = buffer;
+    const { list, lastCheckUpdateTime, BUFFER_MAXCOUNT, BUFFER_TIME } = buffer;
     let maxCount = list.length;
 
     if (
@@ -116,16 +128,15 @@ export default class extends BaseReact<{}, {}> {
       return true;
     else return false;
   }
-  
+
   updateContent = buffer => {
-    const { list, } = buffer;
-    buffer.list  = this.sortList(list);
+    const { list } = buffer;
+    buffer.list = this.sortList(list);
 
     this.trend.setTrendUpdateList(buffer.list);
 
     this.buffer = this.initBuffer();
   };
-
 
   sortList = list => {
     const tmp = Object.assign([], list);
@@ -147,11 +158,11 @@ export default class extends BaseReact<{}, {}> {
     return tmp;
   };
 
-  clearBuffer = ()=>{
-    const { timeId, } = this.buffer;
+  clearBuffer = () => {
+    const { timeId } = this.buffer;
     window.clearTimeout(timeId);
     this.buffer = this.initBuffer();
-  }
+  };
 
   initBuffer() {
     return {
@@ -159,7 +170,7 @@ export default class extends BaseReact<{}, {}> {
       BUFFER_TIME: 2000,
       timeId: 0,
       lastCheckUpdateTime: moment().valueOf(),
-      list: [],
+      list: []
     };
   }
 }

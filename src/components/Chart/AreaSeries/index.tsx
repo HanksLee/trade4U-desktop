@@ -108,7 +108,7 @@ export default class extends React.Component {
         this.areaSeris.update(d);
         this.lastSymbolDate = d.time;
         resovle(true);
-      }, 50);
+      }, 5);
     });
   };
 

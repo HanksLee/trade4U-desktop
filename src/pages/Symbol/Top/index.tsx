@@ -10,7 +10,8 @@ import { BaseReact } from "components/@shared/BaseReact";
 import {
   PRODUCT_RESFRESH,
   RIGHT_SHOW,
-  RIGHT_HIDE
+  RIGHT_HIDE,
+  PRODUCT_UPDATE
 } from "pages/Symbol/config/messageCmd";
 
 import WSConnect from "components/HOC/WSConnect";
@@ -30,7 +31,7 @@ const WS_TrendContainer = WSConnect(
 @observer
 export default class extends BaseReact<{}, {}> {
   state = {
-    info: null,
+    info: null
   };
   trend = null;
   cancelTrackMessageListener = null;
@@ -43,8 +44,8 @@ export default class extends BaseReact<{}, {}> {
   }
 
   render() {
-    const { info, } = this.state;
-    const { getPriceTmp, } = this.props;
+    const { info } = this.state;
+    const { getPriceTmp } = this.props;
     const symbol = info ? info.nowRealID : null;
 
     return (
@@ -69,18 +70,32 @@ export default class extends BaseReact<{}, {}> {
   };
 
   messageListener = (message, reaction) => {
-    const { cmd, data, } = message;
+    const { cmd, data } = message;
+    const d = toJS(data);
     switch (cmd) {
       case PRODUCT_RESFRESH:
-        this.openProductDetail(toJS(data));
+        if(!d)
+          return;
+        d.rowInfo.btnOpen = true;
+        this.setProductTrend(d);
+        break;
+      case PRODUCT_UPDATE:
+        this.setProductTrend(d);
         break;
     }
   };
 
-  openProductDetail = d => {
-    const { rowInfo, } = d;
+  setProductTrend = (d) => {
+    const {rowInfo} = d;
+    const { info } = this.state;
+
+    const newInfo = {
+      ...info,
+      ...rowInfo
+    }
     this.setState({
-      info: rowInfo,
+      info: newInfo
     });
   };
+
 }

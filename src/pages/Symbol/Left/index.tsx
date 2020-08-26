@@ -82,7 +82,7 @@ export default class Left extends BaseReact<{}, {}> {
                 channelCode={currentSymbolType.category}
                 symbol_type_code={currentSymbolType.symbol_type_code}
                 priceTmp={this.priceTmp}
-                sendMessage={this.sendMessage}
+                sendBroadcastMessage={this.sendBroadcastMessage}
                 onFavorite={this.onFavorite}
               />
             </div>
@@ -188,7 +188,7 @@ export default class Left extends BaseReact<{}, {}> {
     }
   }
 
-  sendMessage = (cmd, data)=>{
+  sendBroadcastMessage = (cmd, data)=>{
     this.props.common.setMessage({
       cmd,
       data,

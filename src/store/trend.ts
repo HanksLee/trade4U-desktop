@@ -49,7 +49,6 @@ class TrendStore extends BaseStore {
     });
   };
 
-  
 }
 
 export default new TrendStore();
