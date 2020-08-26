@@ -53,9 +53,9 @@ export default class OrderTabContent extends BaseReact<{}, {}> {
   }
 
   componentDidMount() {
-    const { setReceviceMsgLinter, setStatusChangLinster, } = this.props;
+    const { setReceviceMsgLinter, setStatusChangeListener, } = this.props;
     setReceviceMsgLinter(this.receviceMsgLinter);
-    setStatusChangLinster(this.statusChangLinster);
+    setStatusChangeListener(this.statusChangListener);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -117,7 +117,7 @@ export default class OrderTabContent extends BaseReact<{}, {}> {
     this.updateContent(buffer);
   };
 
-  statusChangLinster = (before, next) => {};
+  statusChangListener = (before, next) => {};
 
   checkBuffer(buffer, key, receviceTime) {
     const { lastCheckUpdateTime, BUFFER_MAXCOUNT, BUFFER_TIME, } = buffer;

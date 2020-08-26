@@ -138,13 +138,14 @@ export default class OrderTable extends BaseReact<{}, {}> {
     return (
       <div>
         <Table
+          className={"symbol-order-table"}
           rowClassName={"symbol-order-table-row"}
           scroll={{ y: "calc(28vh - 56px)", }}
           onRow={getOnRowSetting}
           loading={isLoading}
           pagination={pagination}
           columns={columns}
-          dataSource={result}
+          dataSource={result}        
           rowKey={(record)=>(record.order_number)}
         />
       </div>

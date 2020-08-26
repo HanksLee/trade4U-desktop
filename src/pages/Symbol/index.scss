@@ -1,19 +1,18 @@
 *{
   // outline: 1px solid red;
 }
-
+$side-width:368px;
 .symbol-page {
   color: white;
-  height: calc(100vh - 66px);
+  height: 100%;
   display: flex;
-  padding-left: 10px;
-  padding-top: 10px;
+  padding: 10px;
   //border: 1px solid white;
   overflow: hidden;
 
   .symbol-left {
     //border: 1px solid red;
-    width: 368px;
+    flex: 0 0 $side-width;
     background-color: $primary-color;
     box-shadow:0px 2px 4px 0px rgba(0,0,0,0.5);
     //overflow-y: scroll;
@@ -44,7 +43,7 @@
 
     .symbol-sidebar {
       color: white;
-      padding: 10px;
+      padding: 0px;
       // text-align: center;
       //height: calc(100vh - 56px - 10px - 45px - 22px - 20px);
       width: 100%;
@@ -95,20 +94,19 @@
     }
   }
 
-  .symbol-right {
+  .symbol-center {
     //height: 100vh;
-    width: calc(100vw - 60px - 10px - 400px);
-    //border: 1px solid green;
+    flex: 1 1 calc(100vw - 60px - 10px - 710px);
     overflow: hidden;
-    flex: 1;
 
     >.ant-row {
-      padding-left: 10px;
+      padding: 0 0 0 10px ;
     }
 
     .symbol-chart {
       background-color: $primary-color;
       border-bottom: 1px solid #333;
+      height: 50%;
       //margin-left: 10px;
 
       .symbol-chart-info {
@@ -117,20 +115,51 @@
 
       .symbol-chart-title {
         padding: 10px;
+        height: 100px;
 
         span {
-          margin-right: 10px;
+          margin-right: 7px;
+          font-size: 12px;
         }
 
         .symbol-chart-title-status {
-          border: 1px solid $active-color;
-          border-radius: 2px;
-          padding: 2px 6px;
-          font-size: 12px;
-          color: $active-color;
+          border: 1px solid #FFF;
+          border-radius:4px;
+          width: 62px;
+          height: 20px;
+         
+          display: inline-block;
+          text-align: center;
+          user-select: none;
+          &.in_transaction{
+            color: $active-color;
+            border-color: $active-color;
+          }
+
+          &.closed{
+            color:#838D9E;
+            border-color: #838D9E;
+          }
+        }
+
+        .symbol-chart-priceIcon{
+          margin: 0;
+        }
+        .symbol-chart-main{
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        .symbol-chart-price {
+          font-size: 14px;
         }
       }
 
+      .symbol-chart-container{
+        height: calc(100% - 100px);
+        width: 100%;
+        padding: 10px;
+      }
       .fold-chart {
         height: calc(100vh - 56px - 45px - 554px - 20px);
         min-height: 220px;
@@ -150,7 +179,8 @@
     .symbol-order {
       margin-top: 10px;
       background-color: $primary-color;
-
+      box-shadow:0px 2px 4px 0px rgba(0,0,0,0.5);
+      height: 50%;
       &.unfold-tabs {
         //height: (45px + 57px + 55px + 260px);
         //overflow-y: scroll;
@@ -184,7 +214,7 @@
           display: block;
         }
       }
-
+      .symbol-order-table{}
       .symbol-order-table-row {
         cursor: pointer;
       }
@@ -203,6 +233,49 @@
     }
   }
 
+  .symbol-right {
+    position: relative;
+    flex: 0;
+    transition: 0.5s all ease-in-out;
+    padding: 0;
+
+    .symbol-tool-item{
+      position: absolute;
+      width: $side-width;
+      background-color: $primary-color;
+      height: 100%;
+      box-shadow:0px 2px 4px 0px rgba(0,0,0,0.5);
+      padding-left: 10px;
+      transition: 0.3s all ease-in-out;   
+      visibility: hidden;
+
+      &.symbol-detail{
+        top:0px;
+        left: 500px;
+      }
+      &.symbol-buy-content{
+        top:110%;
+        left: 10px;
+      }
+    }
+
+
+    &.show-area{
+      flex: 0 0 $side-width+10;
+      padding: 0 0 0 10px;
+      .show{
+        visibility:visible;
+
+        &.symbol-detail{
+          left: 10px;
+        }
+
+        &.symbol-buy-content{
+          top:0px;
+        }
+      }
+    }
+  }
   .ant-spin-container {
     background-color: #232c37;
   }

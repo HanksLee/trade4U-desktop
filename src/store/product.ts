@@ -1,5 +1,5 @@
 import api from "services";
-import { action, observable, computed, autorun } from "mobx";
+import { action, observable, computed, autorun, toJS } from "mobx";
 import BaseStore from "store/base";
 import { SELF, NONE } from "pages/Symbol/Left/config/channelConfig";
 import {
@@ -131,16 +131,20 @@ class ProductStore extends BaseStore {
         min_lots,
         selling_fee,
       } = item.symbol_display;
+      const { trader_status, is_self_select, } = item;
       const { symbol_type_code, } = this.currentSymbolType;
       const deleteID = item.symbol;
       const addID = item.id;
-      const { symbol, sell, buy, chg, } = item.product_details
+      const nowRealID = is_self_select === 1 ? item.symbol : item.id;
+
+      const { symbol, sell, buy, change, chg, } = item.product_details
         ? item.product_details
         : {
           symbol: "-----",
           sell: 0,
           buy: 0,
-          chg: 0,
+          change: 0,
+          chg:0,
         };
 
       return {
@@ -150,13 +154,16 @@ class ProductStore extends BaseStore {
           id,
           name,
           spread,
+          change,
           chg,
           sell,
           buy,
           symbol,
           deleteID,
           addID,
+          nowRealID,
           symbol_type_code,
+          trader_status,
         },
         detailInfo: {
           decimals_place,
@@ -218,6 +225,16 @@ class ProductStore extends BaseStore {
   originCurrentList = this.originCurrentListInit();
 
 
+  originCurrentListInit() {
+    return {
+      symbol_type_name: "",
+      count: 0,
+      page: 0,
+      page_size: 0,
+      current_page: 0,
+      results: [],
+    };
+  }
 
   @observable
   currentList = {
@@ -296,6 +313,10 @@ class ProductStore extends BaseStore {
 
     if(!this.isInit)
       return;
+    if(cmd === REFRESH) {
+      this.setOpenSymbol(-1);
+    }
+    
     let tmpList = this.originCurrentListInit();
 
 
@@ -347,22 +368,35 @@ class ProductStore extends BaseStore {
   }
 
   @observable
-  openSymbolId = -1;
+  openSymbol = {
+    id:-1,
+    detail:null,
+  };
 
   @action
-  setOpenSymbolId(id) {
-    this.openSymbolId = id;
+  setOpenSymbol(id) {
+    const detail = this.getOpenSymbolDetail(id);
+
+    this.openSymbol  = {
+      id,
+      detail,
+    };
   }
 
-  originCurrentListInit() {
-    return {
-      symbol_type_name: "",
-      count: 0,
-      page: 0,
-      page_size: 0,
-      current_page: 0,
-      results: [],
-    };
+  @computed
+  get getNowSymbolDetail() {
+    return toJS(this.openSymbol.detail);
+  }
+  
+  getOpenSymbolDetail(id) {
+    const ret = this.currentList.symbolList.filter((item)=>{
+      return item.id === id;
+    });
+
+    if(ret.length === 0)
+      return null;
+
+    return toJS(ret[0]);
   }
 }
 

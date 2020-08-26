@@ -6,6 +6,7 @@ import {
   CONNECTED, //已接收到訊息
   DISCONNECTED, //斷線
   RECONNECT, //斷線重新連線
+  URLREPLACE,
   ERROR //
 } from "./status";
 
@@ -41,6 +42,7 @@ export default class WebSocketControl {
     [RECONNECT]: null,
     [DISCONNECTED]: null,
     [ERROR]: null,
+    [URLREPLACE]:null,
   };
 
   handleStatusChange = null;
@@ -132,7 +134,18 @@ export default class WebSocketControl {
     }
      
     this._path = path;
-    this.reconnectWS();
+
+    try {   
+      if(this.wsInstance) {
+        this.closeCode = AUTO;
+        this.wsInstance.close();
+        this.wsInstance = null;     
+      }   
+      this.callStatusEvent(URLREPLACE);
+      this.startWS();
+    } catch (e) {
+      this.settingErrorEvent(e);
+    }
   }
 
   //private

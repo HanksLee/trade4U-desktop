@@ -1,5 +1,5 @@
 import RankTable from "./RankTable";
-import TrendGraph from "./TrendGraph";
+//import TrendGraph from "./TrendGraph";
 import ForexTable from "./ForexTable";
 import WithRoute from "components/@shared/WithRoute";
 import * as React from "react";
@@ -102,9 +102,7 @@ export default class Market extends BaseReact<any, MarketState> {
         {currentSymbolTypeCode === "HK" && (
           <>
             <div className="trend-graph-panel" ref={this.container}>
-              {symbolTypeMap[currentSymbolTypeCode].map(item => (
-                <TrendGraph productCode={item} width={width} height={height} />
-              ))}
+   
             </div>
             <RankTable symbolTypeCode={currentSymbolTypeCode} />
           </>

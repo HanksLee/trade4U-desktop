@@ -28,8 +28,6 @@ interface TrendGraphState {
   } | null;
 }
 
-@inject("market", "common")
-@observer
 export default class TrendGraph extends BaseReact<TrendGraphProps, TrendGraphState> {
   chart: any = null;
   container: any = null;

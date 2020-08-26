@@ -2,6 +2,7 @@ import { computed, action, observable } from 'mobx';
 import BaseStore from 'store/base';
 import { PAGE_ROUTES } from 'constant';
 import { STOCK_COLOR_MAP, STOCK_COLOR_GIF_MAP } from "constant";
+import { SYMBOL_RESFRESH, RIGHT_SHOW, RIGHT_HIDE } from 'pages/Symbol/config/messageCmd';
 
 class CommonStore extends BaseStore {
 
@@ -167,14 +168,15 @@ class CommonStore extends BaseStore {
   }
 
   @observable
-  count={
-    test:"",
+  message={
+    cmd: null,
+    data: null,
   }
 
   @action
-  setCount(d) {
-    this.count = {
-      ...this.count,
+  setMessage(d) {
+    this.message = {
+      ...this.message,
       ...d,
     };
   }

@@ -5,6 +5,7 @@ const channelConfig = [
     path:"order",
     connectDistanceTime:2000,
     tryConnectMax:10,
+    disconnectMax:10,
   }
 
 ];

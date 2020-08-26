@@ -7,16 +7,24 @@ import {
   CONNECTED, //已接收到訊息
   DISCONNECTED, //斷線
   RECONNECT, //斷線重新連線
+  URLREPLACE, // Url 切換
   ERROR //
 } from "utils/WebSocketControl/status";
 import { AUTO, NORMAL } from "utils/WebSocketControl/close";
 
 export default function WSConnect(defaultChannl, channelConfig, Comp) {
-  const { path, connectDistanceTime, tryConnectMax, } = defaultChannl;
+  const {
+    path,
+    pathKey,
+    connectDistanceTime,
+    tryConnectMax,
+    disconnectMax,
+  } = defaultChannl;
   const wsControl = new WebSocketControl({
     path: path,
     connectDistanceTime: connectDistanceTime,
   });
+
   const connectQueue = [];
   const RECONNECT_DELAYTIME = 5000;
   const tryReconnect = () => {
@@ -25,7 +33,7 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     }, RECONNECT_DELAYTIME);
     connectQueue.push(id);
   };
-  
+
   const clearConnectQueue = () => {
     connectQueue.forEach(id => {
       window.clearTimeout(id);
@@ -37,8 +45,9 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     state = {
       selectedChannel: defaultChannl,
       refreshChannel: false,
-      initMsg:false,
+      initMsg: false,
     };
+    disconnetCount = 0;
 
     constructor(props) {
       super(props);
@@ -48,7 +57,7 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
       //console.log("left getDerivedStateFromProps");
       const { selectedChannel, } = prevState;
       const refreshChannel =
-        nextProps.channelCode !== selectedChannel.channelCode || 
+        nextProps.channelCode !== selectedChannel.channelCode ||
         selectedChannel.pathKey;
 
       return {
@@ -58,7 +67,8 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-      if (!nextState.refreshChannel) {
+      const { refreshChannel, } = nextState;
+      if (!refreshChannel) {
         return true;
       }
 
@@ -73,42 +83,44 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
       nextState.selectedChannel = {
         ...newChannel[0],
       };
-    
-      const { path, pathKey, } = nextState.selectedChannel;
-  
-      let newPath = path;
-      if(pathKey) {
-        pathKey.forEach(key => {
-          const vaule  = nextProps[key];
-          const pathKey = `<${key}>`;
-          newPath = newPath.replace(pathKey, vaule);      
-        });
-      }
 
-      wsControl.replaceUrl(newPath);
       return true;
     }
 
     render() {
       return (
-        <div>
-          <Comp
-            {...this.props}
-            setReceviceMsgLinter={this.setReceviceMsgLinter}
-            setStatusChangLinster={this.setStatusChangLinster}
-            sendMsg={this.sendMsg}
-          />
-        </div>
+        <Comp
+          {...this.props}
+          setReceviceMsgLinter={this.setReceviceMsgLinter}
+          setStatusChangeListener={this.setStatusChangeListener}
+          sendMsg={this.sendMsg}
+        />
       );
     }
 
     componentDidMount() {
       this.setWSEvent(wsControl);
-      wsControl.startWS();
+
+      const { selectedChannel, } = this.state;
+      const { path, pathKey, } = selectedChannel;
+
+      if (pathKey) {
+        const newPath = this.getNewPath(path, pathKey);
+        wsControl.replaceUrl(newPath);
+      } else {
+        wsControl.startWS();
+      }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, PrevState) {
+      const { selectedChannel, refreshChannel, } = this.state;
+      if (!refreshChannel) return;
 
+      const { path, pathKey, } = selectedChannel;
+
+      const newPath = this.getNewPath(path, pathKey);
+
+      wsControl.replaceUrl(newPath);
     }
 
     componentWillUnmount() {
@@ -116,10 +128,29 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     }
 
     //function
-    setWSEvent = (wsc) => {
+
+    getNewPath = (path, pathKey) => {
+      if (!pathKey) {
+        return path;
+      }
+
+      for (let key of pathKey) {
+        const vaule = this.props[key];
+        if (!vaule) {
+          path = "";
+          break;
+        }
+        const pathKey = `<${key}>`;
+        path = path.replace(pathKey, vaule);
+      }
+
+      return path;
+    };
+
+    setWSEvent = wsc => {
       wsc.setStatusChange((wsc, before, now) => {
         // console.log("StatusChange:" ,`${before}->${now}`);
-        if (this.statusChangLinster) this.statusChangLinster(before, now);
+        if (this.statusChangListener) this.statusChangListener(before, now);
       });
       wsc.setReceviceMsg((wsc, msg) => {
         // console.log("ReceviceMsg:" ,msg);
@@ -138,15 +169,19 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
         // console.log("CONNECTED");
       });
       wsc.setStatusEvent(RECONNECT, wsc => {
-        //  console.log("RECONNECT");
+        // console.log("RECONNECT");
       });
       wsc.setStatusEvent(DISCONNECTED, (wsc, closeCode) => {
-        //  console.log("DISCONNECTED");
-
-        if (closeCode === AUTO) tryReconnect();
+        // console.log("DISCONNECTED");
+        this.disconnetCount++;
+        if (closeCode === AUTO && this.disconnetCount < disconnectMax) {
+          tryReconnect();
+        } else if (this.disconnetCount === disconnectMax) {
+          this.$msg.error("已断线，请确认网路状态或联系客服");
+        }
       });
       wsc.setStatusEvent(ERROR, (wsc, e) => {
-        //  console.log("ERROR");
+        // console.log("ERROR");
         wsc.closeWS();
       });
     };
@@ -155,12 +190,12 @@ export default function WSConnect(defaultChannl, channelConfig, Comp) {
     setReceviceMsgLinter = fn => {
       this.receviceMsgLinter = fn;
     };
-    statusChangLinster = null;
-    setStatusChangLinster = fn => {
-      this.statusChangLinster = fn;
+    statusChangListener = null;
+    setStatusChangeListener = fn => {
+      this.statusChangListener = fn;
     };
-    sendMsg =(o)=>{
+    sendMsg = o => {
       wsControl.sendMsg(o);
-    }
+    };
   };
 }

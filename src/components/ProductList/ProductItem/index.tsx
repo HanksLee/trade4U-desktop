@@ -34,11 +34,11 @@ export default class ProductItem extends BaseReact {
       isActive,
       listId,
     } = this.state;
-    
+    const activeCls = isActive ? "custom-table-item active" : "custom-table-item";
     
     return (
       <Row
-        className={"custom-table-item"}
+        className={activeCls}
         key={id}
         type={"flex"}
         justify={"space-between"}

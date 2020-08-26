@@ -8,6 +8,7 @@ const channelConfig = [
     path:"self-select-symbol",
     connectDistanceTime:2000,
     tryConnectMax:10,
+    disconnectMax:10,
   },
   {
     channelCode:NONE,
@@ -15,6 +16,7 @@ const channelConfig = [
     pathKey:["symbol_type_code"],
     connectDistanceTime:2000,
     tryConnectMax:10,  
+    disconnectMax:10,
   }
 
 ];

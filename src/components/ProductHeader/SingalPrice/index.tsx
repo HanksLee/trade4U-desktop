@@ -8,16 +8,12 @@ export default () => {
       type={"flex"}
       justify={"space-between"}
     >
-      <Col span={4}>{"品种"}</Col>
-      <Col span={4}>{"品种代号"}</Col>
-      <Col span={2} className="text-right">
-        {"点差"}
+      <Col span={7}>{"品种 | 代码"}</Col>
+      <Col span={5} className="text-right">
+        {"成交价"}
       </Col>
       <Col span={5} className="text-right">
-        {"卖出"}
-      </Col>
-      <Col span={5} className="text-right">
-        {"买入"}
+        {"涨跌幅"}
       </Col>
       <Col span={3}></Col>
     </Row>

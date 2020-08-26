@@ -18,6 +18,7 @@ import {
   REFRESH,
   SCROLL
 } from "pages/Symbol/Left/config/symbolTypeStatus";
+import { PRODUCT_RESFRESH } from "pages/Symbol/config/messageCmd";
 
 @inject("product")
 @observer
@@ -95,10 +96,10 @@ export default class ProductList extends BaseReact {
   }
 
   componentDidMount() {
-    const { setReceviceMsgLinter, setStatusChangLinster, } = this.props;
+    const { setReceviceMsgLinter, setStatusChangeListener, } = this.props;
     this.setContentScrollEvent(this.scrollRef);
     setReceviceMsgLinter(this.receviceMsgLinter);
-    setStatusChangLinster(this.statusChangLinster);
+    setStatusChangeListener(this.statusChangListener);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -148,19 +149,20 @@ export default class ProductList extends BaseReact {
         const {
           key,
           id,
-          rowInfo: { chg, },
+          rowInfo: { change, },
         } = item;
-        const sign = Math.sign(chg);
+        const sign = Math.sign(change);
         const priceTypeObj =
             sign === 1 ? highPrice : sign === -1 ? lowPrice : normalPrice;
-        const openSymbolId = -1;
+        const { openSymbol, } = this.props.product;
+        
         return (
           <ProductItem
             key={key}
             listId={i}
             {...item}
             priceType={priceTypeObj}
-            isActive={openSymbolId === id}
+            isActive={openSymbol.id === id}
             setOpenItem={this.setOpenItem}
             {...this.props}
           />
@@ -170,7 +172,9 @@ export default class ProductList extends BaseReact {
   };
 
   setOpenItem = id => {
-    this.props.product.setOpenSymbolId(id);
+    this.props.product.setOpenSymbol(id);
+
+    this.props.sendMessage(PRODUCT_RESFRESH, this.props.product.getNowSymbolDetail);
   };
 
   receviceMsgLinter = d => {
@@ -195,7 +199,7 @@ export default class ProductList extends BaseReact {
     this.updateContent(buffer);
   };
 
-  statusChangLinster = (before, next) => {
+  statusChangListener = (before, next) => {
     const { symbol_type_code, } = this.props;
     if (
       before === CONNECTING &&
@@ -345,14 +349,27 @@ export default class ProductList extends BaseReact {
     const newList = this.sortList(list);
     buffer.list = this.filterBufferlList(newList);
 
-    this.props.product.updateCurrentSymbolList(buffer.list);
+    const { product, } = this.props;
+    product.updateCurrentSymbolList(buffer.list);
+
+    //const {getOpenSymbolDetail} = product;
+    // const {rowInfo} = getOpenSymbolDetail;
+
+    // const i  = buffer.list.findIndex((item)=>{
+    //   return item.symbol === rowInfo.symbol;
+    // });
+
+    // if(i !== -1){
+    //   this.props.product.setopenSymbol.id(product.openSymbol.id);
+    // }
+
 
     this.buffer = this.initBuffer();
   };
 
   filterBufferlList(list) {
     return list.filter((item, i, all) => {
-      return (
+      return (  
         all.findIndex(fItem => {
           return fItem.symbol === item.symbol;
         }) === i

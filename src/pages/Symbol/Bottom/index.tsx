@@ -128,7 +128,7 @@ export default class Bottom extends BaseReact<{}, {}> {
     });
   };
 
-  cancelTrackMessageLinster = autorun(() => {
+  cancelTrackMessageListener = autorun(() => {
     const c = this.props.common.count;
     // console.log("Bottom Message!", c.test);
   });

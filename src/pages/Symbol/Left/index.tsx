@@ -2,13 +2,15 @@ import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
 
 import { observer, inject } from "mobx-react";
-import { autorun } from "mobx";
+import { autorun, toJS } from "mobx";
 import { Tabs, Row, Col, Spin } from "antd";
 
 import FilterItem from "components/FilterItem";
 import { SingalPriceHeader, DoublePriceHeader } from "components/ProductHeader";
 import ProductList from "components/ProductList";
 import WSConnect from "components/HOC/WSConnect";
+
+import { PRODUCT_RESFRESH } from "pages/Symbol/config/messageCmd";
 
 import channelConfig from "./config/channelConfig";
 import {
@@ -80,6 +82,7 @@ export default class Left extends BaseReact<{}, {}> {
                 channelCode={currentSymbolType.category}
                 symbol_type_code={currentSymbolType.symbol_type_code}
                 priceTmp={this.priceTmp}
+                sendMessage={this.sendMessage}
                 onFavorite={this.onFavorite}
               />
             </div>
@@ -121,10 +124,6 @@ export default class Left extends BaseReact<{}, {}> {
   }
   // count = 0;
   onFilterChange = (id, symbol_type_name) => {
-    this.props.common.setCount({
-      test: symbol_type_name,
-    });
-    // this.product .setOpenSymbolId(this.count++);
     const { currentSymbolType, } = this.product;
     if (currentSymbolType.symbol_type_name === symbol_type_name) return;
     this.product.setCurrentId({
@@ -189,8 +188,10 @@ export default class Left extends BaseReact<{}, {}> {
     }
   }
 
-  cancelTrackMessageLinster = autorun(() => {
-    const c = this.props.common.count;
-    // console.log("Left Message!", c.test);
-  });
+  sendMessage = (cmd, data)=>{
+    this.props.common.setMessage({
+      cmd,
+      data,
+    });
+  }
 }

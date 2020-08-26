@@ -40,7 +40,7 @@ export default class ProductDetail extends React.PureComponent {
       isActive,
     } = this.state;
    
-    const detailOpenClass = isActive ? "active" : "";
+    const detailOpenClass =  "";
     return (
       <Col
         className={`symbol-sidebar-info ${detailOpenClass}`}

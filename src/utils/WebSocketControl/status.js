@@ -4,4 +4,5 @@ export const CONNECTED = 1;
 export const DISCONNECTING = 2;
 export const DISCONNECTED = 3;
 export const RECONNECT = 4;
+export const URLREPLACE = 5;
 export const ERROR = 99999;
