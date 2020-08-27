@@ -1,9 +1,9 @@
 const config = require("./config"),
   MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-  tsImportPluginFactory = require('ts-import-plugin'),
+  tsImportPluginFactory = require("ts-import-plugin"),
   { resolve } = require("./utils");
 
-const {getThemeVariables} = require('antd/dist/theme');
+const { getThemeVariables } = require("antd/dist/theme");
 
 const setLoaderSourceMap = (loader, options, isProd) => {
   return { loader, options: { ...options, sourceMap: isProd ? false : true } };
@@ -14,30 +14,56 @@ const s = JSON.stringify;
 const getStyleRule = (
   opt = {
     isProd: false,
+    isModules: false,
     preProcessor: "css"
   }
 ) => {
+  const cssModulesSetting = opt.isModules
+    ? {
+        modules: true,
+        localIdentName: "[path][name]__[local]"
+      }
+    : {};
+  console.log(opt);
   const map = {
     css: {
       use: [
         setLoaderSourceMap("style-loader", {}, opt.isProd),
         setLoaderSourceMap("css-loader", {}, opt.isProd),
-        setLoaderSourceMap("postcss-loader", {
-          plugins: () => [require('autoprefixer')({
-            'browsers': ['> 1%', 'last 5 versions']
-          })],
-        }, opt.isProd)
+        setLoaderSourceMap(
+          "postcss-loader",
+          {
+            plugins: () => [
+              require("autoprefixer")({
+                browsers: ["> 1%", "last 5 versions"]
+              })
+            ]
+          },
+          opt.isProd
+        )
       ]
     },
     scss: {
       use: [
         setLoaderSourceMap("style-loader", {}, opt.isProd),
-        setLoaderSourceMap("css-loader", {}, opt.isProd),
-        setLoaderSourceMap("postcss-loader", {
-          plugins: () => [require('autoprefixer')({
-            'browsers': ['> 1%', 'last 5 versions']
-          })],
-        }, opt.isProd),
+        setLoaderSourceMap(
+          "css-loader",
+          {
+            ...cssModulesSetting
+          },
+          opt.isProd
+        ),
+        setLoaderSourceMap(
+          "postcss-loader",
+          {
+            plugins: () => [
+              require("autoprefixer")({
+                browsers: ["> 1%", "last 5 versions"]
+              })
+            ]
+          },
+          opt.isProd
+        ),
         setLoaderSourceMap(
           "sass-loader",
           {
@@ -47,19 +73,30 @@ const getStyleRule = (
           },
           opt.isProd
         ),
-        setLoaderSourceMap('sass-resources-loader', {
-          resources: [resolve('src/styles/vars.scss'), resolve('src/styles/mixins.scss'), resolve('src/styles/func.scss')]}),
+        setLoaderSourceMap("sass-resources-loader", {
+          resources: [
+            resolve("src/styles/vars.scss"),
+            resolve("src/styles/mixins.scss"),
+            resolve("src/styles/func.scss")
+          ]
+        })
       ]
     },
     less: {
       use: [
         setLoaderSourceMap("style-loader", {}, opt.isProd),
         setLoaderSourceMap("css-loader", {}, opt.isProd),
-        setLoaderSourceMap("postcss-loader", {
-          plugins: () => [require('autoprefixer')({
-            'browsers': ['> 1%', 'last 5 versions']
-          })],
-        }, opt.isProd),
+        setLoaderSourceMap(
+          "postcss-loader",
+          {
+            plugins: () => [
+              require("autoprefixer")({
+                browsers: ["> 1%", "last 5 versions"]
+              })
+            ]
+          },
+          opt.isProd
+        ),
         setLoaderSourceMap(
           "less-loader",
           {
@@ -68,7 +105,7 @@ const getStyleRule = (
             },
             modifyVars: getThemeVariables({
               dark: true, // 开启暗黑模式
-              compact: true, // 开启紧凑模式
+              compact: true // 开启紧凑模式
             }),
             javascriptEnabled: true
           },
@@ -79,28 +116,27 @@ const getStyleRule = (
           {
             resources: [
               resolve("src/styles/vars.less"),
-              resolve("src/styles/mixins.less"),
+              resolve("src/styles/mixins.less")
             ]
           },
           opt.isProd
         )
       ]
-    },
-  }
+    }
+  };
 
   // 生产环境下提取 CSS
   if (opt.isProd) {
     for (const preprocessor of Object.values(map)) {
       // production enviroment should not use style-loader
-      preprocessor.use.shift()
+      preprocessor.use.shift();
       preprocessor.use.unshift({
         loader: MiniCssExtractPlugin.loader,
         options: {
           hmr: !config.isProd
         }
-      })
+      });
     }
-
   }
 
   return map[opt.preProcessor];
@@ -114,8 +150,18 @@ const styleLoaders = [
   },
   {
     test: /\.scss$/,
+    exclude: /\.module\.scss$/,
     include: [resolve("src")],
     ...getStyleRule({ isProd: config.isProd, preProcessor: "scss" })
+  },
+  {
+    test: /\.module\.scss$/,
+    include: [resolve("src")],
+    ...getStyleRule({
+      isProd: config.isProd,
+      preProcessor: "scss",
+      isModules: true
+    })
   },
   {
     test: /\.less$/,
@@ -138,13 +184,15 @@ const scriptLoaders = [
         options: {
           transpileOnly: true,
           getCustomTransformers: () => ({
-            before: [tsImportPluginFactory({
-              libraryName: 'antd',
-              libraryDirectory: 'lib'
-            })]
+            before: [
+              tsImportPluginFactory({
+                libraryName: "antd",
+                libraryDirectory: "lib"
+              })
+            ]
           }),
           compilerOptions: {
-            module: 'es2015'
+            module: "es2015"
           }
         }
       }
@@ -158,7 +206,7 @@ const assetsLoaders = [
     loader: "url-loader",
     options: {
       limit: 1024 * 10,
-      name: "assets/img/[name].[ext]?[hash]",
+      name: "assets/img/[name].[ext]?[hash]"
     }
   },
   {
@@ -166,7 +214,7 @@ const assetsLoaders = [
     loader: "url-loader",
     options: {
       limit: 1024 * 200,
-      fallback: 'url-loader',
+      fallback: "url-loader",
       name: "assets/font/[name].[ext]?[hash]"
     }
   },
