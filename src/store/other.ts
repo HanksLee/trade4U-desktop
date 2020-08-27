@@ -19,34 +19,22 @@ class OtherStore extends BaseStore {
     };
   }
 
-  @observable
-  detail = null;
-
-  @action
-  setDetail = d => {
-    this.detail = {
-      ...d,
-    };
-  };
-
-  @action
-  clearDetail = () => {
-    this.detail = null;
-  };
 
   @observable
-  buy = null;
-  @action
-  setBuy = d => {
-    this.buy = {
-      ...d,
-    };
-  };
+  productInfo = {
+    name: "----",
+    chg: 0,
+    change: 0,
+    sell: 0,
+  }
 
   @action
-  clearBuy = () => {
-    this.buy = null;
-  };
+  setProductInfo = (d)=>{
+    this.productInfo = {
+        ...this.productInfo,
+        ...d
+    }
+  }
 }
 
 export default new OtherStore();

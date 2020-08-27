@@ -10,13 +10,14 @@ import { BaseReact } from "components/@shared/BaseReact";
 import {
   PRODUCT_RESFRESH,
   RIGHT_SHOW,
-  RIGHT_HIDE
+  RIGHT_HIDE,
+  PRODUCT_UPDATE
 } from "pages/Symbol/config/messageCmd";
 import {
   SCREEN_DETAIL,
   SCREEN_BUY
 } from "pages/Symbol/Right/config/screenList";
-import { SymbolDetail, SymbolBuyContent } from "components/SymbolTool";
+import { SymbolDetail, SymbolBuyContent } from "components/SymbolField";
 
 import utils from "utils";
 
@@ -42,10 +43,11 @@ export default class Right extends BaseReact<{}, {}> {
     const { type, data, } = topScreen;
 
     const areaShowCls = type && data ? "show-area" : "";
+    const {getPriceTmp} = this.props;
     return (
       <div className={`symbol-right ${areaShowCls}`}>
-        <SymbolDetail type={type} data={data} />
-        <SymbolBuyContent type={type} data={data} />
+        <SymbolDetail type={type} data={data} getPriceTmp={getPriceTmp} />
+        <SymbolBuyContent type={type} data={data}  />
       </div>
     );
   }
@@ -64,9 +66,13 @@ export default class Right extends BaseReact<{}, {}> {
 
   messageListener = (message, reaction) => {
     const { cmd, data, } = message;
+    const d = toJS(data)
     switch (cmd) {
       case PRODUCT_RESFRESH:
-        this.openProductDetail(toJS(data));
+        this.openProductDetail(d);
+        break;
+      case PRODUCT_UPDATE:
+        this.refreshHeader(d.rowInfo)
         break;
     }
   };
@@ -80,5 +86,14 @@ export default class Right extends BaseReact<{}, {}> {
       type: newType,
       data: d,
     });
+    this.other.setProductInfo({
+      chg: 0,
+      change: 0,
+      sell: 0,
+    });
   };
+
+  refreshHeader = d =>{
+    this.other.setProductInfo(d);
+  }
 }

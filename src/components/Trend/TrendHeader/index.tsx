@@ -35,7 +35,7 @@ export default class extends React.Component<any, any> {
 
   render() {
     const { name, trader_status, btnOpen, } = this.state;
-    const {sell, chg, change} = this.trend.trendInfo;
+    const { sell, chg, change, } = this.trend.trendInfo;
     
     const status = traderStatusMap[trader_status];
 

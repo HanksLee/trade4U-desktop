@@ -12,8 +12,8 @@ class TrendStore extends BaseStore {
   fetchTrendList = async (id, unit) => {
     const res = await api.market.getProductTrend(id, {
       params: {
-        unit: unit
-      }
+        unit: unit,
+      },
     });
 
     if (res.status === 200) {
@@ -42,7 +42,7 @@ class TrendStore extends BaseStore {
       const sell = item[key2];
       return {
         time: date,
-        value: sell
+        value: sell,
       };
     });
   };
@@ -54,14 +54,14 @@ class TrendStore extends BaseStore {
     change: 0,
     trader_status: "",
     sell: 0,
-    btnOpen: false
+    btnOpen: false,
   };
 
   @action
   setTrendInfo = d => {
     this.trendInfo = {
-        ...this.trendInfo ,
-        ...d
+      ...this.trendInfo,
+      ...d,
     };
   };
 }
