@@ -31,10 +31,28 @@ class OtherStore extends BaseStore {
   @action
   setProductInfo = (d)=>{
     this.productInfo = {
-        ...this.productInfo,
-        ...d
-    }
+      ...this.productInfo,
+      ...d,
+    };
   }
+
+  @observable
+  mainInfo={
+    high:0,
+    low:0,
+    close:0,
+    open:0,
+    volume:0,
+    max_trading_volume:0
+  }
+
+  @action
+  setMainInfo = d => {
+    this.mainInfo = {
+      ...this.mainInfo,
+      ...d,
+    };
+  };
 }
 
 export default new OtherStore();

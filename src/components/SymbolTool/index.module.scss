@@ -1,0 +1,29 @@
+.symbol-descript {
+  border-bottom: 1px solid #2e3b55;
+  padding: 10px;
+  font-family: PingFangTC-Regular, PingFangTC;
+  font-weight: 400;
+  h2 {
+    font-size: 16px;
+    color: #ffffff;
+    line-height: 22px;
+  }
+
+  .symbol-descript-content {
+    font-size: 14px;
+    .symbol-descript-row {
+      margin: 10px 0 0 0;
+      
+    }
+    .symbol-descript-title {
+      color: #838d9e;
+      line-height: 20px;
+      float: left;
+    }
+    .symbol-descript-value {
+        float: right;
+    }
+
+
+  }
+}

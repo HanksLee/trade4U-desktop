@@ -1,0 +1,18 @@
+.btn-yellow {
+  background: rgba(242, 226, 5, 1);
+  border-radius: 4px;
+  color:#232C37;
+  line-height:29px;
+
+  &:hover{
+    border-color: #00000000;
+    background: rgba(242, 226, 5, 1);
+    color:#232C37;
+  }
+
+  &:focus{
+    border-color: #00000000;
+    background: rgba(242, 226, 5, 1);
+    color:#232C37;
+  }
+}

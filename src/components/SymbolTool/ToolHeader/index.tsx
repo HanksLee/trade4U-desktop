@@ -21,7 +21,7 @@ const IconFont = createFromIconfontCN({
 @observer
 export default class extends React.Component<any, any> {
   state = {
-    name: "----"
+    name: "----",
   };
   other = null;
   constructor(props) {
@@ -32,7 +32,7 @@ export default class extends React.Component<any, any> {
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
       ...prevState,
-      ...nextProps
+      ...nextProps,
     };
   }
 
@@ -41,7 +41,7 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name } = this.state;
+    const { name, } = this.state;
     const { sell, chg, change, } = this.other.productInfo;
 
     const sign = Math.sign(change);

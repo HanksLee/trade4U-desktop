@@ -43,7 +43,7 @@ export default class Right extends BaseReact<{}, {}> {
     const { type, data, } = topScreen;
 
     const areaShowCls = type && data ? "show-area" : "";
-    const {getPriceTmp} = this.props;
+    const { getPriceTmp, } = this.props;
     return (
       <div className={`symbol-right ${areaShowCls}`}>
         <SymbolDetail type={type} data={data} getPriceTmp={getPriceTmp} />
@@ -66,13 +66,14 @@ export default class Right extends BaseReact<{}, {}> {
 
   messageListener = (message, reaction) => {
     const { cmd, data, } = message;
-    const d = toJS(data)
+    const d = toJS(data);
     switch (cmd) {
       case PRODUCT_RESFRESH:
         this.openProductDetail(d);
         break;
       case PRODUCT_UPDATE:
-        this.refreshHeader(d.rowInfo)
+        this.refreshHeader(d.rowInfo);
+        this.refreshMain(d.setMainInfo);
         break;
     }
   };
@@ -95,5 +96,8 @@ export default class Right extends BaseReact<{}, {}> {
 
   refreshHeader = d =>{
     this.other.setProductInfo(d);
+  }
+  refreshMain = d =>{
+    this.other.setMainInfo(d);
   }
 }

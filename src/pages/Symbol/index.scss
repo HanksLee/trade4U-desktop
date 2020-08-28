@@ -298,15 +298,23 @@ $side-width: 368px;
           }
         }
       }
-
+      
       &.symbol-detail {
         top: 0px;
         left: 500px;
+
+        .detail-btn-container{
+          text-align: center;
+          position: absolute;
+          bottom: 10px;
+          width: 100%;
+        }
       }
       &.symbol-buy-content {
         top: 110%;
         left: 10px;
       }
+
     }
 
     &.show-area {
@@ -351,4 +359,13 @@ $side-width: 368px;
   .symbol-modal-form {
     border: 1px solid white;
   }
+}
+
+.symbol-tool-buy{
+  width: 160px;
+  height: 42px;
+  font-size: 21px;
+  font-family:PingFangTC-Medium,PingFangTC;
+  font-weight:500;
+  line-height:29px;
 }

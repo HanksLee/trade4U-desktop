@@ -64,6 +64,8 @@ class TrendStore extends BaseStore {
       ...d,
     };
   };
+
+
 }
 
 export default new TrendStore();
