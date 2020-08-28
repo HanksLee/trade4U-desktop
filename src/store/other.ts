@@ -43,7 +43,7 @@ class OtherStore extends BaseStore {
     close:0,
     open:0,
     volume:0,
-    max_trading_volume:0
+    max_trading_volume:0,
   }
 
   @action

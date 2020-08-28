@@ -2,19 +2,19 @@ import * as React from "react";
 import { observer, inject } from "mobx-react";
 import { autorun, toJS } from "mobx";
 
-import { Button} from "antd";
+import { Button } from "antd";
 
 import moment from "moment";
 
 import { BaseReact } from "components/@shared/BaseReact";
 import { SCREEN_DETAIL, SCREEN_BUY } from 'pages/Symbol/Right/config/screenList';
 import ToolHeader from "components/SymbolTool/ToolHeader";
-import MainDetail from 'components/SymbolTool/MainDetail'
-import ContractDetail from 'components/SymbolTool/ContractDetail'
+import MainDetail from 'components/SymbolTool/MainDetail';
+import ContractDetail from 'components/SymbolTool/ContractDetail';
 import utils from "utils";
 
-import classNames from 'classnames/bind'
-import globalCss from 'app.module.scss'
+import classNames from 'classnames/bind';
+import globalCss from 'app.module.scss';
 
 const globalCx = classNames.bind(globalCss);
 export default class Detail extends BaseReact<{}, {}> {
@@ -45,10 +45,10 @@ export default class Detail extends BaseReact<{}, {}> {
                       data ? 
       "show" : "";
     const { getPriceTmp, } = this.props;
-    const {rowInfo , mainInfo , contractInfo} = data? data : {
+    const { rowInfo, mainInfo, contractInfo, } = data ? data : {
       rowInfo:{},
       mainInfo:{},
-      contractInfo:{}
+      contractInfo:{},
     };
     //con
     return (
@@ -57,7 +57,7 @@ export default class Detail extends BaseReact<{}, {}> {
         <MainDetail />
         <ContractDetail {...contractInfo} />
         <div className="detail-btn-container" >
-          <Button className={globalCx('btn-yellow' , 'symbol-tool-buy')} >下單</Button>
+          <Button className={globalCx('btn-yellow', 'symbol-tool-buy')} >下單</Button>
         </div>
 
       </div>

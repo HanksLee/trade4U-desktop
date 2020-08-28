@@ -18,7 +18,7 @@ const cx = classNames.bind(css);
 @observer
 export default class extends React.Component<any, any> {
   state = {
-    name: "----"
+    name: "----",
   };
   other = null;
   constructor(props) {
@@ -29,7 +29,7 @@ export default class extends React.Component<any, any> {
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
       ...prevState,
-      ...nextProps
+      ...nextProps,
     };
   }
 
@@ -44,7 +44,7 @@ export default class extends React.Component<any, any> {
       close,
       open,
       volume,
-      max_trading_volume
+      max_trading_volume,
     } = this.other.mainInfo;
 
     return (

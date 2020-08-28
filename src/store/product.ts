@@ -24,7 +24,7 @@ class ProductStore extends BaseStore {
       symbol_type_name: "自选",
       page: 1,
       page_size: 20,
-      cmd: REFRESH
+      cmd: REFRESH,
     }
   ];
 
@@ -48,7 +48,7 @@ class ProductStore extends BaseStore {
 
   @action
   setSymbolTypeLoad(typeList) {
-    let { symbolTypeList } = this;
+    let { symbolTypeList, } = this;
     if (symbolTypeList.length > 1) {
       const deletCount = symbolTypeList.length - 1;
       symbolTypeList.splice(1, deletCount);
@@ -69,12 +69,12 @@ class ProductStore extends BaseStore {
       category: "",
       page: 1,
       page_size: 20,
-      cmd: REFRESH
+      cmd: REFRESH,
     };
 
     return {
       ...tmp,
-      ...type
+      ...type,
     };
   }
 
@@ -88,7 +88,7 @@ class ProductStore extends BaseStore {
     const res = await api.market.getSelfSelectSymbolList({
       page,
       page_size,
-      type_name
+      type_name,
     });
 
     if (res.status === 200) {
@@ -109,7 +109,7 @@ class ProductStore extends BaseStore {
     return {
       hasMore,
       dataLoading,
-      error
+      error,
     };
   }
 
@@ -129,10 +129,10 @@ class ProductStore extends BaseStore {
         lots_step,
         min_lots,
         selling_fee,
-        max_trading_volume
+        max_trading_volume,
       } = item.symbol_display;
-      const { trader_status, is_self_select } = item;
-      const { symbol_type_code } = this.currentSymbolType;
+      const { trader_status, is_self_select, } = item;
+      const { symbol_type_code, } = this.currentSymbolType;
       const deleteID = item.symbol;
       const addID = item.id;
       const nowRealID = is_self_select === 1 ? item.symbol : item.id;
@@ -147,21 +147,21 @@ class ProductStore extends BaseStore {
         low,
         close,
         open,
-        volume
+        volume,
       } = item.product_details
         ? item.product_details
         : {
-            symbol: "-----",
-            sell: 0,
-            buy: 0,
-            change: 0,
-            chg: 0,
-            high: 0,
-            low: 0,
-            close: 0,
-            open: 0,
-            volume:0
-          };
+          symbol: "-----",
+          sell: 0,
+          buy: 0,
+          change: 0,
+          chg: 0,
+          high: 0,
+          low: 0,
+          close: 0,
+          open: 0,
+          volume:0,
+        };
 
       return {
         key: `${id}-${name}`,
@@ -179,7 +179,7 @@ class ProductStore extends BaseStore {
           addID,
           nowRealID,
           symbol_type_code,
-          trader_status
+          trader_status,
         },
         mainInfo: {
           high,
@@ -187,7 +187,7 @@ class ProductStore extends BaseStore {
           close,
           open,
           volume,
-          max_trading_volume
+          max_trading_volume,
         },
         contractInfo: {
           purchase_fee,
@@ -196,8 +196,8 @@ class ProductStore extends BaseStore {
           profit_currency_display,
           margin_currency_display,
           min_lots,
-          max_lots
-        }
+          max_lots,
+        },
       };
     });
   }
@@ -211,10 +211,10 @@ class ProductStore extends BaseStore {
     const d = {
       params: {
         type__name: type__name,
-        exclude_self_select: true
+        exclude_self_select: true,
       },
       page,
-      page_size
+      page_size,
     };
     const res = await api.market.getSymbolList(d);
 
@@ -225,12 +225,12 @@ class ProductStore extends BaseStore {
 
   @observable
   currentSymbolType = {
-    ...this.symbolTypeList[0]
+    ...this.symbolTypeList[0],
   };
 
   @action
   setCurrentId(d) {
-    const { id, page, cmd } = d;
+    const { id, page, cmd, } = d;
     const nowType = this.symbolTypeList.filter(item => {
       return item.id === id;
     })[0];
@@ -239,7 +239,7 @@ class ProductStore extends BaseStore {
     this.currentSymbolType = {
       ...this.currentSymbolType,
       ...nowType,
-      cmd
+      cmd,
     };
   }
 
@@ -252,7 +252,7 @@ class ProductStore extends BaseStore {
       page: 0,
       page_size: 0,
       current_page: 0,
-      results: []
+      results: [],
     };
   }
 
@@ -261,14 +261,14 @@ class ProductStore extends BaseStore {
     status: {
       hasMore: false,
       dataLoading: false,
-      error: false
+      error: false,
     },
-    symbolList: []
+    symbolList: [],
   };
 
   @computed
   get allProductListId() {
-    const { symbolList } = this.currentList;
+    const { symbolList, } = this.currentList;
     return symbolList.map(item => {
       return item.rowInfo.addID;
     });
@@ -278,7 +278,7 @@ class ProductStore extends BaseStore {
   setCurrentSymbolList(d) {
     this.currentList = {
       ...this.currentList,
-      ...d
+      ...d,
     };
   }
 
@@ -296,7 +296,7 @@ class ProductStore extends BaseStore {
   updateCurrentSymbolList(updateList) {
     updateList.forEach(uItem => {
       const selectedItem = this.originCurrentList.results.filter(cItem => {
-        const { product_details } = cItem;
+        const { product_details, } = cItem;
         return (
           product_details &&
           uItem.symbol === product_details.symbol &&
@@ -305,19 +305,19 @@ class ProductStore extends BaseStore {
       });
 
       if (selectedItem.length === 0) return;
-      let { product_details } = selectedItem[0];
+      let { product_details, } = selectedItem[0];
       product_details = {
         ...product_details,
-        ...uItem
+        ...uItem,
       };
       selectedItem[0].product_details = {
-        ...product_details
+        ...product_details,
       };
     });
 
     const symbolList = this.createSymbolList(this.originCurrentList.results);
     this.setCurrentSymbolList({
-      symbolList
+      symbolList,
     });
   }
 
@@ -327,7 +327,7 @@ class ProductStore extends BaseStore {
       symbol_type_name,
       page,
       page_size,
-      cmd
+      cmd,
     } = this.currentSymbolType;
 
     if (!this.isInit) return;
@@ -353,12 +353,12 @@ class ProductStore extends BaseStore {
         ? this.mergeSymbolList(tmpList, this.originCurrentList)
         : tmpList;
 
-    const { count } = this.originCurrentList;
+    const { count, } = this.originCurrentList;
     const status = this.checkSymbolPageStatua(count, page, page_size);
     const symbolList = this.createSymbolList(this.originCurrentList.results);
     this.setCurrentSymbolList({
       status,
-      symbolList
+      symbolList,
     });
   });
 
@@ -367,15 +367,15 @@ class ProductStore extends BaseStore {
 
     return {
       ...newList,
-      results
+      results,
     };
   }
   @action
   async deleteSelfSelectSymbolList(symbol) {
     const d = {
       data: {
-        symbol: [symbol]
-      }
+        symbol: [symbol],
+      },
     };
     const res = await this.$api.market.deleteSelfSelectSymbolList(d);
     if (res.status == 204) {
@@ -386,7 +386,7 @@ class ProductStore extends BaseStore {
   @observable
   openSymbol = {
     id: -1,
-    detail: null
+    detail: null,
   };
 
   @action
@@ -395,7 +395,7 @@ class ProductStore extends BaseStore {
 
     this.openSymbol = {
       id,
-      detail
+      detail,
     };
   }
 
