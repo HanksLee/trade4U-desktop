@@ -24,7 +24,6 @@ const getStyleRule = (
         localIdentName: "[path][name]__[local]"
       }
     : {};
-  console.log(opt);
   const map = {
     css: {
       use: [
@@ -149,8 +148,7 @@ const styleLoaders = [
     ...getStyleRule({ isProd: config.isProd, preProcessor: "css" })
   },
   {
-    test: /\.scss$/,
-    exclude: /\.module\.scss$/,
+    test: /(?<!\.module)\.scss$/, // 编译非 .module 的 .scss 档案
     include: [resolve("src")],
     ...getStyleRule({ isProd: config.isProd, preProcessor: "scss" })
   },
