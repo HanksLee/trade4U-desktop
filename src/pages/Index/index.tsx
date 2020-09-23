@@ -225,7 +225,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     const {
       computedUserInfo,
       toggleGuideModalVisible,
-      computedSidebar, guideModalVisible, settingsModalVisible } = this.props.common;
+      computedSidebar, guideModalVisible, settingsModalVisible, } = this.props.common;
 
     return (
       <div className={"home"}>
@@ -366,7 +366,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                     key={item.path}
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                      }`}
+                    }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
