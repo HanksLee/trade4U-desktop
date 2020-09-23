@@ -197,7 +197,13 @@ function setSignStirng(number) {
   return sign > 0 ? `+${number}` : number;
 }
 
-
+function parseBool(input) {
+  if (!input) return Boolean(input);
+  const isFalse = /false/i.test(input);
+  const isZero = Number(input) === 0;
+  if (isFalse || isZero) return false;
+  return Boolean(input);
+}
 
 export default {
   setRootFontSizeFromClient,
@@ -218,4 +224,5 @@ export default {
   getFileInfo,
   getStockChangeClass,
   setSignStirng,
+  parseBool,
 };
