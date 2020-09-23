@@ -19,8 +19,10 @@ import serviceSVG from "assets/img/service.svg";
 import logoutSVG from "assets/img/logout.svg";
 import "./index.scss";
 import { inject, observer } from "mobx-react";
+import { toJS } from "mobx";
 import debounce from "lodash/debounce";
 import ws from "utils/ws";
+import utils from "utils";
 const { Header, Sider, Content, } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
@@ -223,7 +225,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
     const {
       computedUserInfo,
       toggleGuideModalVisible,
-      computedSidebar, guideModalVisible, settingsModalVisible, } = this.props.common;
+      computedSidebar, guideModalVisible, settingsModalVisible } = this.props.common;
 
     return (
       <div className={"home"}>
@@ -358,11 +360,13 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
             showContainer && (
               <div className={"home-sidebar"}>
                 {computedSidebar.map(item => (
-                  <div
+                  (item.isShow === '' ? true : utils.parseBool(this.props.common.getKeyConfig(item.isShow)))
+                  &&
+                  (<div
                     key={item.path}
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
@@ -382,7 +386,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                       alt=""
                     />
                     <p>{item.title}</p>
-                  </div>
+                  </div>)
                 ))}
               </div>
             )}

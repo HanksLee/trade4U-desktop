@@ -43,6 +43,7 @@ export const PAGE_ROUTES = [
   {
     title: '产品',
     path: '/dashboard/symbol',
+    isShow:'',
     icon: symbolSVG,
     activeIcon: symbolActiveSVG,
   },
@@ -55,18 +56,21 @@ export const PAGE_ROUTES = [
   {
     title: '资金',
     path: '/dashboard/captial',
+    isShow:'',
     icon: capitalSVG,
     activeIcon: capitalActiveSVG,
   },
   {
     title: '申購',
     path: '/dashboard/subscribe',
+    isShow:'function_ipo',
     icon: subscribeSVG,
     activeIcon: subscribeActiveSVG,
   },
   {
     title: '新聞',
     path: '/dashboard/news',
+    isShow:'function_news',
     icon: newsSVG,
     activeIcon: newsActiveSVG,
   }
