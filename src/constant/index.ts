@@ -4,6 +4,10 @@ import symbolSVG from 'assets/img/symbol.svg';
 import symbolActiveSVG from 'assets/img/symbol-active.svg';
 import capitalSVG from 'assets/img/capital.svg';
 import capitalActiveSVG from 'assets/img/capital-active.svg';
+import subscribeSVG from 'assets/img/subscribe.svg';
+import subscribeActiveSVG from 'assets/img/subscribe-active.svg';
+import newsSVG from 'assets/img/news.svg';
+import newsActiveSVG from 'assets/img/news-active.svg';
 
 export const FORMAT_TIME = 'YYYY.MM.DD HH:mm:ss';
 
@@ -53,6 +57,18 @@ export const PAGE_ROUTES = [
     path: '/dashboard/captial',
     icon: capitalSVG,
     activeIcon: capitalActiveSVG,
+  },
+  {
+    title: '申購',
+    path: '/dashboard/subscribe',
+    icon: subscribeSVG,
+    activeIcon: subscribeActiveSVG,
+  },
+  {
+    title: '新聞',
+    path: '/dashboard/news',
+    icon: newsSVG,
+    activeIcon: newsActiveSVG,
   }
 ];
 

@@ -1,0 +1,90 @@
+.news-page {
+    height: calc(100vh - 100px);
+    position: relative;
+    color: white;
+    padding: 10px;
+    overflow: hidden;
+    .news-nav-bar {
+        .ant-tabs-nav-wrap {
+            padding: 0 16px;
+        }
+        .ant-tabs-bar {
+            margin-bottom: 0;
+        }
+        .ant-tabs,
+        .ant-tabs-content {
+            background-color: $primary-color;
+        }
+    }
+    .news-content {
+        height: 100%;
+        overflow: hidden;
+        .news-list {
+            height: 100%;
+            overflow: auto;
+            border-right: 1px solid #2e3b55;
+            padding-bottom: 36px; //news-page - padding:10px*2 + news-item - padding:16px
+            .news-item {
+                border-bottom: 1px solid #2e3b55;
+                padding: 16px;
+                position: relative;
+
+                .news-item-title {
+                    font-size: 16px;
+                    margin-bottom: 1em;
+                    line-height: 22px;
+                    flex-basis: 80%;
+                }
+                .news-item-time {
+                    font-size: 12px;
+                    position: absolute;
+                    bottom: 0px;
+                    left: 0px;
+                }
+                .news-item-img {
+                    padding-left: 8px;
+                }
+                &.active{
+                    background-color: #26455A;
+                }
+                
+            }
+           :hover{
+                background-color: #26455A;
+            }
+            
+        }
+        .news-detail {
+            height: 100%;
+            overflow: hidden;
+            padding-bottom: 16px;
+
+            .news-detail-title {
+                font-size: 21px;
+                padding: 16px;
+            }
+            .news-detail-time {
+                font-size: 12px;
+                padding: 16px;
+                border-bottom: 1px solid #2e3b55;
+            }
+            .news-detail-content {
+                height: 80%;
+                overflow: auto;
+                font-size: 18px;
+                padding: 16px;
+                
+                p {
+                    margin-bottom: 40px;
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    >img{
+                        margin:auto;
+                        padding: 50px;
+                    }
+                }
+            }
+        }
+    }
+}

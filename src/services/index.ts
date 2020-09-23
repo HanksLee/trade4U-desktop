@@ -3,6 +3,7 @@ import market from "./market";
 import captial from "./captial";
 import message from "./message";
 import settings from "./settings";
+import news from "./news";
 
 export default {
   captial,
@@ -10,4 +11,5 @@ export default {
   market,
   message,
   settings,
+  news,
 };
