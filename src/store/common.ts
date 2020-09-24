@@ -2,7 +2,6 @@ import { computed, action, observable } from 'mobx';
 import BaseStore from 'store/base';
 import { PAGE_ROUTES } from 'constant';
 import { STOCK_COLOR_MAP, STOCK_COLOR_GIF_MAP } from "constant";
-import { SYMBOL_RESFRESH, RIGHT_SHOW, RIGHT_HIDE } from 'pages/Symbol/config/messageCmd';
 
 class CommonStore extends BaseStore {
 
@@ -65,6 +64,20 @@ class CommonStore extends BaseStore {
     };
   }
 
+  getPriceTmp = (sign) => {
+    const {
+      getHighPriceClass,
+      getNormalPriceClass,
+      getLowPriceClass,
+    } = this;
+    return sign === 1 ? 
+      getHighPriceClass : 
+      sign  === -1 ? 
+        getLowPriceClass : 
+        getNormalPriceClass;
+  };
+
+  
   @observable
   paginationConfig = {
     defaultCurrent: 1,

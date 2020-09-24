@@ -1,26 +1,25 @@
 import api from "services";
 import { action, observable, computed, autorun, toJS } from "mobx";
 import BaseStore from "store/base";
-import { SELF, NONE } from "pages/Symbol/Left/config/channelConfig";
-import { REFRESH, SCROLL } from "pages/Symbol/Left/config/symbolTypeStatus";
+
 import moment from "moment";
 import {
   IN_TRANSACTION,
   PENDING,
   FINISH
-} from "pages/Symbol/Bottom/config/tabConfig";
+} from "pages/Symbol/Center/OrderInfo/config/tabConfig";
 import {
   META_FUND,
   ORDER_OPEN,
   ORDER_CLOSE,
   ORDER_PROFIT,
   PENDING_ORDER_CLOSE
-} from "pages/Symbol/Bottom/config/wsType";
+} from "pages/Symbol/Center/OrderInfo/config/wsType";
 
 import {
   orderMap,
   historyMap
-} from "pages/Symbol/Bottom/config/columnMapConfig";
+} from "pages/Symbol/Center/OrderInfo/config/columnMapConfig";
 
 class OrderStore extends BaseStore {
   isInit = false;
@@ -28,10 +27,21 @@ class OrderStore extends BaseStore {
   setInit = () => {
     this.isInit = true;
   };
+  
+  @observable
+  foldTabs = false;
+  @action
+  setFoldTabs(foldTabs) {
+    this.foldTabs = foldTabs;
+  }
+
+  @action 
+  setFoldTabsClick = ()=>{
+    this.foldTabs = !this.foldTabs;
+  }
 
   @observable
   info = {
-    foldTabs: false,
     orderTabKey: IN_TRANSACTION,
     search: {
       page_size: 5,
@@ -208,7 +218,7 @@ class OrderStore extends BaseStore {
     addList.map(aItem => {
       const { order_number, timestamp, } = aItem;
       const i = originlist.findIndex(oItem => {
-        return (oItem.order_number = order_number);
+        return (oItem.order_number === order_number);
       });
 
       const originTimestamp = originlist[i].timestamp;

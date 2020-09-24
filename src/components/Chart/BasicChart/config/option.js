@@ -1,3 +1,4 @@
+import moment from 'moment';
 export default {
   width: 0,
   height: 295,
@@ -7,17 +8,25 @@ export default {
   leftPriceScale: {//左邊價格軸
     visible: true
   },
-  timeScale: {//時間現
+  timeScale: {//時間線
     timeVisible:true,
     secondsVisible:true,
-    visible: false
+    visible: true,
+    fixLeftEdge:false,
+    rightOffset: 22,
+    tickMarkFormatter: (time, tickMarkType, locale) => {
+      const timeObj = moment(time * 1000);
+      const timeString = timeObj.format('HH:mm');
+      return timeString;
+  },
   },
   crosshair: {//十字參考線
     horzLine: {//縱軸
       visible: true
     },
     vertLine: {//橫軸
-      visible: true
+      visible: true,
+      labelVisible:false
     }
   },
   layout: {//整體畫面

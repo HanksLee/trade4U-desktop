@@ -7,38 +7,21 @@ import { Tabs, Row, Col, DatePicker } from "antd";
 import moment from "moment";
 
 import { BaseReact } from "components/@shared/BaseReact";
-import { SYMBOL_RESFRESH, RIGHT_SHOW, RIGHT_HIDE } from 'pages/Symbol/config/messageCmd';
+import {
+  SCREEN_DETAIL,
+  SCREEN_BUY
+} from "pages/Symbol/Right/config/screenList";
 
 import utils from "utils";
 
-const { RangePicker, } = DatePicker;
-const { TabPane, } = Tabs;
+export default ({ type, symbolKey, }) => {
+  const showCls =
+    (type === SCREEN_BUY) && symbolKey ? "show" : "";
+  return (
+    <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
 
-@inject("common")
-@observer
-export default class BuyContent extends BaseReact<{}, {}> {
-  order = null;
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { isShow, } = this.props;
-    const showCls = isShow ? "show" : "";
-    return (
-      <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
-
-      </div>
-    );
-  }
-
-  componentDidMount() {
-
-  }
-
-  componentDidUpdate() {}
-
-  //function
+    </div>
+  );
+};
 
 
-}

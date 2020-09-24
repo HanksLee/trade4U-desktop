@@ -7,12 +7,13 @@ import { StarFilled, createFromIconfontCN } from "@ant-design/icons";
 
 import { traderStatusMap } from "constant";
 import moment from "moment";
+import { FULL, ZOOMOUT } from 'pages/Symbol/Center/config/containerStatus';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
 });
 
-@inject("trend")
+@inject("common", "trend")
 @observer
 export default class extends React.Component<any, any> {
   state = {
@@ -34,17 +35,15 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name, trader_status, btnOpen, } = this.state;
-    const { sell, chg, change, } = this.trend.trendInfo;
-    
+    const { name, trader_status, sell, chg, change, } = this.trend.trendInfo;
+    const { rightSide, } = this.trend.containerStatus;
     const status = traderStatusMap[trader_status];
 
     const sign = Math.sign(change);
-    const priceObj = this.props.getPriceTmp(sign);
+    const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
 
-    const btnCss = btnOpen ? "close" : "open";
-
+    const btnCss = rightSide !== FULL ? "close" : "open";
     return (
       <Row
         className={"symbol-chart-info"}
@@ -67,7 +66,7 @@ export default class extends React.Component<any, any> {
             <span className={`symbol-chart-title-status ${trader_status}`}>
               {status}
             </span>
-            <span className={`symbol-right-btn ${btnCss}`}></span>
+            <span className={`symbol-right-btn ${btnCss}`} onClick={()=>this.onRightBtnClick(rightSide)}></span>
           </div>
         </Col>
       </Row>
@@ -86,5 +85,12 @@ export default class extends React.Component<any, any> {
     let type = sign > 0 ? "icon-arrow-up" : "icon-arrow-down";
 
     return <IconFont type={type} className="symbol-chart-priceIcon" />;
+  }
+
+
+  //event
+  onRightBtnClick = (status)=>{
+    const rightSide = status === FULL ? ZOOMOUT : FULL;
+    this.props.trend.setRightBtnOpenClick(rightSide);
   }
 }

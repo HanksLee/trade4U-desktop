@@ -1,5 +1,5 @@
 import common from './common';
-import market from './market';
+import symbol from './symbol';
 import captial from './captial';
 import product from './product';
 import order from './order';
@@ -8,7 +8,7 @@ import trend from './trend';
 
 export default {
   common,
-  market,
+  symbol,
   captial,
   product,
   order,

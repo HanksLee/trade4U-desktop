@@ -38,14 +38,7 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const {
-      high,
-      low,
-      close,
-      open,
-      volume,
-      max_trading_volume,
-    } = this.other.mainInfo;
+    const { high, low, close, open, volume, amount, } = this.other.mainInfo;
 
     return (
       <div className={cx("symbol-descript")}>
@@ -81,9 +74,7 @@ export default class extends React.Component<any, any> {
             <Col span={1}></Col>
             <Col span={11}>
               <span className={cx("symbol-descript-title")}>成交额</span>
-              <span className={cx("symbol-descript-value")}>
-                {max_trading_volume}
-              </span>
+              <span className={cx("symbol-descript-value")}>{amount}</span>
             </Col>
           </Row>
           <Row className={cx("symbol-descript-row")}>

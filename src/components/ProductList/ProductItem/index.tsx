@@ -1,21 +1,19 @@
 import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
 
-import { Row } from "antd";
-
-import ProductRow from './ProductRow';
-import ProductDetail from './ProductDetail';
-
+import { Row, Col } from "antd";
+import { StarFilled } from "@ant-design/icons";
 
 export default class ProductItem extends BaseReact {
-  state={
-    id:0,
-    listId:0,
-    rowInfo:null,
-    detailInfo:null,
-    priceType:null,
-    isActive:false,
-  }
+  state = {
+    priceInfo: null,
+    priceType: null,
+    isActive: false,
+    symbolId: -1,
+    symbol_type_code: "",
+    symbolCode: "",
+    name: "",
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -24,47 +22,91 @@ export default class ProductItem extends BaseReact {
     };
   }
 
-  
   render() {
     const {
-      id,
-      rowInfo,
-      detailInfo,
+      priceInfo,
       priceType,
       isActive,
-      listId,
+      symbolId,
+      symbol_type_code,
+      symbolCode,
+      name,
     } = this.state;
-    const activeCls = isActive ? "custom-table-item active" : "custom-table-item";
-    
+    const { sell, buy, } = priceInfo;
+    const activeCls = isActive
+      ? "custom-table-item active"
+      : "custom-table-item";
+    const priceTypeClass = `${priceType.color} ${priceType.gif} self-select-sell-block`;
+    const favorIcon =
+      symbol_type_code === "SELF"
+        ? {
+          color: "#f2e205",
+          cursor: "pointer",
+        }
+        : {
+          cursor: "pointer",
+        };
     return (
       <Row
         className={activeCls}
-        key={id}
+        key={symbolId}
         type={"flex"}
         justify={"space-between"}
         onClick={e => {
-          this.onSingleClick(id, isActive);
+          this.onSingleClick(symbolId, isActive);
         }}
         onDoubleClick={e => {
           this.onDoubleClick();
         }}
       >
-        <ProductRow {...rowInfo} priceType={priceType} {...this.props} />
-        <ProductDetail {...detailInfo} isActive={isActive} />
-      
+        <Col span={24}>
+          <Row type={"flex"} justify={"space-between"}>
+            <Col span={4}>
+              <span
+                style={{
+                  color: "#838D9E",
+                }}
+              >
+                {name}
+              </span>
+            </Col>
+            <Col span={4}>
+              <span
+                style={{
+                  color: "#FFF",
+                }}
+              >
+                {symbolCode}
+              </span>
+            </Col>
+            <Col span={5} className={"self-select-sell-container"}>
+              <span className={priceTypeClass}>{sell}</span>
+            </Col>
+            <Col span={5} className={"self-select-buy-container"}>
+              <span className={priceTypeClass}>{buy}</span>
+            </Col>
+            <Col span={2}>
+              <div className={"symbol-order-favorite"}>
+                <StarFilled
+                  onClick={e => {
+                    this.props.onFavorite(symbol_type_code, symbolId, name);
+                    e.stopPropagation();
+                  }}
+                  style={favorIcon}
+                />
+              </div>
+            </Col>
+            <Col span={1}></Col>
+          </Row>
+        </Col>
       </Row>
     );
   }
 
-
   //function
-  onSingleClick(id, isActive) {
-    this.props.setOpenItem(isActive ? -1 : id);
+  onSingleClick(symbolId, isActive) {
+    this.props.setOpenItem(isActive ? -1 : symbolId);
   }
 
-  onDoubleClick() {
-
-  }
-
-
+  onDoubleClick() {}
 }

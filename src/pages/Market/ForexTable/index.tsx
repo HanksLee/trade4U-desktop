@@ -32,7 +32,7 @@ interface ForexTableState {
 }
 
 @withRouter
-@inject("common", "market")
+@inject("common")
 @observer
 export default class ForexTable extends BaseReact<
 ForexTableProps,

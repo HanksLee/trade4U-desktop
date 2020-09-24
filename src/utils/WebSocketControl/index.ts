@@ -1,21 +1,28 @@
 import ws from "../ws";
 
-import {
+import * as status from "./status";
+
+import * as close from './close';
+
+const {
   STANDBY, //啟動ws之前
   CONNECTING, //已開通通路，未接收到訊息
   CONNECTED, //已接收到訊息
   DISCONNECTED, //斷線
   RECONNECT, //斷線重新連線
   URLREPLACE,
-  ERROR //
-} from "./status";
+  ERROR, //
+}  = status;
 
-import {
+const  {
   NORMAL,
   AUTO,
-  NONE
-} 
-  from './close';
+  NONE,
+} = close; 
+
+
+export const WebSocketStatus = status;
+export const WebSocketCloseCode = close;
 
 export default class WebSocketControl {
   wsInstance = null;
@@ -128,6 +135,9 @@ export default class WebSocketControl {
   }
 
   replaceUrl(path) {
+    if(this._path === path) {
+      return;
+    }
     if(!path) {
       this.closeWS();
       return;
@@ -233,3 +243,5 @@ export default class WebSocketControl {
       this.callStatusEvent(ERROR, e);
   }
 }
+
+

@@ -1,28 +1,17 @@
 import * as React from "react";
-import { BaseReact } from "components/@shared/BaseReact";
+import { BasePureReact } from "components/@shared/BaseReact";
 import { observer, inject } from "mobx-react";
-import InfiniteScroll from "react-infinite-scroller";
 import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import ProductItem from "./ProductItem";
 import moment from "moment";
-import {
-  STANDBY, //啟動ws之前
-  CONNECTING, //已開通通路，未接收到訊息
-  CONNECTED, //已接收到訊息
-  DISCONNECTED, //斷線
-  RECONNECT, //斷線重新連線
-  ERROR //
-} from "utils/WebSocketControl/status";
-import {
-  REFRESH,
-  SCROLL
-} from "pages/Symbol/Left/config/symbolTypeStatus";
-import { PRODUCT_RESFRESH, PRODUCT_UPDATE } from "pages/Symbol/config/messageCmd";
+import InfiniteScroll from "react-infinite-scroller";
 
-@inject("product")
+import ProductItem from "./ProductItem";
+import { SELF } from "pages/Symbol/config/symbolTypeCategory";
+import { PAGE_SIZE } from 'constant';
+
+@inject("common", "product", "symbol")
 @observer
-export default class ProductList extends BaseReact {
+export default class ProductList extends BasePureReact {
   state = {
     id: 0,
     initData: [],
@@ -30,9 +19,9 @@ export default class ProductList extends BaseReact {
   };
 
   subscribList = [];
-  wsStatus = STANDBY;
   scrollRef = null;
   scrollInfo = {
+    isLoading:false,
     timeId: 0,
     itemCount: 0,
     MAXCOUNT: 5,
@@ -41,8 +30,8 @@ export default class ProductList extends BaseReact {
   buffer = {};
   constructor(props) {
     super(props);
-    this.scrollRef = React.createRef();
     this.buffer = this.initBuffer();
+    this.scrollRef = React.createRef();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -52,15 +41,12 @@ export default class ProductList extends BaseReact {
     };
   }
 
-  render() {
-    const { currentList, } = this.props.product;
-    const { symbolList, status, } = currentList;
-    const { hasMore, dataLoading, } = status;
-    // console.log("product list render");
-    const {
-      priceTmp: { high, normal, low, },
-    } = this.state;
 
+  render() {
+    const { currentSymbolList, } = this.props.product;
+    const { results, nextPage, } = currentSymbolList;
+    const { getPriceTmp, } = this.props.common;
+    const hasMore = nextPage !== -1 || results.length === 0;
     return (
       <div
         ref={ref => {
@@ -82,88 +68,49 @@ export default class ProductList extends BaseReact {
           loadMore={this.loadMore}
           getScrollParent={() => this.scrollRef}
         >
-          <div>
-            {this.createSymbolComponentList(symbolList, high, low, normal)}
-          </div>
-          {dataLoading && (
-            <Spin
-              indicator={<LoadingOutlined style={{ fontSize: 24, }} spin />}
-            />
-          )}
+          <div>{this.createSymbolComponentList(results, getPriceTmp)}</div>
         </InfiniteScroll>
       </div>
     );
   }
 
   componentDidMount() {
-    const { setReceviceMsgLinter, setStatusChangeListener, } = this.props;
     this.setContentScrollEvent(this.scrollRef);
-    setReceviceMsgLinter(this.receviceMsgLinter);
-    setStatusChangeListener(this.statusChangListener);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const prevSymbol_type_code = prevProps.symbol_type_code;
-    if (prevSymbol_type_code !== this.props.symbol_type_code)
-      this.scrollRef.scrollTo(0, 0);
-
-    const { currentList, } = this.props.product;
-    const { status, } = currentList;
-    const { dataLoading, } = status;
-    if (dataLoading) {
-      this.cancelDataLoading(status);
-      //第一次載入追蹤
-      this.firstTrackSymbol();
+    const { currentSymbolList, } = this.props.product;
+    const { page, results, } = currentSymbolList;
+    const pageTotal = page * PAGE_SIZE;
+    if(pageTotal === results.length) {
+      this.scrollInfo.isLoading = false;
     }
   }
 
   //function
-  firstTrackSymbol = () => {
-    if (
-      this.props.symbol_type_code === "SELF" ||
-      this.subscribList.length !== 0
-    ) {
-      return;
-    }
-    this.subscribList = this.createSubscribeList();
-
-    const { trackSymbol, subscribList, } = this;
-    trackSymbol(subscribList, "subscribe");
-  };
-
-  cancelDataLoading = status => {
-    const newStatus = {
-      ...status,
-      dataLoading: false,
-    };
-    this.props.product.setCurrentSymbolList({
-      status: {
-        ...newStatus,
-      },
-    });
-  };
-
-  createSymbolComponentList = (list, highPrice, lowPrice, normalPrice) => {
+  createSymbolComponentList = (list, getPriceTmpFn) => {
     return list
       ? list.map((item, i) => {
         const {
-          key,
-          id,
-          rowInfo: { change, },
+          symbolKey,
+          symbolId,
+          name,
+          priceInfo: { change, },
         } = item;
         const sign = Math.sign(change);
-        const priceTypeObj =
-            sign === 1 ? highPrice : sign === -1 ? lowPrice : normalPrice;
-        const { openSymbol, } = this.props.product;
-        
+        const priceTypeObj = getPriceTmpFn(sign);
+        const { currentSymbol, } = this.props.symbol;
+
         return (
           <ProductItem
-            key={key}
-            listId={i}
+            key={symbolKey}
             {...item}
             priceType={priceTypeObj}
-            isActive={openSymbol.id === id}
+            isActive={currentSymbol?.symbolId === symbolId}
+            symbolId={symbolId}
+            name={name}
             setOpenItem={this.setOpenItem}
+            onFavorite={this.onFavorite}
             {...this.props}
           />
         );
@@ -171,215 +118,32 @@ export default class ProductList extends BaseReact {
       : null;
   };
 
-  setOpenItem = id => {
-    this.props.product.setOpenSymbol(id);
-
-    this.props.sendBroadcastMessage(PRODUCT_RESFRESH, this.props.product.getNowSymbolDetail);
-  };
-
-  receviceMsgLinter = d => {
-    const { data, } = d;
-
-    const { buffer, } = this;
-    const { timeId, BUFFER_TIME, list, } = buffer;
-    const receviceTime = moment().valueOf();
-    buffer.list = [
-      ...list,
-      ...data
-    ];
-
-    if (timeId) window.clearTimeout(timeId);
-    if (!this.checkBuffer(buffer, receviceTime)) {
-      buffer.timeId = window.setTimeout(() => {
-        this.updateContent(buffer);
-      }, BUFFER_TIME);
-      return;
-    }
-
-    this.updateContent(buffer);
-    this.broadcastMsg(buffer);
-  };
-
-  statusChangListener = (before, next) => {
-    const { symbol_type_code, } = this.props;
-    if (
-      before === CONNECTING &&
-      next === CONNECTED &&
-      symbol_type_code !== "SELF"
-    ) {
-      const { trackSymbol, subscribList, } = this;
-      if (subscribList.length !== 0) {
-        // trackSymbol(subscribList, "unsubscribe");
-        // trackSymbol(subscribList, "subscribe");
-      }
+  onFavorite = async (code, symbolId, name) => {
+    switch (code) {
+      case SELF:
+        this.props.product.deleteSelfSelectSymbolList(symbolId, name);
+        break;
+      default:
+        this.props.product.addSelfSelectSymbolList(symbolId, name);
+        break;
     }
   };
 
-  setContentScrollEvent = elRef => {
-    elRef.addEventListener("scroll", e => {
-      this.productScroll(e);
+  setOpenItem = symbolId => {
+    const { currentSymbolList, } = this.props.product;
+    const { results, } = currentSymbolList;
+    const itemTmp = results.filter(item => {
+      return item.symbolId === symbolId;
     });
-  };
+    const selectedItem = itemTmp.length === 0 ? null : itemTmp[0];
 
-  productScroll = e => {
-    window.clearTimeout(this.scrollInfo.timeId);
-    this.scrollInfo.timeId = window.setTimeout(() => {
-      const {
-        error,
-        hasMore,
-        dataLoading,
-      } = this.props.product.currentList.status;
-      // Bails early if:
-      // * there's an error
-      // * it's already loading
-      // * there's nothing left to load
-      if (error || dataLoading || !hasMore) return;
-
-      const { currentSymbolType, } = this.props.product;
-      const { page, page_size, symbol_type_code, } = currentSymbolType;
-      const { itemCount, MAXCOUNT, } = this.scrollInfo;
-      const {
-        offsetHeight,
-        scrollTop, //scroll 座標x
-        scrollHeight,
-        clientHeight,
-      } = e.target;
-
-      const item = e.target.querySelectorAll(
-        ".ant-row.ant-row-space-between.custom-table-item"
-      );
-      const nowItemCount = this.checkScrollingItemCount(
-        item,
-        symbol_type_code,
-        scrollTop,
-        itemCount,
-        MAXCOUNT
-      );
-
-      if (nowItemCount !== -1) {
-        // console.log("trackSymbol");
-        this.scrollInfo.itemCount = nowItemCount;
-
-        this.trackSymbol(this.subscribList, "unsubscribe");
-
-        this.subscribList = this.createSubscribeList(
-          nowItemCount,
-          page_size,
-          MAXCOUNT
-        );
-
-        this.trackSymbol(this.subscribList, "subscribe");
-      }
-
-      const scrollingHeight = offsetHeight + scrollTop;
-      const count = Math.ceil(scrollingHeight / clientHeight);
-
-      if (scrollingHeight < scrollHeight || count === page) {
-        return;
-      }
-
-      const nowPage = page + 1;
-      this.props.product.setCurrentId({
-        ...currentSymbolType,
-        page: nowPage,
-        cmd: SCROLL,
-      });
-    }, 50);
-  };
-
-  loadMore(page) {
-    //console.log(page);
-  }
-
-  //subscribe
-  checkScrollingItemCount = (
-    itemListEl,
-    symbol_type_code,
-    scrollTop,
-    prevCount,
-    maxCount
-  ) => {
-    if (itemListEl.length === 0 || symbol_type_code === "SELF") return -1;
-
-    const itemHeight = itemListEl[0].clientHeight;
-
-    const count = Math.floor(scrollTop / itemHeight);
-
-    if (Math.abs(prevCount - count) < maxCount) return -1;
-
-    return count;
-  };
-  trackSymbol = (currentList, type) => {
-    const o = {
-      type: type,
-      data: {
-        symbol_ids: currentList,
-      },
-    };
-
-    this.props.sendMsg(o);
-  };
-
-  createSubscribeList = (nowItemCount = 0, length = -1, count = 0) => {
-    const { allProductListId, } = this.props.product;
-    length = length === -1 ? allProductListId.length : length;
-
-    const start = nowItemCount - count;
-    const end = (start > 0 ? start : 0) + length + count;
-
-    return allProductListId.filter((id, i) => {
-      return i >= start && i <= end;
-    });
+    this.props.symbol.setCurrentSymbol(selectedItem);
   };
 
   //buffer
-  checkBuffer(buffer, receviceTime) {
-    const { list, lastCheckUpdateTime, BUFFER_MAXCOUNT, BUFFER_TIME, } = buffer;
-    let maxCount = list.length;
-
-    if (
-      receviceTime - lastCheckUpdateTime >= BUFFER_TIME ||
-      maxCount >= BUFFER_MAXCOUNT
-    )
-      return true;
-    else return false;
-  }
-  
-  updateContent = buffer => {
-    const { list, } = buffer;
-    const newList = this.sortList(list);
-    buffer.list = this.filterBufferlList(newList);
-
-    const { product, } = this.props;
-    product.updateCurrentSymbolList(buffer.list);
-
-
-    this.buffer = this.initBuffer();
-  };
-
-  broadcastMsg = (buffer)=>{
-    const { product, } = this.props;
-    const { getCurrentList, openSymbol, } = product;
-    const selectedItem =  getCurrentList.filter((item)=>{
-      return item.id === openSymbol.id;
-    });
-
-    if(selectedItem.length === 0) {
-      return;
-    }
-    const i  = buffer.list.findIndex((item)=>{
-      return item.symbol === selectedItem[0].rowInfo.symbol;
-    });
-
-    if(i !== -1) {
-      this.props.sendBroadcastMessage(PRODUCT_UPDATE, selectedItem[0]);
-    }
-  }
-
-
   filterBufferlList(list) {
     return list.filter((item, i, all) => {
-      return (  
+      return (
         all.findIndex(fItem => {
           return fItem.symbol === item.symbol;
         }) === i
@@ -420,4 +184,106 @@ export default class ProductList extends BaseReact {
       list: [],
     };
   }
+
+  loadMore = () => {};
+  setContentScrollEvent = elRef => {
+    elRef.addEventListener("scroll", e => {
+      this.productScroll(e);
+    });
+  };
+
+  productScroll = e => {
+    window.clearTimeout(this.scrollInfo.timeId);
+    this.scrollInfo.timeId = window.setTimeout(() => {
+      const { nextPage, page, results, } = this.props.product.currentSymbolList;
+      const { itemCount, MAXCOUNT, isLoading, } = this.scrollInfo;
+      if (results.length === 0 || nextPage === -1 || isLoading) return;
+
+      const { currentSymbolType, } = this.props.symbol;
+      const {
+        symbol_type_code,
+        symbol_type_name,
+        category,
+      } = currentSymbolType;
+
+
+      const {
+        offsetHeight,
+        scrollTop, //scroll 座標x
+        scrollHeight,
+        clientHeight,
+      } = e.target;
+
+      const item = e.target.querySelectorAll(
+        ".ant-row.ant-row-space-between.custom-table-item"
+      );
+      const nowItemCount = -1; //this.checkScrollingItemCount(
+      //   item,
+      //   symbol_type_code,
+      //   scrollTop,
+      //   itemCount,
+      //   MAXCOUNT
+      // );
+
+      if (nowItemCount !== -1) {
+        // console.log("trackSymbol");
+        this.scrollInfo.itemCount = nowItemCount;
+
+        // this.trackSymbol(this.subscribList, "unsubscribe");
+
+        // this.subscribList = this.createSubscribeList(
+        //   nowItemCount,
+        //   page_size,
+        //   MAXCOUNT
+        // );
+
+        // this.trackSymbol(this.subscribList, "subscribe");
+      }
+
+      const scrollingHeight = offsetHeight + scrollTop;
+      const pageCount = Math.ceil(scrollingHeight / clientHeight);
+
+      if (scrollingHeight < scrollHeight || pageCount === page) {
+        return;
+      }
+      this.props.product.addCurrentSymbolList(
+        nextPage,
+        symbol_type_name,
+        symbol_type_code,
+        category
+      );
+      this.scrollInfo.isLoading = true;
+    }, 50);
+  };
+
+  //other fuc
+  checkScrollingItemCount = (
+    itemListEl,
+    symbol_type_code,
+    scrollTop,
+    prevCount,
+    maxCount
+  ) => {
+    if (itemListEl.length === 0 || symbol_type_code === SELF) return -1;
+
+    const itemHeight = itemListEl[0].clientHeight;
+
+    const count = Math.floor(scrollTop / itemHeight);
+
+    if (Math.abs(prevCount - count) < maxCount) return -1;
+
+    return count;
+  };
+
+  createSubscribeList = (nowItemCount = 0, length = -1, count = 0) => {
+    const { allProductListId, } = this.props.product;
+    length = length === -1 ? allProductListId.length : length;
+
+    const start = nowItemCount - count;
+    const end = (start > 0 ? start : 0) + length + count;
+
+    return allProductListId.filter((id, i) => {
+      return i >= start && i <= end;
+    });
+  };
 }

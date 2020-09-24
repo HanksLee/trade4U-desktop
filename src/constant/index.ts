@@ -175,3 +175,6 @@ export default {
 };
 
 export const supportedResolution = ['1', '5', '15', '30', '60', '240', '1D', '7D'];
+
+
+export const PAGE_SIZE = 20;

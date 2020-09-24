@@ -8,12 +8,6 @@ import moment from "moment";
 
 import { BaseReact } from "components/@shared/BaseReact";
 import {
-  PRODUCT_RESFRESH,
-  RIGHT_SHOW,
-  RIGHT_HIDE,
-  PRODUCT_UPDATE
-} from "pages/Symbol/config/messageCmd";
-import {
   SCREEN_DETAIL,
   SCREEN_BUY
 } from "pages/Symbol/Right/config/screenList";
@@ -43,11 +37,17 @@ export default class Right extends BaseReact<{}, {}> {
     const { type, data, } = topScreen;
 
     const areaShowCls = type && data ? "show-area" : "";
-    const { getPriceTmp, } = this.props;
     return (
       <div className={`symbol-right ${areaShowCls}`}>
-        <SymbolDetail type={type} data={data} getPriceTmp={getPriceTmp} />
-        <SymbolBuyContent type={type} data={data}  />
+        <SymbolDetail
+          type={type}
+          {...data}
+          onPurchasShow={this.onPurchasShow}
+        />
+        <SymbolBuyContent
+          type={type}
+          {...data}
+        />
       </div>
     );
   }
@@ -60,8 +60,9 @@ export default class Right extends BaseReact<{}, {}> {
 
   setMessageListener = () => {
     this.cancelTrackMessageListener = reaction(
-      ()=> this.props.common.message,
-      this.messageListener);
+      () => this.props.common.message,
+      this.messageListener
+    );
   };
 
   messageListener = (message, reaction) => {
@@ -73,7 +74,7 @@ export default class Right extends BaseReact<{}, {}> {
         break;
       case PRODUCT_UPDATE:
         this.refreshHeader(d.rowInfo);
-        this.refreshMain(d.setMainInfo);
+        this.refreshMain(d.mainInfo);
         break;
     }
   };
@@ -84,7 +85,7 @@ export default class Right extends BaseReact<{}, {}> {
 
     const newType = type ? type : SCREEN_DETAIL;
     this.other.setTopScreen({
-      type: newType,
+      type: SCREEN_DETAIL,
       data: d,
     });
     this.other.setProductInfo({
@@ -94,10 +95,21 @@ export default class Right extends BaseReact<{}, {}> {
     });
   };
 
-  refreshHeader = d =>{
+  refreshHeader = d => {
     this.other.setProductInfo(d);
-  }
-  refreshMain = d =>{
+  };
+  refreshMain = d => {
+    const { topScreen, } = this.other;
+    const { type, } = topScreen;
+
+    if (type !== SCREEN_DETAIL) return;
     this.other.setMainInfo(d);
-  }
+  };
+
+  onPurchasShow = d => {
+    this.other.setTopScreen({
+      type: SCREEN_BUY,
+      data: d,
+    });
+  };
 }

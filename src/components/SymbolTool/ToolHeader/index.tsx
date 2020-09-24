@@ -17,7 +17,7 @@ const IconFont = createFromIconfontCN({
 });
 
 
-@inject("other")
+@inject("common", "other")
 @observer
 export default class extends React.Component<any, any> {
   state = {
@@ -45,7 +45,7 @@ export default class extends React.Component<any, any> {
     const { sell, chg, change, } = this.other.productInfo;
 
     const sign = Math.sign(change);
-    const priceObj = this.props.getPriceTmp(sign);
+    const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
     return (
       <div className={`symbol-tool-header`}>

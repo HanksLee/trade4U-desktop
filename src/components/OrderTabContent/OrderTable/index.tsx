@@ -9,7 +9,7 @@ import { observer, inject } from "mobx-react";
 
 import order from "store/order";
 
-@inject("order")
+@inject("common", "order")
 @observer
 export default class OrderTable extends BaseReact<{}, {}> {
 
@@ -91,7 +91,7 @@ export default class OrderTable extends BaseReact<{}, {}> {
       width: 150,
       render: (text, record) => {
         const sign = Math.sign(text);
-        const priceCls = this.props.getPriceTmp(sign);
+        const priceCls = this.props.common.getPriceTmp(sign);
         return (
           <span className={`${priceCls.color}`}>
             {text > 0 ? `+${text}` : text}
