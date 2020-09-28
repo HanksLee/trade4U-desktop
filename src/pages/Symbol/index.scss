@@ -268,26 +268,24 @@ $side-width: 368px;
     }
 
     &.zoom-out{
-      flex: 0 0 calc(100vw - 60px - 10px - 710px);
+      flex: 0 0 calc(100vw - 60px - 10px - 745px)
     }
 
   }
 
   .symbol-right {
     position: relative;
-    flex: 0;
+    flex: 0 0 $side-width;
     transition: 0.5s all ease-in-out;
     padding: 0;
 
     .symbol-tool-item {
-      position: absolute;
-      width: $side-width;
+      width: $side-width - 10;
       background-color: $primary-color;
       height: 100%;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
       transition: 0.3s all ease-in-out;
-      visibility: hidden;
-
+      margin: 0 10px;
       .symbol-tool-header {
         height: 78px;
         width: 100%;
@@ -330,7 +328,7 @@ $side-width: 368px;
       }
       &.symbol-buy-content {
         top: 110%;
-        left: 10px;
+        position: absolute;
       }
 
     }

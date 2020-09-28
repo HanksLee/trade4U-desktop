@@ -217,5 +217,5 @@ export default {
   spliceQuery,
   getFileInfo,
   getStockChangeClass,
-  setSignStirng,
+  setSignString: setSignStirng,
 };

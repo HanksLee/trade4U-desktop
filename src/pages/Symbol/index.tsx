@@ -35,7 +35,7 @@ export default class extends BaseReact {
         <Left  />
         <Center/>
   
-        {/* <Right /> */}
+        <Right />
       </div>
     );
   }

@@ -1,8 +1,6 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { autorun, reaction, toJS } from "mobx";
-
-import { Tabs, Row, Col, DatePicker } from "antd";
+import { reaction, toJS } from "mobx";
 
 import moment from "moment";
 
@@ -15,39 +13,25 @@ import { SymbolDetail, SymbolBuyContent } from "components/SymbolField";
 
 import utils from "utils";
 
-const { RangePicker, } = DatePicker;
-const { TabPane, } = Tabs;
-
-@inject("other", "common")
+@inject("other", "common", "symbol")
 @observer
 export default class Right extends BaseReact<{}, {}> {
   state = {};
   other = null;
-  cancelTrackMessageListener = null;
 
   constructor(props) {
     super(props);
 
     this.other = props.other;
-    this.setMessageListener();
+    this.setOnCurrentSymbolChange();
+    this.setOnCurrentTransactionSymbolChange();
   }
 
   render() {
-    const { topScreen, } = this.other;
-    const { type, data, } = topScreen;
-
-    const areaShowCls = type && data ? "show-area" : "";
     return (
-      <div className={`symbol-right ${areaShowCls}`}>
-        <SymbolDetail
-          type={type}
-          {...data}
-          onPurchasShow={this.onPurchasShow}
-        />
-        <SymbolBuyContent
-          type={type}
-          {...data}
-        />
+      <div className={`symbol-right`}>
+        <SymbolDetail />
+        <SymbolBuyContent />
       </div>
     );
   }
@@ -57,59 +41,34 @@ export default class Right extends BaseReact<{}, {}> {
   componentDidUpdate() {}
 
   //function
-
-  setMessageListener = () => {
-    this.cancelTrackMessageListener = reaction(
-      () => this.props.common.message,
-      this.messageListener
+  setOnCurrentSymbolChange = () => {
+    reaction(
+      () => this.props.symbol.currentSymbol,
+      currentSymbol => {
+        this.setHeaderInfo(currentSymbol);
+      }
     );
   };
 
-  messageListener = (message, reaction) => {
-    const { cmd, data, } = message;
-    const d = toJS(data);
-    switch (cmd) {
-      case PRODUCT_RESFRESH:
-        this.openProductDetail(d);
-        break;
-      case PRODUCT_UPDATE:
-        this.refreshHeader(d.rowInfo);
-        this.refreshMain(d.mainInfo);
-        break;
-    }
+  setOnCurrentTransactionSymbolChange = () => {
+    reaction(
+      () => this.props.symbol.currentTransactionSymbol,
+      currentTransactionSymbol => {
+        const { symbolId, } =  this.props.symbol.currentSymbol;
+
+        if(symbolId  === currentTransactionSymbol.symbolId) return;
+        this.setHeaderInfo(currentTransactionSymbol);
+      }
+    );
   };
 
-  openProductDetail = d => {
-    const { topScreen, } = this.other;
-    const { type, } = topScreen;
+  setHeaderInfo = (info)=>{
+    const { symbolId, name, priceInfo, } = info;
+    const { change, chg, sell, } = priceInfo;
+    const { headerInfo, } = this.other;
+    this.other.setHeaderInfo({ symbolId, name, change, chg, sell, });
 
-    const newType = type ? type : SCREEN_DETAIL;
-    this.other.setTopScreen({
-      type: SCREEN_DETAIL,
-      data: d,
-    });
-    this.other.setProductInfo({
-      chg: 0,
-      change: 0,
-      sell: 0,
-    });
-  };
-
-  refreshHeader = d => {
-    this.other.setProductInfo(d);
-  };
-  refreshMain = d => {
-    const { topScreen, } = this.other;
-    const { type, } = topScreen;
-
-    if (type !== SCREEN_DETAIL) return;
-    this.other.setMainInfo(d);
-  };
-
-  onPurchasShow = d => {
-    this.other.setTopScreen({
-      type: SCREEN_BUY,
-      data: d,
-    });
-  };
+    if(headerInfo.symbolId === symbolId) return;
+    this.other.fetchContractInfo(symbolId);
+  }
 }

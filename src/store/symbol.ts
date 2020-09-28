@@ -24,18 +24,6 @@ class SymbolStore extends BaseStore {
       ...o,
     };
   };
-
-  @observable
-  currentSymbol = null;
-
-  @action
-  setCurrentSymbol = d => {
-    let info = d === null ? this.creatNULLSymbol() : d;
-    this.currentSymbol = {
-      ...info,
-    };
-  };
-
   creatNULLSymbol = (): ISymbolItem => {
     const priceInfo: IPriceInfo = {
       symbol: "-----",
@@ -73,6 +61,19 @@ class SymbolStore extends BaseStore {
       contractInfo,
     };
   };
+  
+  @observable
+  currentSymbol = this.creatNULLSymbol();
+
+  @action
+  setCurrentSymbol = d => {
+    let info = d === null ? this.creatNULLSymbol() : d;
+    this.currentSymbol = {
+      ...info,
+    };
+  };
+
+  
 
   @computed
   get getTrendInfo() {
@@ -87,16 +88,15 @@ class SymbolStore extends BaseStore {
       sell,
     };
   }
+  
   @observable
-  currentTransactionSymbol = {
-    mode: "",
-    data: null,
-  };
+  currentTransactionSymbol: ISymbolItem =  this.creatNULLSymbol();
 
   @action
   setCurrentTransactionSymbol = d => {
     this.currentTransactionSymbol = {
       ...this.currentTransactionSymbol,
+      ...d,
     };
   };
 }

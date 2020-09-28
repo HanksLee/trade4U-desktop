@@ -21,7 +21,7 @@ const symbolTypeMap = {
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/market")
-@inject(, "common")
+@inject("common")
 @observer
 export default class Market extends BaseReact<any, MarketState> {
   container: any = null;

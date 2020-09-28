@@ -53,7 +53,6 @@ export default class extends React.Component<any, any> {
       min_lots,
       max_lots,
     } = this.state;
-
     return (
       <div className={cx("symbol-descript")}>
         <h2>合约资讯</h2>

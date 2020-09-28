@@ -1,27 +1,64 @@
 import * as React from "react";
-import { observer, inject } from "mobx-react";
-import { autorun } from "mobx";
+import { useState, useEffect } from "react";
 
-import { Tabs, Row, Col, DatePicker } from "antd";
+import { Button } from "antd";
 
-import moment from "moment";
-
-import { BaseReact } from "components/@shared/BaseReact";
 import {
   SCREEN_DETAIL,
   SCREEN_BUY
 } from "pages/Symbol/Right/config/screenList";
-
+import ToolHeader from "components/SymbolTool/ToolHeader";
+import MainDetail from "components/SymbolTool/MainDetail";
+import ContractDetail from "components/SymbolTool/ContractDetail";
 import utils from "utils";
+import api from "services";
 
-export default ({ type, symbolKey, }) => {
-  const showCls =
-    (type === SCREEN_BUY) && symbolKey ? "show" : "";
-  return (
-    <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
+import classNames from "classnames/bind";
+import globalCss from "app.module.scss";
+import { inject, observer } from "mobx-react";
+import { reaction, toJS } from "mobx";
 
-    </div>
-  );
-};
+const globalCx = classNames.bind(globalCss);
 
+@inject("other", "common", "symbol")
+@observer
+export default class extends React.PureComponent<{}, {}> {
+  state = {
+    showCls: "",
+  };
+  other = null;
+  symbol = null;
+  constructor(props) {
+    super(props);
 
+    this.other = props.other;
+    this.symbol = props.symbol;
+    this.setOnCurrentTransactionSymbolChange();
+  }
+
+  render() {
+    const { showCls, } = this.state;
+    return (
+      <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
+        <ToolHeader />
+      </div>
+    );
+  }
+
+  componentDidMount() {}
+
+  componentDidUpdate() {}
+
+  //function
+  setOnCurrentTransactionSymbolChange = () => {
+    reaction(
+      () => this.props.symbol.currentTransactionSymbol,
+      currentTransactionSymbol => {
+        const { symbolId, } = currentTransactionSymbol;
+        const showCls = symbolId === -1 ? "" : "show";
+
+        this.setState({ showCls, });
+      }
+    );
+  };
+}
