@@ -21,6 +21,8 @@ const getTransactionList = (config): Promise<any> =>
     ...config,
   });
 
+
+
 export default {
   getPaymentMethods,
   deposit,

@@ -1,0 +1,233 @@
+.subscribe-page {
+  height: calc(100vh - 100px);
+  position: relative;
+  color: white;
+  // background-color: $primary-color;
+  margin: 10px;
+  padding: 10px;
+  overflow: hidden;
+
+  .ant-tabs,
+  .ant-tabs-content {
+    background-color: $primary-color;
+    .ant-tabs-tabpane {
+      height: 100%;
+      overflow: scroll;
+    }
+  }
+}
+.subscribe-head {
+  margin-bottom: 10px;
+}
+.symbol-filter {
+  display: flex;
+  color: white;
+  padding: 10px 0px 10px 10px;
+  background-color: $primary-color;
+  border-bottom: 1px solid rgba(46, 59, 85, 1);
+  .symbol-filter-item {
+    margin-right: 30px;
+    cursor: pointer;
+    &.active {
+      color: $active-color;
+    }
+  }
+}
+.subscribe-content {
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+
+  .ant-col-24 {
+    flex: 0;
+  }
+
+  .subscribe-detail {
+    margin-bottom: 10px;
+    background-color: $primary-color;
+    overflow: hidden;
+    flex-basis: 85%;
+
+    &.fold-tabs {
+      flex-basis: 8%;
+      overflow: hidden;
+    }
+   
+    .subscribe-detail-title {
+      border-bottom: 1px solid #2e3b55;
+      padding: 8px 16px;
+      .subscribe-detail-title-isFold{
+        font-size: 14px;
+        color:#838D9E
+      }
+    }
+
+    .ant-table-body {
+     
+      .ant-table-cell-fix-left {
+        background-color: $primary-color;
+      }
+      .ant-table-row-level-0:nth-child(odd) {
+        background-color: #293842;
+        > .ant-table-cell-fix-left:nth-child(odd) {
+          background-color: #293842;
+        }
+      }
+      button {
+        width: 66px;
+        color: #232c37;
+        background: none;
+       
+        &.canSubscribe {
+          background-color: #f2e205;
+          border: solid 1px #f2e205;
+          border-radius: 4px;
+          &:hover{
+            opacity: 0.5;
+          }
+        }
+        &.isSubscribe {
+          border: solid 1px #32d74b;
+          color: #32d74b;
+        }
+        &.isWin {
+          border: solid 1px #f7b500;
+          color: #f7b500;
+        }
+        &.noWin {
+          border: solid 1px #838d9e;
+          color: #838d9e;
+        }
+      }
+    }
+  }
+}
+.ant-modal{
+top:0;
+}
+.ant-modal-content {
+
+  .ant-modal-header {
+    text-align: center;
+    background-color: #141e28;
+    border-bottom: 0;
+    border-radius: 0;
+
+    .ant-modal-title {
+      color: #fff;
+      padding: 12px;
+      font-weight: 400;
+      .dialog-title-text-left {
+        text-align: left;
+        padding: 6px;
+      }
+      .dialog-title-text-right {
+        text-align: right;
+        padding: 6px;
+      }
+      .price-green {
+        color: #44d7b6;
+      }
+    }
+  }
+
+  .ant-modal-body {
+    padding: 16px 70px;
+    background-color: #1f2934;
+    .dialog-detail-item {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .dialog-detail-item-line {
+      border-bottom: 1px solid #2e3b55;
+    }
+
+    .dialog-detail-item-input {
+      .detail-input-item-btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .detail-input-item-add-btn,
+        .detail-input-item-less-btn {
+          width: 50px;
+          text-align: center;
+          background: rgba(131, 141, 158, 1);
+          color: #fff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &:active {
+            opacity: 0.5;
+          }
+        }
+
+        .detail-input-item-less-btn {
+          border-radius: 4px 0px 0px 4px;
+        }
+
+        .detail-input-item-add-btn {
+          border-radius: 0px 4px 4px 0px;
+        }
+
+        .detail-input-item-input {
+          color: #f2e205;
+          width: calc(100% - 100px);
+          border-top: 1px solid #838d9e;
+          border-bottom: 1px solid #838d9e;
+          line-height: 28px;
+          text-align: center;
+
+          input {
+            text-align: center;
+            width: 100%;
+          }
+          input::-webkit-outer-spin-button,
+          input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+          }
+          input[type="number"] {
+            -moz-appearance: textfield;
+          }
+        }
+      }
+    }
+    .ant-select {
+      width: 100%;
+    }
+    .ant-select-selector {
+      background-color: initial;
+      border: unset;
+      padding: 0;
+      box-shadow: unset !important;
+      font-size: 16px;
+      border-bottom: 1px solid #c8c7cc;
+    }
+    .dialog-detail-item-submit-btn {
+      width: 160px;
+      margin: auto;
+      line-height: 30px;
+      background: #f2e205;
+      border-radius: 4px;
+      color: #21212b;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      border-bottom: 1px solid #2e3b55;
+      &:hover{
+        opacity: 0.5;
+      }
+    }
+    .dialog-remark-item {
+      font-size: 12px;
+      margin-bottom: 10px;
+      .dialog-remark-item-text {
+        white-space: wrap;
+      }
+      .dialog-remark-item-titile {
+        color: #838d9e;
+      }
+    }
+  }
+}

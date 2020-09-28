@@ -10,6 +10,12 @@ const routes: any[] = [
   },
   {
     component: loadable(() => import(/* webpackChunkName: "captial" */ './pages/Captial')),
+  },
+  {
+    component: loadable(() => import(/* webpackChunkName: "subscribe" */ './pages/Subscribe')),
+  },
+  {
+    component: loadable(() => import(/* webpackChunkName: "subscribe" */ './pages/News')),
   }
   // {
   //   component: loadable(() => import(/* webpackChunkName:  */ './pages/Market')),

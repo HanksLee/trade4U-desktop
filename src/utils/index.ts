@@ -192,12 +192,18 @@ function getStockChangeClass(change, colorMode) {
   return STOCK_COLOR_MAP[colorMode][ret];
 }
 
-function setSignStirng(number) {
+function setSignString(number) {
   const sign = Math.sign(number);
   return sign > 0 ? `+${number}` : number;
 }
 
-
+function parseBool(input) {
+  if (!input) return Boolean(input);
+  const isFalse = /false/i.test(input);
+  const isZero = Number(input) === 0;
+  if (isFalse || isZero) return false;
+  return Boolean(input);
+}
 
 export default {
   setRootFontSizeFromClient,
@@ -217,5 +223,6 @@ export default {
   spliceQuery,
   getFileInfo,
   getStockChangeClass,
-  setSignString: setSignStirng,
+  setSignString,
+  parseBool,
 };
