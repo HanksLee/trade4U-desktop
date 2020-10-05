@@ -5,17 +5,14 @@ import utils from "utils";
 
 export default class ProductRow extends React.PureComponent {
   state = {
-    id: 0,
     symbol_type_code: "",
     name: "",
     symbol: "",
-    spread: 0,
     sell: 0,
     buy: 0,
     chg: 0,
     priceType: null,
-    addID: 0,
-    deleteID: 0,
+    symbolId:-1,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -29,14 +26,11 @@ export default class ProductRow extends React.PureComponent {
     const {
       name,
       symbol,
-      spread,
       sell,
       buy,
       priceType,
       symbol_type_code,
-      id,
-      addID,
-      deleteID,
+      symbolId,
     } = this.state;
     const priceTypeClass = `${priceType.color} ${priceType.gif} self-select-sell-block`;
     const favorIcon = symbol_type_code === "SELF" ? 
@@ -68,15 +62,6 @@ export default class ProductRow extends React.PureComponent {
               {symbol}
             </span>
           </Col>
-          <Col span={2} className={"self-select-dot-container"}>
-            <span
-              style={{
-                color: "#838D9E",
-              }}
-            >
-              {spread}
-            </span>
-          </Col>
           <Col span={5} className={"self-select-sell-container"}>
             <span className={priceTypeClass}>{sell}</span>
           </Col>
@@ -89,8 +74,7 @@ export default class ProductRow extends React.PureComponent {
                 onClick={e => {
                   this.props.onFavorite(
                     symbol_type_code,
-                    addID,
-                    deleteID,
+                    symbolId,
                     name
                   );
                   e.stopPropagation();

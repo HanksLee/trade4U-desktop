@@ -18,7 +18,13 @@ const cx = classNames.bind(css);
 @observer
 export default class extends React.Component<any, any> {
   state = {
-    name: "----",
+    purchase_fee: 0,
+    selling_fee: 0,
+    contract_size: 0,
+    profit_currency_display: 0,
+    margin_currency_display: 0,
+    min_lots: 0,
+    max_lots: 0,
   };
   other = null;
   constructor(props) {
@@ -39,14 +45,14 @@ export default class extends React.Component<any, any> {
 
   render() {
     const {
-      high,
-      low,
-      close,
-      open,
-      volume,
-      max_trading_volume,
-    } = this.other.mainInfo;
-
+      purchase_fee,
+      selling_fee,
+      contract_size,
+      profit_currency_display,
+      margin_currency_display,
+      min_lots,
+      max_lots,
+    } = this.state;
     return (
       <div className={cx("symbol-descript")}>
         <h2>合约资讯</h2>
@@ -54,42 +60,48 @@ export default class extends React.Component<any, any> {
           <Row className={cx("symbol-descript-row")}>
             <Col span={12}>
               <span className={cx("symbol-descript-title")}>合约大小</span>
-              <span className={cx("symbol-descript-value")}>{high}</span>
+              <span className={cx("symbol-descript-value")}>
+                {contract_size}
+              </span>
             </Col>
             <Col span={1}></Col>
             <Col span={11}>
               <span className={cx("symbol-descript-title")}>预付款货币</span>
-              <span className={cx("symbol-descript-value")}>{low}</span>
+              <span className={cx("symbol-descript-value")}>
+                {margin_currency_display}
+              </span>
             </Col>
           </Row>
           <Row className={cx("symbol-descript-row")}>
             <Col span={12}>
               <span className={cx("symbol-descript-title")}>获利货币</span>
-              <span className={cx("symbol-descript-value")}>{open}</span>
+              <span className={cx("symbol-descript-value")}>
+                {profit_currency_display}
+              </span>
             </Col>
             <Col span={1}></Col>
             <Col span={11}>
               <span className={cx("symbol-descript-title")}>最大交易手数</span>
-              <span className={cx("symbol-descript-value")}>{close}</span>
+              <span className={cx("symbol-descript-value")}>{max_lots}</span>
             </Col>
           </Row>
           <Row className={cx("symbol-descript-row")}>
             <Col span={12}>
               <span className={cx("symbol-descript-title")}>最小交易手数</span>
-              <span className={cx("symbol-descript-value")}>{volume}</span>
+              <span className={cx("symbol-descript-value")}>{min_lots}</span>
             </Col>
             <Col span={1}></Col>
             <Col span={11}>
               <span className={cx("symbol-descript-title")}>买入库存费</span>
               <span className={cx("symbol-descript-value")}>
-                {max_trading_volume}
+                {purchase_fee}
               </span>
             </Col>
           </Row>
           <Row className={cx("symbol-descript-row")}>
             <Col span={12}>
               <span className={cx("symbol-descript-title")}>卖出库存费</span>
-              <span className={cx("symbol-descript-value")}>1</span>
+              <span className={cx("symbol-descript-value")}>{selling_fee}</span>
             </Col>
             <Col span={12}></Col>
           </Row>

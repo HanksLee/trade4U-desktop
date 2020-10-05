@@ -2,7 +2,9 @@ import React from "react";
 import defaultSeriesOption from "./config/option";
 import moment from "moment";
 import { STANDBY, INIT, REFRESH, UPDATE, CLEAR } from "./config/process";
-import { toJS } from 'mobx';
+import { toJS } from "mobx";
+
+const basicStep = 15;
 export default class extends React.Component {
   state = {
     chart: null,
@@ -18,6 +20,8 @@ export default class extends React.Component {
 
   lastSymbolDate = null;
   nowProcess = STANDBY;
+  totalCount = 0;
+
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
       ...prevState,
@@ -36,24 +40,14 @@ export default class extends React.Component {
 
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
-    // const { updateList } = this.state;
-    // if (!updateList || updateList.length === 0) return;
-
-    // this.refreshSeries();
     const { nowProcess, } = this;
     const { symbol, initList, updateList, } = this.state;
     const prevSymbol = prevState.symbol;
-
-    //    if(symbol === prevSymbol){
-    //        if(initList.length )
-    //        //this.
-    //    }
-
-    if(initList !== prevState.initList && this.nowProcess !== STANDBY) {
-      this.nowProcess =  INIT;
+    if (initList !== prevState.initList && this.nowProcess !== STANDBY) {
+      this.nowProcess = INIT;
     }
 
-    switch(this.nowProcess) {
+    switch (this.nowProcess) {
       case STANDBY:
         this.initSeries();
         break;
@@ -77,38 +71,44 @@ export default class extends React.Component {
     if (!chart && this.areaSeris) return;
     const nowOption = this.createOption(defaultSeriesOption, seriesOption);
     this.areaSeris = chart.addAreaSeries(nowOption);
-
     this.nowProcess = INIT;
   };
 
   refreshSeries = () => {
     const { initList, } = this.state;
     if (initList.length === 0) return;
-    this.areaSeris.setData([...initList]);
-    this.lastSymbolDate = initList[initList.length - 1].time;
-    this.nowProcess = REFRESH;
+
+    this.areaSeris.setData([]);
+    window.setTimeout(()=>{
+      this.areaSeris.setData([...initList]);
+      this.lastSymbolDate = initList[initList.length - 1].time;
+      this.nowProcess = REFRESH;
+      this.totalCount = initList.length;  
+      this.props.setBasicInfo(0, initList.length);
+    }, 10);
   };
 
-  insertListSeries = async updateList => {
+  insertListSeries = async (updateList) => {
     const lastTimestamp = moment(this.lastSymbolDate * 1000).unix();
 
     for (let item of updateList) {
       const nowTimestamp = moment(item.time).unix();
       if (nowTimestamp - lastTimestamp > 0) {
         item.time = nowTimestamp;
-        await this.insertSeries(item);
+        await this.insertSeries(item);        
+        this.props.setBasicInfo(0, this.totalCount++);
       }
     }
     this.nowProcess = UPDATE;
   };
 
-  insertSeries = d => {
+  insertSeries = (d) => {
     return new Promise((resovle, reject) => {
       window.setTimeout(() => {
         this.areaSeris.update(d);
         this.lastSymbolDate = d.time;
         resovle(true);
-      }, 5);
+      }, 50);
     });
   };
 

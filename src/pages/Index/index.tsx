@@ -76,7 +76,7 @@ function exactFromSidebarPath(pathlist) {
 /* eslint new-cap: "off" */
 // @ts-ignore
 @withRouter
-@inject("common", "market")
+@inject("common")
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
   wsConnect = null;

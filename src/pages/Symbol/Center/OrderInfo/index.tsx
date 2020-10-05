@@ -6,49 +6,50 @@ import { autorun } from "mobx";
 
 import { Tabs, Row, Col, DatePicker } from "antd";
 
+import OrderTabBarExtra from "components/OrderTabBarExtra";
 import OrderTabContent from "components/OrderTabContent";
 
-import WSConnect from "components/HOC/WSConnect";
 import moment from "moment";
 
 import { IN_TRANSACTION, PENDING, FINISH } from "./config/tabConfig";
 
-import channelConfig from "./config/channelConfig";
 import utils from "utils";
 
 const { RangePicker, } = DatePicker;
 const { TabPane, } = Tabs;
 
 /* eslint new-cap: "off" */
-const WS_OrderTabContent = WSConnect(
-  channelConfig[0],
-  channelConfig,
-  OrderTabContent
-);
 
-@inject("order", "common")
+@inject("order", "common", "symbol")
 @observer
 export default class Bottom extends BaseReact<{}, {}> {
   order = null;
+  symbol = null;
   constructor(props) {
     super(props);
     this.order = props.order;
+    this.symbol = props.symbol;
     this.order.setInit();
   }
 
   render() {
-    const { foldTabs, orderTabKey, } = this.order.info;
+    const { orderTabKey, } = this.order.info;
+    const { foldTabs, } = this.order;
     const foldCls = foldTabs ? "fold-tabs" : "unfold-tabs";
-    const { getPriceTmp, } = this.props;
-    const tabBarExtraContent = this.getTabBarExtraContent(
-      orderTabKey,
-      foldTabs
-    );
+    const isShowDatePicker = orderTabKey !== FINISH;
+
     // console.log("Bottom render");
     return (
       <Col span={24} className={`symbol-order ${foldCls}`}>
         <Tabs
-          tabBarExtraContent={tabBarExtraContent}
+          tabBarExtraContent={
+            <OrderTabBarExtra
+              isShowDatePicker={isShowDatePicker}
+              foldTabs={foldTabs}
+              onDateChange={this.onDateChange}
+              onBtnBottomClick={this.toggleFoldTabs}
+            />
+          }
           tabBarStyle={{
             padding: "0 10px",
           }}
@@ -59,7 +60,7 @@ export default class Bottom extends BaseReact<{}, {}> {
           <TabPane tab="挂单" key={PENDING}></TabPane>
           <TabPane tab="历史" key={FINISH}></TabPane>
         </Tabs>
-        <WS_OrderTabContent getPriceTmp={getPriceTmp} />
+        <OrderTabContent />
       </Col>
     );
   }
@@ -71,15 +72,11 @@ export default class Bottom extends BaseReact<{}, {}> {
     });
   }
 
-  componentDidUpdate() {
-    
-  }
+  componentDidUpdate() {}
 
   //function
-  toggleFoldTabs = foldTabs => {
-    this.order.setInfo({
-      foldTabs: !foldTabs,
-    });
+  toggleFoldTabs = () => {
+    this.order.setFoldTabsClick();
   };
 
   onTabChange = orderTabKey => {
@@ -88,33 +85,6 @@ export default class Bottom extends BaseReact<{}, {}> {
     });
   };
 
-  getTabBarExtraContent = (key, foldTabs) => {
-    const showPickerStyle =
-      key !== FINISH
-        ? {
-          display: "none",
-        }
-        : null;
-    return (
-      <Col span={24}>
-        <RangePicker
-          style={showPickerStyle}
-          format="YYYY-MM-DD"
-          disabledDate={this.disabledDate}
-          onChange={this.onDateChange}
-        />
-        <span
-          onClick={() => this.toggleFoldTabs(foldTabs)}
-          className="rect-dock"
-        />
-      </Col>
-    );
-  };
-
-  disabledDate = current => {
-    const startDay = moment().subtract(3, "M");
-    return current > moment().endOf("day") || current < startDay.endOf("day");
-  };
   onDateChange = dateRange => {
     if (!dateRange) return;
 
@@ -127,9 +97,4 @@ export default class Bottom extends BaseReact<{}, {}> {
       },
     });
   };
-
-  cancelTrackMessageListener = autorun(() => {
-    const c = this.props.common.count;
-    // console.log("Bottom Message!", c.test);
-  });
 }

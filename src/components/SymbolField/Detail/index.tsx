@@ -1,78 +1,69 @@
 import * as React from "react";
-import { observer, inject } from "mobx-react";
-import { autorun, toJS } from "mobx";
+import { useState, useEffect } from "react";
 
 import { Button } from "antd";
 
-import moment from "moment";
-
-import { BaseReact } from "components/@shared/BaseReact";
-import { SCREEN_DETAIL, SCREEN_BUY } from 'pages/Symbol/Right/config/screenList';
+import {
+  SCREEN_DETAIL,
+  SCREEN_BUY
+} from "pages/Symbol/Right/config/screenList";
 import ToolHeader from "components/SymbolTool/ToolHeader";
-import MainDetail from 'components/SymbolTool/MainDetail';
-import ContractDetail from 'components/SymbolTool/ContractDetail';
+import MainDetail from "components/SymbolTool/MainDetail";
+import ContractDetail from "components/SymbolTool/ContractDetail";
 import utils from "utils";
+import api from "services";
 
-import classNames from 'classnames/bind';
-import globalCss from 'app.module.scss';
+import classNames from "classnames/bind";
+import globalCss from "app.module.scss";
+import { inject, observer } from 'mobx-react';
+import { reaction, toJS } from 'mobx';
 
 const globalCx = classNames.bind(globalCss);
-export default class Detail extends BaseReact<{}, {}> {
-  state ={
-    type:"",
-    data:null,
-  }
+
+@inject("other", "common", "symbol")
+@observer
+export default class  extends React.PureComponent<{}, {}> {
+  state = {};
+  other = null;
+  symbol = null;
   constructor(props) {
     super(props);
-  }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    return {
-      ...prevState,
-      ...nextProps,
-    };
+    this.other = props.other;
+    this.symbol = props.symbol;
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.type === SCREEN_DETAIL || nextState.type ===  SCREEN_BUY ;
-  }
-
 
   render() {
-    const { type, data, } = this.state;
- 
-    const showCls = (type === SCREEN_DETAIL || type === SCREEN_BUY) &&
-                      data ? 
-      "show" : "";
-    const { getPriceTmp, } = this.props;
-    const { rowInfo, mainInfo, contractInfo, } = data ? data : {
-      rowInfo:{},
-      mainInfo:{},
-      contractInfo:{},
-    };
-    //con
+    const { contractInfo, } = this.other;
     return (
-      <div className={`symbol-tool-item symbol-detail ${showCls}`}>
-        <ToolHeader getPriceTmp={getPriceTmp} { ...rowInfo} />
+      <div className={`symbol-tool-item symbol-detail`}>
+        <ToolHeader />
         <MainDetail />
-        <ContractDetail {...contractInfo} />
-        <div className="detail-btn-container" >
-          <Button className={globalCx('btn-yellow', 'symbol-tool-buy')} >下單</Button>
+        <ContractDetail {...toJS(contractInfo)} />
+        <div className="detail-btn-container">
+          <Button
+            className={globalCx("btn-yellow", "symbol-tool-buy")}
+            onClick={() => {
+              this.onOrderBuyClick();
+            }}
+          >
+          下單
+          </Button>
         </div>
-
       </div>
     );
   }
+  
 
-  componentDidMount() {
+  componentDidMount() {}
 
-  }
-
-  componentDidUpdate() {
-
-  }
+  componentDidUpdate() {}
 
   //function
+  
+  onOrderBuyClick = ()=>{
+    const { currentSymbol, } = this.symbol;
+    this.symbol.setCurrentTransactionSymbol(toJS(currentSymbol));
+  }
+} 
 
-
-}

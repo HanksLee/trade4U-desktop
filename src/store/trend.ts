@@ -3,39 +3,56 @@ import { action, observable, computed, autorun, toJS, runInAction } from "mobx";
 import BaseStore from "store/base";
 
 import moment from "moment";
+import { FULL, ZOOMOUT } from 'pages/Symbol/Center/config/containerStatus';
 
 class TrendStore extends BaseStore {
   @observable
-  trendList = [];
-
+  trendChartInfo = {
+    symbolId: -1,
+    unit: "1m",
+    option: {
+      width: 0,
+      height: 500,
+    },
+    list: [],
+  };
   @action
-  fetchTrendList = async (id, unit) => {
-    const res = await api.market.getProductTrend(id, {
+  fetchCurrentTrendList = async (symbolId, unit) => {
+    const res = await api.market.getProductTrend(symbolId, {
       params: {
         unit: unit,
       },
     });
+    const list = res.status === 200 ? this.converTrendList(res.data.trend, 0, 1) : [];
 
-    if (res.status === 200) {
-      this.setTrendList(res.data.trend);
-    }
+    this.setTrendChartInfo({
+      symbolId,
+      unit,
+      list,
+    });
   };
 
   @action
-  setTrendList = list => {
-    const newList = this.converTrendList(list, 0, 1);
-    this.trendList = [...newList];
+  setTrendChartInfo = d => {
+    this.trendChartInfo = {
+      ...this.trendChartInfo,
+      ...d,
+    };
   };
-
-  @observable
-  trendUpdateList = [];
 
   @action
-  setTrendUpdateList = list => {
-    const newList = this.converTrendList(list, "time", "sell");
-    this.trendUpdateList = [...newList];
+  setTrendChartOption = d => {
+    const { option, } =     this.trendChartInfo ;
+    const newOption = {
+      ...option,
+      ...d,
+    };
+    // console.log("setTrendChartOption", toJS(newOption), d);
+    this.trendChartInfo = {
+      ...this.trendChartInfo,
+      option:newOption,
+    };
   };
-
   converTrendList = (list, key1, key2) => {
     return list.map(item => {
       const date = item[key1];
@@ -49,12 +66,12 @@ class TrendStore extends BaseStore {
 
   @observable
   trendInfo = {
+    symbolId: -1,
     name: "----",
+    trader_status: "",
     chg: 0,
     change: 0,
-    trader_status: "",
     sell: 0,
-    btnOpen: false,
   };
 
   @action
@@ -65,7 +82,28 @@ class TrendStore extends BaseStore {
     };
   };
 
+  @observable
+  containerStatus = {
+    rightSide: FULL,
+    bottomSide: FULL,
+  };
+  btnRgithOpen = false;
 
+  @action
+  setRightBtnOpenClick = rightSide => {
+    this.containerStatus = {
+      ...this.containerStatus,
+      rightSide,
+    };
+  };
+
+  @action
+  setBottomBtnOpenClick = bottomSide =>{
+    this.containerStatus = {
+      ...this.containerStatus,
+      bottomSide,
+    };
+  };
 }
 
 export default new TrendStore();

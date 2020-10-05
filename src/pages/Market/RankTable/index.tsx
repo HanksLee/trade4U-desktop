@@ -29,7 +29,7 @@ interface RankTableState {
 }
 
 @withRouter
-@inject("common", "market")
+@inject("common")
 @observer
 export default class RankTable extends BaseReact<RankTableProps, RankTableState> {
   constructor(props) {

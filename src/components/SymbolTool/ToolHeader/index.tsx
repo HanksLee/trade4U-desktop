@@ -1,23 +1,16 @@
 import React from "react";
 
 import { observer, inject } from "mobx-react";
-import { autorun, reaction, toJS } from "mobx";
-import { Row, Col } from "antd";
-import { StarFilled, createFromIconfontCN } from "@ant-design/icons";
+import { createFromIconfontCN } from "@ant-design/icons";
 
-import moment from "moment";
 
-import {
-  SCREEN_DETAIL,
-  SCREEN_BUY
-} from "pages/Symbol/Right/config/screenList";
 import utils from "utils";
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
 });
 
 
-@inject("other")
+@inject("common", "other")
 @observer
 export default class extends React.Component<any, any> {
   state = {
@@ -26,7 +19,7 @@ export default class extends React.Component<any, any> {
   other = null;
   constructor(props) {
     super(props);
-    this.other = this.props.other;
+    this.other = props.other;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -41,11 +34,10 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name, } = this.state;
-    const { sell, chg, change, } = this.other.productInfo;
+    const { name, change, chg, sell, } = this.other.headerInfo;
 
     const sign = Math.sign(change);
-    const priceObj = this.props.getPriceTmp(sign);
+    const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
     return (
       <div className={`symbol-tool-header`}>
@@ -55,10 +47,10 @@ export default class extends React.Component<any, any> {
             {sell} {this.getPriceIcon(sign)}{" "}
           </span>
           <span className={`${priceCss} symbol-header-price-item`}>
-            {utils.setSignStirng(change)}
+            {utils.setSignString(change)}
           </span>
           <span className={`${priceCss}  symbol-header-price-item`}>
-            {utils.setSignStirng(chg)}%
+            {utils.setSignString(chg)}%
           </span>
         </div>
       </div>

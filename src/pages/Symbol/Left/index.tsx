@@ -1,31 +1,30 @@
 import * as React from "react";
 import { BaseReact } from "components/@shared/BaseReact";
 
+import { reaction, toJS } from "mobx";
 import { observer, inject } from "mobx-react";
-import { autorun, toJS } from "mobx";
-import { Tabs, Row, Col, Spin } from "antd";
+
+import { Spin, Tabs } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+
+import InfiniteScroll from "react-infinite-scroller";
 
 import FilterItem from "components/FilterItem";
-import { SingalPriceHeader, DoublePriceHeader } from "components/ProductHeader";
+import { SingalPriceHeader } from "components/ProductHeader";
 import ProductList from "components/ProductList";
-import WSConnect from "components/HOC/WSConnect";
-
-import { PRODUCT_RESFRESH } from "pages/Symbol/config/messageCmd";
-
-import channelConfig from "./config/channelConfig";
-import {
-  REFRESH,
-  SCROLL,
-  SCROLL_UP,
-  SCROLL_DOWN
-} from "./config/symbolTypeStatus";
-import utils from "utils";
+import { SELF } from "../config/symbolTypeCategory";
 
 const { TabPane, } = Tabs;
 
 /* eslint new-cap: "off" */
-const WS_ProductList = WSConnect(channelConfig[0], channelConfig, ProductList);
-@inject("product", "common")
+
+const BarClass = {
+  padding: "0 10px",
+  borderBottom: "1px solid rgba(46,59,85,1)",
+  marginBottom: "0px",
+};
+
+@inject("symbol", "product", "common")
 @observer
 export default class Left extends BaseReact<{}, {}> {
   state = {};
@@ -33,15 +32,19 @@ export default class Left extends BaseReact<{}, {}> {
   PAGE_SIZE = 20;
   priceTmp = {};
   product = null;
+  symbol = null;
+
   constructor(props) {
     super(props);
-    this.priceTmp = this.setPriceTmp();
     this.product = this.props.product;
-    this.product.setInit();
+    this.symbol = this.props.symbol;
+    this.setOnSymbolTypeListChange();
+    // this.setOnSymbolDataLoadingChange();
+    this.setOnSymbolTypeChange();
+    this.setFavorListener();
   }
   //lift cycle
   static getDerivedStateFromProps(nextProps, prevState) {
-    //console.log("left getDerivedStateFromProps");
     return {
       ...prevState,
       ...nextProps,
@@ -49,25 +52,17 @@ export default class Left extends BaseReact<{}, {}> {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    //  console.log("left shouldComponentUpdate");
-    return true; //nextState.symbolTypeList.length != this.state.symbolTypeList.length;
+    return true;
   }
 
   render() {
-    // console.log("Left render");
-    const { currentSymbolType, symbolTypeList, } = this.product;
-    const barClass = {
-      padding: "0 10px",
-      borderBottom: "1px solid rgba(46,59,85,1)",
-      marginBottom: "0px",
-    };
+    const { symbolTypeList, symbolListStatus, } = this.product;
+    const currentSymbolType = this.symbol.currentSymbolType || { id: -1, };
+    const { dataLoading, nextPage, } = symbolListStatus;
+    const hasMore = dataLoading || nextPage !== -1;
     return (
       <div className={"symbol-left"}>
-        <Tabs
-          tabBarStyle={barClass}
-          className={"tabtest"}
-          defaultActiveKey={"1"}
-        >
+        <Tabs tabBarStyle={BarClass} defaultActiveKey={"1"}>
           <TabPane tab={"产品"} key={"1"}>
             <div className={"symbol-filter"}>
               {this.createSymbolComponentList(
@@ -78,13 +73,7 @@ export default class Left extends BaseReact<{}, {}> {
             </div>
             <div className={"symbol-sidebar custom-table"}>
               <SingalPriceHeader />
-              <WS_ProductList
-                channelCode={currentSymbolType.category}
-                symbol_type_code={currentSymbolType.symbol_type_code}
-                priceTmp={this.priceTmp}
-                sendBroadcastMessage={this.sendBroadcastMessage}
-                onFavorite={this.onFavorite}
-              />
+              <ProductList />
             </div>
           </TabPane>
         </Tabs>
@@ -92,23 +81,99 @@ export default class Left extends BaseReact<{}, {}> {
     );
   }
 
-  async componentDidMount() {
-    this.product.fetchSymbolTypeLoad();
+  componentDidMount() {
+    this.product.loadSymbolTypeList();
   }
 
   componentDidUpdate() {}
   // function
 
-  getSymbolTypeList = async () => {
-    const res = await this.$api.market.getSymbolTypeList();
-
-    if (res.status == 200) {
-      return res.data.results;
-    }
-
-    return null;
+  //tracker listener
+  setOnSymbolTypeListChange = () => {
+    reaction(
+      () => this.props.product.symbolTypeList,
+      symbolTypeList => {
+        if (!symbolTypeList || symbolTypeList.length === 1) return;
+        const firstCurrentSymbolType = toJS(symbolTypeList[0]);
+        this.symbol.setCurrentSymbolType(firstCurrentSymbolType);
+      }
+    );
   };
 
+  setOnSymbolTypeChange = () => {
+    reaction(
+      () => this.props.symbol.currentSymbolType,
+      currentSymbolType => {
+        if (!currentSymbolType) return;
+
+        const {
+          symbol_type_name,
+          symbol_type_code,
+          category,
+        } = currentSymbolType;
+        this.refreshCurrentSymbolList(
+          symbol_type_name,
+          symbol_type_code,
+          category
+        );
+      }
+    );
+  };
+
+  setOnSymbolDataLoadingChange = () => {
+    reaction(
+      () => this.props.product.symbolListStatus,
+      symbolListStatus => {
+        if (!symbolListStatus) return;
+        const { dataLoading, page, } = symbolListStatus;
+
+        if (!dataLoading) return;
+
+        const {
+          symbol_type_name,
+          symbol_type_code,
+          category,
+        } = this.symbol.currentSymbolType;
+
+        if (page === 1) {
+          this.product.clearCurrentSymbolList();
+        }
+
+        this.product.addCurrentSymbolList(
+          page,
+          symbol_type_name,
+          symbol_type_code,
+          category
+        );
+      }
+    );
+  };
+
+  setFavorListener = () => {
+    reaction(
+      () => this.props.product.toastMsg,
+      toastMsg => {
+        if (!toastMsg) return;
+        const { isRefresh, text, } = toastMsg;
+        this.$msg.success(text);
+
+        if (!isRefresh) return;
+        const { currentSymbolType, } = this.symbol;
+        const {
+          symbol_type_name,
+          symbol_type_code,
+          category,
+        } = currentSymbolType;
+        this.refreshCurrentSymbolList(
+          symbol_type_name,
+          symbol_type_code,
+          category
+        );
+      }
+    );
+  };
+
+  //creator
   createSymbolComponentList(list, currentId, itemClick) {
     return list.map(item => {
       return (
@@ -122,76 +187,28 @@ export default class Left extends BaseReact<{}, {}> {
       );
     });
   }
-  // count = 0;
+
+  //event listener
   onFilterChange = (id, symbol_type_name) => {
-    const { currentSymbolType, } = this.product;
+    const { currentSymbolType, } = this.symbol;
     if (currentSymbolType.symbol_type_name === symbol_type_name) return;
-    this.product.setCurrentId({
-      id,
+    const { symbolTypeList, } = this.product;
+    const nowSymbolTypeList = symbolTypeList.filter(type => {
+      return type.id === id;
+    });
+
+    if (nowSymbolTypeList.length === 0) return;
+    const nowSymbolType = nowSymbolTypeList[0];
+    this.symbol.setCurrentSymbolType(nowSymbolType);
+  };
+
+  refreshCurrentSymbolList = (symbol_type_name, symbol_type_code, category) => {
+    this.product.clearCurrentSymbolList();
+    this.product.addCurrentSymbolList(
+      1,
       symbol_type_name,
-      page: this.PAGE,
-      cmd: REFRESH,
-    });
+      symbol_type_code,
+      category
+    );
   };
-
-  setPriceTmp = () => {
-    const {
-      getHighPriceClass,
-      getNormalPriceClass,
-      getLowPriceClass,
-    } = this.props.common;
-    return {
-      high: getHighPriceClass,
-      normal: getNormalPriceClass,
-      low: getLowPriceClass,
-    };
-  };
-
-  onFavorite = async (code, addID, deleteID, name) => {
-    let res = null;
-    switch (code) {
-      case "SELF":
-        res = await this.deleteSelfSelectSymbolList(deleteID);
-        break;
-      default:
-        res = await this.addSelfSelectSymbolList(addID);
-        break;
-    }
-    if (res) {
-      this.$msg.success(`${name}${res}`);
-
-      this.product.setCurrentId({
-        cmd: REFRESH,
-      });
-    }
-  };
-
-  async deleteSelfSelectSymbolList(symbol) {
-    const d = {
-      data: {
-        symbol: [symbol],
-      },
-    };
-    const res = await this.$api.market.deleteSelfSelectSymbolList(d);
-    if (res.status == 204) {
-      return "成功移除自选";
-    }
-  }
-
-  async addSelfSelectSymbolList(symbol) {
-    const d = {
-      symbol: [symbol],
-    };
-    const res = await this.$api.market.addSelfSelectSymbolList(d);
-    if (res.status == 201) {
-      return "成功添加到自选";
-    }
-  }
-
-  sendBroadcastMessage = (cmd, data)=>{
-    this.props.common.setMessage({
-      cmd,
-      data,
-    });
-  }
 }

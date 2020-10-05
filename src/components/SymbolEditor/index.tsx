@@ -33,7 +33,7 @@ const Option = Select.Option;
 
 // @ts-ignore
 @Form.create()
-@inject("common", "market")
+@inject("common")
 @observer
 export default class SymbolEditor extends BaseReact {
   state = {

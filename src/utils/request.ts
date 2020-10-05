@@ -26,7 +26,7 @@ export default class API implements IAPI {
         if (token) {
           config["headers"]["Authorization"] = `Token ${token}`;
         }
-
+        // debugger
         NProgress.start();
         return config;
       },

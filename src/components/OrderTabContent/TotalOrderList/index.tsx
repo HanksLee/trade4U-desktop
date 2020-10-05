@@ -8,7 +8,7 @@ import { observer, inject } from "mobx-react";
 import OrderItem from "./OrderItem";
 import order from "store/order";
 
-@inject("order")
+@inject("common", "order")
 @observer
 export default class TotalOrderList extends BaseReact<{}, {}> {
   state = {
@@ -29,7 +29,7 @@ export default class TotalOrderList extends BaseReact<{}, {}> {
   }
 
   render() {
-    const { getPriceTmp, } = this.props;
+    const { getPriceTmp, } = this.props.common;
     const { tradeInfo, } = order;
     const { result, colMap, } = tradeInfo;
     const list = this.createOrderInfoComponentList(

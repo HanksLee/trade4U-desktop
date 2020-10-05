@@ -192,7 +192,7 @@ function getStockChangeClass(change, colorMode) {
   return STOCK_COLOR_MAP[colorMode][ret];
 }
 
-function setSignStirng(number) {
+function setSignString(number) {
   const sign = Math.sign(number);
   return sign > 0 ? `+${number}` : number;
 }
@@ -223,6 +223,6 @@ export default {
   spliceQuery,
   getFileInfo,
   getStockChangeClass,
-  setSignStirng,
+  setSignString,
   parseBool,
 };

@@ -6,6 +6,7 @@ $side-width: 368px;
   color: white;
   height: 100%;
   display: flex;
+  flex-wrap: nowrap;
   padding: 10px;
   //border: 1px solid white;
   overflow: hidden;
@@ -96,9 +97,9 @@ $side-width: 368px;
 
   .symbol-center {
     //height: 100vh;
-    flex: 1 1 calc(100vw - 60px - 10px - 710px);
+    flex: 0 0 calc(100vw - 60px - 10px - 378px);
     overflow: hidden;
-
+    transition: 0.5s all ease-in-out;
     > .ant-row {
       padding: 0 0 0 10px;
     }
@@ -106,6 +107,7 @@ $side-width: 368px;
     .symbol-chart {
       background-color: $primary-color;
       border-bottom: 1px solid #333;
+      transition: 0.5s all ease-in-out;
       height: 50%;
       //margin-left: 10px;
 
@@ -186,9 +188,12 @@ $side-width: 368px;
         min-height: 220px;
       }
 
-      .unfold-chart {
-        height: calc(100vh - 56px - 45px - 56px - 20px);
+      &.zoom-out{
+        height: calc(100% - 56px );
       }
+      // .unfold-chart {
+      //   height: calc(100vh - 56px - 45px - 56px - 20px);
+      // }
 
       &.select-product {
         display: flex;
@@ -202,6 +207,7 @@ $side-width: 368px;
       background-color: $primary-color;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
       height: 50%;
+      transition: 0.5s all ease-in-out;
       &.unfold-tabs {
         //height: (45px + 57px + 55px + 260px);
         //overflow-y: scroll;
@@ -212,17 +218,24 @@ $side-width: 368px;
         overflow: hidden;
       }
 
-      .rect-dock {
+      .symbol-bottom-btn {
         display: inline-block;
-        background-image: url("../../assets/img/rect-dock.png");
-        width: 25px;
-        height: 25px;
-        border-radius: 2px;
+        width: 30px;
+        height: 26px;
+        // border-radius:2px;
         background-size: cover;
         margin: 0 0 0 10px;
         cursor: pointer;
         vertical-align: middle;
+        &.open {
+          background-image: url("../../assets/img/btn-bottom-open.png");
+        }
+
+        &.close {
+          background-image: url("../../assets/img/btn-bottom-close.png");
+        }
       }
+
 
       .symbol-order-info {
         color: $text-color;
@@ -253,23 +266,26 @@ $side-width: 368px;
         cursor: pointer;
       }
     }
+
+    &.zoom-out{
+      flex: 0 0 calc(100vw - 60px - 10px - 745px)
+    }
+
   }
 
   .symbol-right {
     position: relative;
-    flex: 0;
+    flex: 0 0 $side-width;
     transition: 0.5s all ease-in-out;
     padding: 0;
 
     .symbol-tool-item {
-      position: absolute;
-      width: $side-width;
+      width: $side-width - 10;
       background-color: $primary-color;
       height: 100%;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
       transition: 0.3s all ease-in-out;
-      visibility: hidden;
-
+      margin: 0 10px;
       .symbol-tool-header {
         height: 78px;
         width: 100%;
@@ -312,26 +328,27 @@ $side-width: 368px;
       }
       &.symbol-buy-content {
         top: 110%;
+        position: absolute;
+      }
+
+    }
+
+    .show {
+      visibility: visible;
+
+      &.symbol-detail {
         left: 10px;
       }
 
-    }
-
-    &.show-area {
-      flex: 0 0 $side-width + 10;
-      padding: 0 0 0 10px;
-      .show {
-        visibility: visible;
-
-        &.symbol-detail {
-          left: 10px;
-        }
-
-        &.symbol-buy-content {
-          top: 0px;
-        }
+      &.symbol-buy-content {
+        top: 0px;
       }
     }
+    // &.show-area {
+    //   flex: 0 0 $side-width + 10;
+    //   padding: 0 0 0 10px;
+      
+    // }
   }
   .ant-spin-container {
     background-color: #232c37;
