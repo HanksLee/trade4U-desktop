@@ -1,238 +1,266 @@
-import Dialog from 'components/Dialog';
+import api from "services";
 import WithRoute from 'components/@shared/WithRoute';
 import * as React from 'react';
-import { BaseReact } from 'components/@shared/BaseReact';
 import { inject, observer } from "mobx-react";
-import { Tabs } from 'antd';
 import './index.scss';
-import FilterItem from "components/FilterItem";
 import SubscribeTable from "components/SubscribeTable";
-
-const TabPane = Tabs.TabPane;
+import Dialog from 'components/Dialog';
+import SubscribeNavBar from "./SubscribeNavBar";
+import moment from "moment";
+import momentTimezone from "moment-timezone";
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/subscribe")
 @inject("common")
 @observer
-export default class Subscribe extends BaseReact {
+export default class Subscribe extends React.Component {
 
 
   state = {
-    subscribeTypeList: [{ "id": "1", "name": '港股', }, { "id": "2", "name": '沪深', }],
-    subscribeTypeID: '港股',
-    status: 3,
+    newstockList: [],
+    userSubscribeList: [],
+    subscribe_data: [],
+    currentTab: 'HK',
+    getToday: momentTimezone(Date.now()).tz("Asia/Shanghai"),
     dialogModalStatus: false,
     canSubscribeHeight: '',
     isSubscribeHeight: '',
 
-    subsctibe_columns: [
+    subscribe_columns: [
+      {
+        title: "状态", dataIndex: "status", width: 90, fixed: "left",
+        render: (text, record, index) => <button
+          onClick={() => {
+            text === '可申购' &&
+              this.showDialogModal(record);
+          }}
+          className={text === '可申购' ? 'canSubscribe' : 'noWin'}
+        >
+          {text}
+        </button>,
+      },
+      { title: "股名", dataIndex: "stock_name", width: 120, },
+      { title: "品种", dataIndex: "market", width: 90, },
+      { title: "品种代码", dataIndex: "stock_code", width: 105, },
+      { title: "申购价格", dataIndex: "public_price", width: 125, },
+      { title: "起始日", dataIndex: "subscription_date_start", width: 125, },
+      { title: "截止日", dataIndex: "subscription_date_end", width: 125, },
+      { title: "上市日", dataIndex: "public_date", width: 125, },
+      { title: "中签公布日", dataIndex: "draw_result_date", width: 125, },
+      { title: "每手金额", dataIndex: "lots_price", width: 110, },
+      { title: "每手股数", dataIndex: "lots_size", width: 110, },
+      { title: "币种", dataIndex: "currency", width: 110, }
+    ],
+    isSubscribe_columns: [
       {
         title: "状态", dataIndex: "status", width: 90, fixed: "left",
         render: (text) => <button
-          onClick={() => {
-            this.showDialogModal();
-          }}
-          className=
-            {text === '可申購' ? 'canSubscribe'
-              : text === '已申購' ? 'isSubscribe'
-                : text === '已中簽' ? 'isWin' : 'noWin'}>
+          className={
+            text === '已申购' ? 'isSubscribe'
+              : text === '已中籤' ? 'isWin' : 'noWin'
+          }>
           {text}
         </button>,
       },
-      { title: "品种", dataIndex: "stock_name", width: 110, },
-      { title: "品种代码", dataIndex: "stock_code", width: 110, },
-      { title: "申购价格", dataIndex: "public_price", width: 110, },
-      { title: "申购日期", dataIndex: "subscription_date_start", width: 110, },
-      { title: "截止日期", dataIndex: "subscription_date_end", width: 110, },
-      { title: "上市日期", dataIndex: "public_date", width: 110, },
-      { title: "每手金额", dataIndex: "lots_price", width: 110, },
-      { title: "每手股数", dataIndex: "lots_size", width: 110, }
-    ],
-    subsctibe_dataSource: [
-      {
-        key: '1', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '2', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '3', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '4', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '5', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '6', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '7', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '8', status: '可申購', stock_name: '立德教育', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      },
-      {
-        key: '9', status: '可申購', stock_name: '立德教育9', stock_code: '01449', public_price: '30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30'
-        , public_date: '2020-12-30', lots_price: '2662.00', lots_size: '10',
-      }
-
-    ],
-    isSubsctibe_columns: [
-      {
-        title: "状态", dataIndex: "status", width: 100, fixed: "left",
-        render: (text) => <button className=
-          {text === '可申購' ? 'canSubscribe'
-            : text === '已申購' ? 'isSubscribe'
-              : text === '已中簽' ? 'isWin' : 'noWin'}>
-          {text}
-        </button>,
-      },
-      { title: "品种", dataIndex: "stock_name", width: 110, },
-      { title: "品种代码", dataIndex: "stock_code", width: 110, },
-      { title: "申购价格", dataIndex: "public_price", width: 110, },
-      { title: "申购日期", dataIndex: "subscription_date_start", width: 150, },
-      { title: "截止日期", dataIndex: "subscription_date_end", width: 150, },
-      { title: "上市日期", dataIndex: "public_date", width: 150, },
-      { title: "每手金额", dataIndex: "lots_price", width: 110, },
+      { title: "股名", dataIndex: "stock_name", width: 120, },
+      { title: "品种", dataIndex: "market", width: 90, },
+      { title: "品种代码", dataIndex: "stock_code", width: 105, },
+      { title: "申购价格", dataIndex: "public_price", width: 125, },
+      { title: "起始日", dataIndex: "subscription_date_start", width: 125, },
+      { title: "截止日", dataIndex: "subscription_date_end", width: 125, },
+      { title: "上市日", dataIndex: "public_date", width: 125, },
+      { title: "中签公布日", dataIndex: "draw_result_date", width: 125, },
+      { title: "每手金额", dataIndex: "amount_per_lot", width: 110, },
       { title: "每手股数", dataIndex: "lots_size", width: 110, },
+      { title: "币种", dataIndex: "currency", width: 110, },
       { title: "申购手数", dataIndex: "wanted_lots", width: 110, },
-      { title: "手续费", dataIndex: "fee", width: 110, }, // 欄位英文 非正確
+      { title: "手续费", dataIndex: "hand_fee", width: 110, },
       { title: "入场费", dataIndex: "entrance_fee", width: 110, },
-      { title: "认购金额", dataIndex: "subscription＿fee", width: 110, }, // 欄位英文 非正確
-      { title: "融资比例", dataIndex: "financing_percent", width: 110, }, // 欄位英文 非正確
-      { title: "融资金额", dataIndex: "financing_price", width: 110, }, // 欄位英文 非正確
-      { title: "融资利息", dataIndex: "financing_interest", width: 110, }, // 欄位英文 非正確
-      { title: "利息费", dataIndex: "interest＿fee", width: 110, }// 欄位英文 非正確
+      { title: "认购金额", dataIndex: "total_subscription_amount", width: 110, },
+      { title: "融资比例", dataIndex: "loan_proportion", width: 110, },
+      { title: "融资金额", dataIndex: "loan", width: 110, },
+      { title: "融资利率", dataIndex: "interest_rate", width: 110, },
+      { title: "融资利息", dataIndex: "interest", width: 110, }
     ],
-    isSubsctibe_dataSource: [
-      {
-        key: '1', status: '已申購', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '2', status: '已申購', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '3', status: '已申購', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '4', status: '已中簽', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '5', status: '未中簽', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '6', status: '已中簽', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '7', status: '已申購', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '8', status: '未中簽', stock_name: '立德教育', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      },
-      {
-        key: '9', status: '未中簽', stock_name: '立德教育9', stock_code: '01449', public_price: '30.30'
-        , subscription_date_start: '2020-12-30', subscription_date_end: '2020-12-30', public_date: '2020-12-30'
-        , lots_price: '2662.00', lots_size: '1000', wanted_lots: '2', fee: '20', entrance_fee: '24501.06'
-        , subscription＿fee: '24501.06', financing_percent: '60%', financing_price: '14712.64'
-        , financing_interest: '14.1', interest＿fee: '14.1',
-      }
-
-    ],
+    subscribe_dataSource: [],
+    isSubscribe_dataSource: [],
   }
 
-  createSymbolComponentList(list, currentId, itemClick) {
-    return list.map(item => {
-      return (
-        // --> 無資料先以name比對
-        <FilterItem
-          key={`symbol_type_${item.name}`}
-          symbol_type_name={item.name}
-          isItemActive={item.name === currentId}
-          onFilterChange={itemClick}
-          id={item.name}
+  componentDidMount() {
+    const { currentTab, } = this.state;
+    this.calSubscribeTableScroll();
+    this.onTabChange(currentTab);
+  }
 
-        // 請參考 Symbol > Left > index --> 以下為原使程式碼，以id比對
-        // key={`symbol_type_${item.id}`}
-        // symbol_type_name={item.symbol_type_name}
-        // isItemActive={item.id === currentId}
-        // onFilterChange={itemClick}
-        // id={item.id}
-        />
-      );
+  onTabChange = (currentTabID) => {
+    this.setState({ currentTab: currentTabID, });
+    this.setState(
+      { subscribe_dataSource: [], isSubscribe_dataSource: [], newstockList: [], userSubscribeList: [], },
+      async () => {
+        await this.getNewstockList();
+        await this.getUserSubscribeList();
+        await this.newstockListMap();
+        this.newstock_data_modal();
+      });
+  }
+
+  dateFormat = (theDate) => theDate && moment(theDate).format('YYYY-MM-DD') || '';
+  dateIsBefore = (theDate, compareDate) => moment(theDate).isBefore(compareDate);
+
+  getNewstockList = async () => {
+    const { currentTab, } = this.state;
+    const res = await api.subscribe.getNewstockList({});
+    const newstockList = res.data.filter(list => currentTab.includes(list.market)).reverse();
+
+    // 排序截止日（ 新到舊 ）
+    const sortnNewstockList = this.sortNewstockList(newstockList);
+
+    if (res.status === 200) {
+      this.setState({
+        newstockList: sortnNewstockList,
+      });
+    }
+  }
+
+  getUserSubscribeList = async () => {
+    const { currentTab, } = this.state;
+    const res = await api.subscribe.getUserSubscribeList({});
+    if (res.status === 200) {
+      const newstock_data = res.data.results.map(list => list.newstock_data);
+      const newstock_data_mapMarket = newstock_data.filter(item => currentTab.includes(item.market));
+      let userSubscribeList_key = [];
+      newstock_data.map((data, key) => {
+        newstock_data_mapMarket.map(market => {
+          if (data === market) { userSubscribeList_key.push(key); }
+        });
+      });
+      const userSubscribeList_data = userSubscribeList_key.map(key => res.data.results[key]);
+
+      // 排序截止日（ 新到舊 ）
+      const sortSubscribeDateEnd = userSubscribeList_data.sort((a, b)=> 
+      new Date(b.newstock_data.subscription_date_end) - new Date(a.newstock_data.subscription_date_end));
+      const sortUserSubscribeList = this.sortNewstockList(sortSubscribeDateEnd);
+
+      this.setState({
+        userSubscribeList: sortUserSubscribeList,
+      });
+    }
+  }
+
+  sortNewstockList = (data) => {
+    const { getToday, } = this.state;
+    const mainList = [];
+    const otherList = [];
+    data.filter(item => {
+      let itemProperty = item.hasOwnProperty('newstock_data') ? item.newstock_data : item;
+      this.dateIsBefore(itemProperty.subscription_date_start, getToday)
+        && this.dateIsBefore(getToday, itemProperty.subscription_date_end) ?
+        mainList.push(item) : otherList.push(item);
     });
+    return [...mainList, ...otherList];
   }
 
-  onFilterChange = (id, symbol_type_name) => {
+  newstockListMap = () => {
+    const { newstockList, userSubscribeList, } = this.state;
+    const stockcodeList = userSubscribeList.map(item => item.newstock_data.stock_code);
+    const map_newstockList = newstockList.filter(item => !stockcodeList.includes(item.stock_code)); // 取得未申購的資料
     this.setState({
-      subscribeTypeID: id === '港股' ? '港股' : '沪深',
-      symbol_type_name,
+      newstockList: map_newstockList,
     });
-  };
+  }
+
+
+  newstock_data_modal = () => {
+    const { newstockList, userSubscribeList, getToday, } = this.state;
+
+    // 未申購
+    const newstockList_data = [];
+    newstockList.map(item => {
+      let publicPriceMax = Math.max(...item.public_price.split('~'));
+      let lotsPrice = Number(publicPriceMax * item.lots_size).toFixed(2);
+      let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
+      let buttonText = this.dateIsBefore(item.subscription_date_start, getToday) && this.dateIsBefore(getToday, item.subscription_date_end)
+        ? '可申购'
+        : this.dateIsBefore(getToday, item.subscription_date_start) ? '未开始' : '已截止';
+
+      let data = {
+        key: item.id
+        , status: buttonText
+        , stock_name: item.stock_name
+        , market: item.market
+        , stock_code: item.stock_code
+        , public_price: item.public_price
+        , subscription_date_start: this.dateFormat(item.subscription_date_start)
+        , subscription_date_end: this.dateFormat(item.subscription_date_end)
+        , public_date: public_date
+        , draw_result_date: this.dateFormat(item.draw_result_date)
+        , lots_price: lotsPrice
+        , lots_size: item.lots_size
+        , currency: item.currency
+        , new_stock_hand_fee: item.new_stock_hand_fee
+        , interest_mul_days: item.interest_mul_days,
+      };
+      newstockList_data.push(data);
+    });
+
+    // 已申購
+    const userSubscribeList_data = [];
+    userSubscribeList.map(item => {
+      let newstock_data = item.newstock_data;
+      let draw_result_date = this.dateFormat(newstock_data.draw_result_date);
+      let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
+      let buttonText = this.dateIsBefore(newstock_data.draw_result_date, getToday) && (item.real_lots === 0 ? '未中籤' : '已中籤') || '已申购';
+     
+      let data = {
+        key: item.id
+        , status: buttonText
+        , stock_name: newstock_data.stock_name
+        , market: newstock_data.market
+        , stock_code: newstock_data.stock_code
+        , public_price: newstock_data.public_price
+        , draw_result_date: draw_result_date
+        , subscription_date_start: this.dateFormat(newstock_data.subscription_date_start)
+        , subscription_date_end: this.dateFormat(newstock_data.subscription_date_end)
+        , public_date: public_date
+        , amount_per_lot: newstock_data.amount_per_lot
+        , lots_size: newstock_data.lots_size
+        , currency: newstock_data.currency
+        , wanted_lots: item.wanted_lots
+        , hand_fee: item.hand_fee
+        , entrance_fee: item.entrance_fee
+        , total_subscription_amount: item.total_subscription_amount
+        , loan_proportion: Number(item.loan_proportion) * 100 + '%'
+        , loan: item.loan
+        , interest_rate: item.interest_rate + '%'
+        , interest: item.interest,
+      };
+      userSubscribeList_data.push(data);
+    });
+
+    this.setState({
+      subscribe_dataSource: newstockList_data,
+      isSubscribe_dataSource: userSubscribeList_data,
+    });
+  }
 
   hideDialogModal = () => {
     this.setState({}, () => {
-      this.setState({ dialogModalStatus: false, });
+      this.setState({
+        dialogModalStatus: false,
+        subscribe_data: [],
+      });
     });
   };
 
-  showDialogModal = () => {
-    this.setState({ dialogModalStatus: true, });
+  showDialogModal = (detail) => {
+    const { subscribe_dataSource, } = this.state;
+    const subscribeDetail = subscribe_dataSource.filter(item => detail.stock_code === item.stock_code)[0];
+    this.setState({
+      dialogModalStatus: true,
+      subscribe_data: subscribeDetail,
+    });
   };
 
-  componentDidMount() {
-    this.calSubscribeTableScroll();
-  }
 
   calSubscribeTableScroll = () => {
     let canSubscribe = document.getElementsByClassName('subscribe-detail')[0].clientHeight;
@@ -255,59 +283,37 @@ export default class Subscribe extends BaseReact {
   }
   render() {
     const {
-      subscribeTypeList
-      , subscribeTypeID
-      , dialogModalStatus
-      , subsctibe_columns
-      , subsctibe_dataSource
-      , isSubsctibe_columns
-      , isSubsctibe_dataSource
+      dialogModalStatus
+      , subscribe_columns
+      , subscribe_dataSource
+      , isSubscribe_columns
+      , isSubscribe_dataSource
       , canSubscribeHeight
-      , isSubscribeHeight,
+      , isSubscribeHeight
+      , subscribe_data,
     } = this.state;
-
-    const barClass = {
-      padding: "0 10px",
-      borderBottom: "1px solid rgba(46,59,85,1)",
-      marginBottom: "0px",
-    };
-
 
     return (
       <div className="subscribe-page">
-        <div className="subscribe-head">
-          <Tabs
-            tabBarStyle={barClass}
-            className={"tabtest"}
-            defaultActiveKey={"1"}
-          >
-            <TabPane tab="產品" key="1"></TabPane>
-          </Tabs>
-          <div className={"symbol-filter"}>
-            {this.createSymbolComponentList(
-              subscribeTypeList,
-              subscribeTypeID,
-              this.onFilterChange
-            )}
-          </div>
-        </div>
+        <SubscribeNavBar tabChange={this.onTabChange} />
         <div className="subscribe-content">
           <SubscribeTable
-            titleName={'可申購'}
+            titleName={'未申购'}
             scrollHeight={canSubscribeHeight}
-            columns={subsctibe_columns}
-            dataSource={subsctibe_dataSource}
+            columns={subscribe_columns}
+            dataSource={subscribe_dataSource}
             onClick={this.calSubscribeTableScroll}
           />
           <SubscribeTable
-            titleName={'已申購'}
+            titleName={'已申购'}
             scrollHeight={isSubscribeHeight}
-            columns={isSubsctibe_columns}
-            dataSource={isSubsctibe_dataSource}
+            columns={isSubscribe_columns}
+            dataSource={isSubscribe_dataSource}
             onClick={this.calSubscribeTableScroll}
           />
         </div>
-        {dialogModalStatus && (<Dialog onCancel={this.hideDialogModal}></Dialog>)}
+        {dialogModalStatus && 
+        (<Dialog onCancel={this.hideDialogModal} subscribe_data={subscribe_data} onTabClick={this.onTabChange}></Dialog>)}
       </div>
     );
   }

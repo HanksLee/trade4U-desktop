@@ -19,6 +19,11 @@
 .subscribe-head {
   margin-bottom: 10px;
 }
+.subscribe-nav-bar {
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(46, 59, 85, 1);
+  margin-bottom: 0px;
+}
 .symbol-filter {
   display: flex;
   color: white;
@@ -52,18 +57,19 @@
       flex-basis: 8%;
       overflow: hidden;
     }
-   
+
     .subscribe-detail-title {
       border-bottom: 1px solid #2e3b55;
       padding: 8px 16px;
-      .subscribe-detail-title-isFold{
+      white-space: nowrap;
+      .subscribe-detail-title-isFold {
+        cursor: pointer;
         font-size: 14px;
-        color:#838D9E
+        color: #838d9e;
       }
     }
 
     .ant-table-body {
-     
       .ant-table-cell-fix-left {
         background-color: $primary-color;
       }
@@ -77,12 +83,14 @@
         width: 66px;
         color: #232c37;
         background: none;
-       
+        outline: none;
+
         &.canSubscribe {
+          cursor: pointer;
           background-color: #f2e205;
           border: solid 1px #f2e205;
           border-radius: 4px;
-          &:hover{
+          &:hover {
             opacity: 0.5;
           }
         }
@@ -102,11 +110,10 @@
     }
   }
 }
-.ant-modal{
-top:0;
+.ant-modal {
+  top: 0;
 }
 .ant-modal-content {
-
   .ant-modal-header {
     text-align: center;
     background-color: #141e28;
@@ -115,8 +122,13 @@ top:0;
 
     .ant-modal-title {
       color: #fff;
-      padding: 12px;
+      padding: 10px 12px 0px 12px;
       font-weight: 400;
+      .dialog-title-text {
+        span {
+          padding: 3px;
+        }
+      }
       .dialog-title-text-left {
         text-align: left;
         padding: 6px;
@@ -215,7 +227,7 @@ top:0;
       font-weight: 700;
       font-size: 16px;
       border-bottom: 1px solid #2e3b55;
-      &:hover{
+      &:hover {
         opacity: 0.5;
       }
     }
