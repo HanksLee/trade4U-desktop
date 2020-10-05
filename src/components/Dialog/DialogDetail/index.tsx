@@ -20,7 +20,7 @@ export default class DialogTitle extends BaseReact {
     loanRatio: 0,                // 融资比例
     loanInterest: 0,             // 融资利息 = interest_mul_days＊融资金额
     per_price: 0,                // publicPrice 申购价格＊ lots_size每手股数
-    interest_mul_days: 0,        
+    interest_mul_days: 0,
     withdrawableBalance: 0,       // 可用资金
 
   };
@@ -72,7 +72,8 @@ export default class DialogTitle extends BaseReact {
 
   setDetail = async () => {
     const { per_price, wanted_lots, new_stock_hand_fee_base, loanRatio, interest_mul_days, } = this.state;
-    let amount_price = (Number(per_price) * Number(wanted_lots)).toFixed(2);
+    let amount_price_base = (Number(per_price) * Number(wanted_lots)).toFixed(2);
+    let amount_price = (Number(amount_price_base) + Number(amount_price_base) * Number(1.0077 / 100)).toFixed(2); // 认购金额
     this.setState({
       new_stock_hand_fee: (Number(new_stock_hand_fee_base) * Number(wanted_lots)).toFixed(2),
       amount: amount_price,
@@ -90,7 +91,7 @@ export default class DialogTitle extends BaseReact {
     const new_stock_id = this.props.subscribe_data.key;
     const market = this.props.subscribe_data.market === 'HK' ? 'HK' : 'SZSH';
     const { wanted_lots, new_stock_hand_fee, entrance_fee, loanInterest, withdrawableBalance, loan, } = this.state;
-    const requiredBalance = Number(entrance_fee) + Number(new_stock_hand_fee) + Number(loanInterest);
+    const requiredBalance = (Number(entrance_fee) + Number(new_stock_hand_fee) + Number(loanInterest)).toFixed(2);
 
     if (Number(withdrawableBalance) < Number(requiredBalance)) {
       Modal.confirm({
@@ -143,7 +144,7 @@ export default class DialogTitle extends BaseReact {
   }
 
   render() {
-    const { 
+    const {
       wanted_lots
       , isFinancingShow
       , loanOption
@@ -155,7 +156,7 @@ export default class DialogTitle extends BaseReact {
       , withdrawableBalance,
     } = this.state;
 
-    const requiredBalance = Number(entrance_fee) + Number(new_stock_hand_fee) + Number(loanInterest);
+    const requiredBalance = (Number(entrance_fee) + Number(new_stock_hand_fee) + Number(loanInterest)).toFixed(2);
 
     return (
       <>

@@ -1,5 +1,5 @@
 import WithRoute from 'components/@shared/WithRoute';
-import logo from 'assets/img/logo.png';
+import logo from 'assets/img/Trade4U Logo.svg';
 import utils from 'utils';
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
@@ -139,8 +139,8 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
     return (
       <div className='login'>
         <div className='form-wrapper'>
-          <img src={logo} alt="logo" />
-          <h1>Trade4U</h1>
+          <img src={logo} alt="logo" className="logoImg" />
+          {/* <h1>Trade4U</h1> */}
           <div className='form'>
             {
               isLogin ? this.renderBrokerChoosePanel() : this.renderLoginPanel()
