@@ -138,7 +138,7 @@ export default class Subscribe extends React.Component {
 
       // 排序截止日（ 新到舊 ）
       const sortSubscribeDateEnd = userSubscribeList_data.sort((a, b)=> 
-      new Date(b.newstock_data.subscription_date_end).valueOf() - new Date(a.newstock_data.subscription_date_end).valueOf());
+        new Date(b.newstock_data.subscription_date_end).valueOf() - new Date(a.newstock_data.subscription_date_end).valueOf());
       const sortUserSubscribeList = this.sortNewstockList(sortSubscribeDateEnd);
 
       this.setState({
