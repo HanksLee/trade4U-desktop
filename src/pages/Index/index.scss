@@ -21,6 +21,17 @@
 
     h2 {
       color: #fff;
+      &.logoText{
+        color: #ded126;
+        >img{
+          width: 27px;
+          height: 27px;
+        }
+        >span{
+          vertical-align: middle;
+        }
+
+      }
     }
 
     .home-header-right {

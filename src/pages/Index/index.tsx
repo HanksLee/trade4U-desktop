@@ -11,7 +11,7 @@ import GuideModal from 'components/GuideModal';
 // import settingsIcon from "assets/img/settings-icon.svg";
 // import MessageModal from "components/MessageModal";
 // import SettingsModal from "components/SettingsModal";
-import logoSVG from "assets/img/logo.svg";
+import logoSVG from "assets/img/Trade4U Logo.svg";
 import messageSVG from "assets/img/message.svg";
 import settingsSVG from "assets/img/settings.svg";
 import guideSVG from "assets/img/guide-icon.svg";
@@ -283,9 +283,9 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               </OptGroup>
             ))}
           </Select>
-          <h2>
+          <h2 className='logoText'>
             <img src={logoSVG} alt="" />
-            WeTrader
+            <span>Trade4U</span>
           </h2>
           <p className="home-header-right">
             <span
