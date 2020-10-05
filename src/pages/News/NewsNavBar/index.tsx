@@ -1,7 +1,5 @@
-import api from "services";
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
-import { action, observable, computed, autorun, toJS } from "mobx";
 import { Tabs } from 'antd';
 import '../index.scss';
 

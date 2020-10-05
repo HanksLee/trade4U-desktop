@@ -3,7 +3,6 @@ import WithRoute from 'components/@shared/WithRoute';
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
 import { inject, observer } from "mobx-react";
-import moment from "moment";
 import NewsNavBar from "./NewsNavBar";
 import NewsList from "./NewsList";
 import './index.scss';
@@ -38,7 +37,7 @@ export default class News extends BaseReact {
   };
   getList = async (currentSymbolCode) => {
     const { page, } = this.state;
-    const res = await api.news.getSymbolTypeList({
+    const res = await api.news.getNewsList({
       params: {
         news_class: currentSymbolCode,
         page,

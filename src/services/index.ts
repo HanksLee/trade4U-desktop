@@ -4,6 +4,7 @@ import captial from "./captial";
 import message from "./message";
 import settings from "./settings";
 import news from "./news";
+import subscribe from "./subscribe";
 
 export default {
   captial,
@@ -12,4 +13,5 @@ export default {
   message,
   settings,
   news,
+  subscribe,
 };
