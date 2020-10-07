@@ -50,7 +50,7 @@ export default class OrderTable extends BaseReact<{}, {}> {
         // }
         return (
           <span className={bgColor}>{tradeActionMap[text]}</span>
-        )
+        );
       },
     },
     {
@@ -115,7 +115,7 @@ export default class OrderTable extends BaseReact<{}, {}> {
       width: 120,
       render: (text, record) =>
         moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
-    },
+    }
   ];
 
   order = null;

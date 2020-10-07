@@ -10,7 +10,7 @@ class CommonStore extends BaseStore {
   @computed get configMap() {
     try {
       return this.systemConfig.reduce((obj, curr) => {
-        const { key, value } = curr;
+        const { key, value, } = curr;
         obj[key] = value;
         return obj;
       }, {});
@@ -33,11 +33,11 @@ class CommonStore extends BaseStore {
     const colorMode = localStorage.getItem("trade4U_PC_color_mode");
     const root = document.documentElement;
     if (colorMode === "hk_style") {
-      root.style.setProperty('--up-color', `#e94a39`)
-      root.style.setProperty('--down-color', `#44d7b6`)
+      root.style.setProperty('--up-color', `#e94a39`);
+      root.style.setProperty('--down-color', `#44d7b6`);
     } else {
-      root.style.setProperty('--up-color', `#44d7b6`)
-      root.style.setProperty('--down-color', `#e94a39`)
+      root.style.setProperty('--up-color', `#44d7b6`);
+      root.style.setProperty('--down-color', `#e94a39`);
     }
   }
 

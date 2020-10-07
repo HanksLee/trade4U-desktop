@@ -51,7 +51,7 @@ export default class HistoryTable extends BaseReact<{}, {}> {
         // }
         return (
           <span className={bgColor}>{tradeActionMap[text]}</span>
-        )
+        );
       },
     },
     {
@@ -127,7 +127,7 @@ export default class HistoryTable extends BaseReact<{}, {}> {
       // fixed: "right",
       render: (text, record) =>
         moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
-    },
+    }
   ];
   PAGE_SIZE = 5;
   columnsWidth = 0;
