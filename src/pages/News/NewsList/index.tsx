@@ -20,12 +20,10 @@ export default class NewsList extends BaseReact {
     super(props);
   }
   static getDerivedStateFromProps(nextProps, prevState) {
-    
     return {
       ...prevState,
       ...nextProps,
     };
-    
   }
 
   shouldComponentUpdate(nextProps, nextState) {

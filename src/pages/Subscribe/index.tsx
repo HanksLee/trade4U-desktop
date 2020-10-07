@@ -150,7 +150,7 @@ export default class Subscribe extends React.Component {
     const otherList = [];
     data.filter(item => {
       let itemProperty = item.hasOwnProperty('newstock_data') ? item.newstock_data : item;
-      itemProperty.status==='2'?mainList.push(item) : otherList.push(item);
+      itemProperty.status === '2' ? mainList.push(item) : otherList.push(item);
     });
     return [...mainList, ...otherList];
   }
@@ -166,7 +166,7 @@ export default class Subscribe extends React.Component {
 
 
   newstock_data_modal = () => {
-    const { newstockList, userSubscribeList } = this.state;
+    const { newstockList, userSubscribeList, } = this.state;
 
     // 未申購
     const newstockList_data = [];
@@ -174,7 +174,7 @@ export default class Subscribe extends React.Component {
       let publicPriceMax = Math.max(...item.public_price.split('~'));
       let lotsPrice = Number(publicPriceMax * item.lots_size).toFixed(2);
       let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
-      let buttonText = { '1': '未开始', '2': '可申购', '3': '已截止', '4': '已截止' };
+      let buttonText = { '1': '未开始', '2': '可申购', '3': '已截止', '4': '已截止', };
 
       let data = {
         key: item.id
