@@ -76,7 +76,7 @@ function exactFromSidebarPath(pathlist) {
 /* eslint new-cap: "off" */
 // @ts-ignore
 @withRouter
-@inject("common")
+@inject("common", "symbol")
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
   wsConnect = null;
@@ -263,7 +263,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               }
             }, 500)}
             onChange={(value, elem) => {
-              this.props.market.getCurrentSymbol(value);
+              this.props.symbol.setCurrentSymbol({ symbolId: value, name: elem.children, });
+              // this.props.market.getCurrentSymbol(value);
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
                 // this.setState({

@@ -61,19 +61,22 @@ class SymbolStore extends BaseStore {
       contractInfo,
     };
   };
-  
+
   @observable
   currentSymbol = this.creatNULLSymbol();
 
   @action
   setCurrentSymbol = d => {
-    let info = d === null ? this.creatNULLSymbol() : d;
-    this.currentSymbol = {
-      ...info,
+    const empty = this.creatNULLSymbol();
+
+    let info = d === null ? empty : {
+      ...empty,
+      ...d,
     };
+    this.currentSymbol = info;
   };
 
-  
+
 
   @computed
   get getTrendInfo() {
@@ -88,9 +91,9 @@ class SymbolStore extends BaseStore {
       sell,
     };
   }
-  
+
   @observable
-  currentTransactionSymbol: ISymbolItem =  this.creatNULLSymbol();
+  currentTransactionSymbol: ISymbolItem = this.creatNULLSymbol();
 
   @action
   setCurrentTransactionSymbol = d => {
