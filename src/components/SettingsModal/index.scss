@@ -182,21 +182,39 @@
         .settings-item {
           padding: 5px 20px;
 
-          span:nth-child(1) {
+          .settings-title {
             display: inline-block;
             width: 100px;
             font-size: 16px;
           }
 
-          span:nth-child(2) {
+          .settings-input {
             display: inline-block;
             width: 150px;
             padding: 5px 10px;
             font-size: 12px;
             background-color: #5a6169;
           }
-
-          span:nth-child(3) {
+          .setting-option {
+            .ant-select {
+              display: inline-block;
+              font-size: 12px;
+              background-color: #5a6169;
+              width: 150px;
+            }
+           
+            .ant-select-selector,
+            .ant-select-selector:active,
+            .ant-select-focused .ant-select-selection,
+            .ant-select-selection:focus,
+            .ant-select-selection:active {
+              border: none !important;
+              outline: none !important;
+              -webkit-box-shadow: none !important;
+              box-shadow:none !important;
+            }
+          }
+          .settings-edit {
             margin-left: 10px;
             font-size: 12px;
             cursor: pointer;
@@ -312,7 +330,7 @@
     }
   }
 }
-.app-notice.ant-modal-confirm{
+.app-notice.ant-modal-confirm {
   height: 95%;
   display: flex;
   justify-content: center;
@@ -343,8 +361,8 @@
   }
 
   &.ant-modal-confirm-success {
-     .anticon {
-        color: #fff;
-      }
+    .anticon {
+      color: #fff;
+    }
   }
 }
