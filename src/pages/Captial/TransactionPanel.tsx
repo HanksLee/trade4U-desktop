@@ -77,7 +77,7 @@ export default class TransactionPanel extends BaseReact {
         dataIndex: 'remarks',
         key: 'remarks',
         align: 'right',
-        width: 400
+        width: 400,
       }
     ];
   }
