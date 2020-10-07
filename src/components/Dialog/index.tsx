@@ -28,17 +28,19 @@ export default class Dialog extends BaseReact<IDialogModalProps> {
   render() {
     const { onCancel, subscribe_data, } = this.props;
     return (
-      <Modal
+      
+      <Modal 
+        className="dialog-modal"
         visible={true}
         title={<DialogTitle subscribe_data={subscribe_data} />}
         footer={null}
         closeIcon={<img src={closeModalIcon} alt="close-modal-icon" />}
         onCancel={onCancel}
       >
-        <DialogDetail onClose={this.onClose} reloadData={this.reloadData} subscribe_data={subscribe_data} />
+        <DialogDetail  onClose={this.onClose} reloadData={this.reloadData} subscribe_data={subscribe_data} />
         <DialogRemark />
       </Modal>
-
+      
     );
   }
 

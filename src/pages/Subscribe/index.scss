@@ -110,135 +110,135 @@
     }
   }
 }
-.ant-modal {
+
+.dialog-modal {
   top: 0;
-}
-.ant-modal-content {
-  .ant-modal-header {
-    text-align: center;
-    background-color: #141e28;
-    border-bottom: 0;
-    border-radius: 0;
-
-    .ant-modal-title {
-      color: #fff;
-      padding: 10px 12px 0px 12px;
-      font-weight: 400;
-      .dialog-title-text {
-        span {
-          padding: 3px;
-        }
-      }
-      .dialog-title-text-left {
-        text-align: left;
-        padding: 6px;
-      }
-      .dialog-title-text-right {
-        text-align: right;
-        padding: 6px;
-      }
-      .price-green {
-        color: #44d7b6;
-      }
-    }
-  }
-
-  .ant-modal-body {
-    padding: 16px 70px;
-    background-color: #1f2934;
-    .dialog-detail-item {
-      display: flex;
-      margin-bottom: 20px;
-    }
-
-    .dialog-detail-item-line {
-      border-bottom: 1px solid #2e3b55;
-    }
-
-    .dialog-detail-item-input {
-      .detail-input-item-btn-group {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-
-        .detail-input-item-add-btn,
-        .detail-input-item-less-btn {
-          width: 50px;
-          text-align: center;
-          background: rgba(131, 141, 158, 1);
-          color: #fff;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          &:active {
-            opacity: 0.5;
-          }
-        }
-
-        .detail-input-item-less-btn {
-          border-radius: 4px 0px 0px 4px;
-        }
-
-        .detail-input-item-add-btn {
-          border-radius: 0px 4px 4px 0px;
-        }
-
-        .detail-input-item-input {
-          color: #f2e205;
-          width: calc(100% - 100px);
-          border-top: 1px solid #838d9e;
-          border-bottom: 1px solid #838d9e;
-          line-height: 28px;
-          text-align: center;
-
-          input {
-            text-align: center;
-            width: 100%;
-          }
-          input::-webkit-outer-spin-button,
-          input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-          }
-          input[type="number"] {
-            -moz-appearance: textfield;
-          }
-        }
-      }
-    }
-    .ant-select {
-      width: 100%;
-    }
-    .ant-select-selector {
-      background-color: initial;
-      border: unset;
-      padding: 0;
-      box-shadow: unset !important;
-      font-size: 16px;
-      border-bottom: 1px solid #c8c7cc;
-    }
-    .dialog-detail-item-submit-btn {
-      width: 160px;
-      margin: auto;
-      line-height: 30px;
-      background: #f2e205;
-      border-radius: 4px;
-      color: #21212b;
+  .ant-modal-content {
+    .ant-modal-header {
       text-align: center;
-      font-weight: 700;
-      font-size: 16px;
-      border-bottom: 1px solid #2e3b55;
-      &:hover {
-        opacity: 0.5;
+      background-color: #141e28;
+      border-bottom: 0;
+      border-radius: 0;
+
+      .ant-modal-title {
+        color: #fff;
+        padding: 10px 12px 0px 12px;
+        font-weight: 400;
+        .dialog-title-text {
+          span {
+            padding: 3px;
+          }
+        }
+        .dialog-title-text-left {
+          text-align: left;
+          padding: 6px;
+        }
+        .dialog-title-text-right {
+          text-align: right;
+          padding: 6px;
+        }
+        .price-green {
+          color: #44d7b6;
+        }
       }
     }
-    .dialog-remark-item {
-      font-size: 12px;
-      margin-bottom: 10px;
-      .dialog-remark-item-text {
-        white-space: wrap;
+    .ant-modal-body {
+      padding: 16px 70px;
+      background-color: #1f2934;
+      .dialog-detail-item {
+        display: flex;
+        margin-bottom: 20px;
       }
-      .dialog-remark-item-titile {
-        color: #838d9e;
+
+      .dialog-detail-item-line {
+        border-bottom: 1px solid #2e3b55;
+      }
+
+      .dialog-detail-item-input {
+        .detail-input-item-btn-group {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+
+          .detail-input-item-add-btn,
+          .detail-input-item-less-btn {
+            width: 50px;
+            text-align: center;
+            background: rgba(131, 141, 158, 1);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            &:active {
+              opacity: 0.5;
+            }
+          }
+
+          .detail-input-item-less-btn {
+            border-radius: 4px 0px 0px 4px;
+          }
+
+          .detail-input-item-add-btn {
+            border-radius: 0px 4px 4px 0px;
+          }
+
+          .detail-input-item-input {
+            color: #f2e205;
+            width: calc(100% - 100px);
+            border-top: 1px solid #838d9e;
+            border-bottom: 1px solid #838d9e;
+            line-height: 28px;
+            text-align: center;
+
+            input {
+              text-align: center;
+              width: 100%;
+            }
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+            }
+            input[type="number"] {
+              -moz-appearance: textfield;
+            }
+          }
+        }
+      }
+      .ant-select {
+        width: 100%;
+      }
+      .ant-select-selector {
+        background-color: initial;
+        border: unset;
+        padding: 0;
+        box-shadow: unset !important;
+        font-size: 16px;
+        border-bottom: 1px solid #c8c7cc;
+      }
+      .dialog-detail-item-submit-btn {
+        width: 160px;
+        margin: auto;
+        line-height: 30px;
+        background: #f2e205;
+        border-radius: 4px;
+        color: #21212b;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        border-bottom: 1px solid #2e3b55;
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+      .dialog-remark-item {
+        font-size: 12px;
+        margin-bottom: 10px;
+        .dialog-remark-item-text {
+          white-space: wrap;
+        }
+        .dialog-remark-item-titile {
+          color: #838d9e;
+        }
       }
     }
   }

@@ -74,6 +74,7 @@ export default class Subscribe extends React.Component {
       { title: "每手股数", dataIndex: "lots_size", width: 110, },
       { title: "币种", dataIndex: "currency", width: 110, },
       { title: "申购手数", dataIndex: "wanted_lots", width: 110, },
+      { title: "中籤数量", dataIndex: "real_lots", width: 110, },
       { title: "手续费", dataIndex: "hand_fee", width: 110, },
       { title: "入场费", dataIndex: "entrance_fee", width: 110, },
       { title: "认购金额", dataIndex: "total_subscription_amount", width: 110, },
@@ -105,7 +106,6 @@ export default class Subscribe extends React.Component {
   }
 
   dateFormat = (theDate) => theDate && moment(theDate).format('YYYY-MM-DD') || '';
-  dateIsBefore = (theDate, compareDate) => moment(theDate).isBefore(compareDate);
 
   getNewstockList = async () => {
     const { currentTab, } = this.state;
@@ -114,7 +114,6 @@ export default class Subscribe extends React.Component {
 
     // 排序截止日（ 新到舊 ）
     const sortnNewstockList = this.sortNewstockList(newstockList);
-
     if (res.status === 200) {
       this.setState({
         newstockList: sortnNewstockList,
@@ -137,10 +136,9 @@ export default class Subscribe extends React.Component {
       const userSubscribeList_data = userSubscribeList_key.map(key => res.data.results[key]);
 
       // 排序截止日（ 新到舊 ）
-      const sortSubscribeDateEnd = userSubscribeList_data.sort((a, b)=> 
+      const sortSubscribeDateEnd = userSubscribeList_data.sort((a, b) =>
         new Date(b.newstock_data.subscription_date_end).valueOf() - new Date(a.newstock_data.subscription_date_end).valueOf());
       const sortUserSubscribeList = this.sortNewstockList(sortSubscribeDateEnd);
-
       this.setState({
         userSubscribeList: sortUserSubscribeList,
       });
@@ -148,14 +146,11 @@ export default class Subscribe extends React.Component {
   }
 
   sortNewstockList = (data) => {
-    const { getToday, } = this.state;
     const mainList = [];
     const otherList = [];
     data.filter(item => {
       let itemProperty = item.hasOwnProperty('newstock_data') ? item.newstock_data : item;
-      this.dateIsBefore(itemProperty.subscription_date_start, getToday)
-        && this.dateIsBefore(getToday, itemProperty.subscription_date_end) ?
-        mainList.push(item) : otherList.push(item);
+      itemProperty.status === '2' ? mainList.push(item) : otherList.push(item);
     });
     return [...mainList, ...otherList];
   }
@@ -171,7 +166,7 @@ export default class Subscribe extends React.Component {
 
 
   newstock_data_modal = () => {
-    const { newstockList, userSubscribeList, getToday, } = this.state;
+    const { newstockList, userSubscribeList, } = this.state;
 
     // 未申購
     const newstockList_data = [];
@@ -179,13 +174,11 @@ export default class Subscribe extends React.Component {
       let publicPriceMax = Math.max(...item.public_price.split('~'));
       let lotsPrice = Number(publicPriceMax * item.lots_size).toFixed(2);
       let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
-      let buttonText = this.dateIsBefore(item.subscription_date_start, getToday) && this.dateIsBefore(getToday, item.subscription_date_end)
-        ? '可申购'
-        : this.dateIsBefore(getToday, item.subscription_date_start) ? '未开始' : '已截止';
+      let buttonText = { '1': '未开始', '2': '可申购', '3': '已截止', '4': '已截止', };
 
       let data = {
         key: item.id
-        , status: buttonText
+        , status: buttonText[item.status]
         , stock_name: item.stock_name
         , market: item.market
         , stock_code: item.stock_code
@@ -209,8 +202,9 @@ export default class Subscribe extends React.Component {
       let newstock_data = item.newstock_data;
       let draw_result_date = this.dateFormat(newstock_data.draw_result_date);
       let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
-      let buttonText = this.dateIsBefore(newstock_data.draw_result_date, getToday) && (item.real_lots === 0 ? '未中籤' : '已中籤') || '已申购';
-     
+      let real_lots_text = item.real_lots === 0 ? '未中籤' : '已中籤';
+      let buttonText = item.status === '4' ? real_lots_text : '已申购';
+
       let data = {
         key: item.id
         , status: buttonText
@@ -226,6 +220,7 @@ export default class Subscribe extends React.Component {
         , lots_size: newstock_data.lots_size
         , currency: newstock_data.currency
         , wanted_lots: item.wanted_lots
+        , real_lots:item.real_lots
         , hand_fee: item.hand_fee
         , entrance_fee: item.entrance_fee
         , total_subscription_amount: item.total_subscription_amount
@@ -312,8 +307,8 @@ export default class Subscribe extends React.Component {
             onClick={this.calSubscribeTableScroll}
           />
         </div>
-        {dialogModalStatus && 
-        (<Dialog onCancel={this.hideDialogModal} subscribe_data={subscribe_data} onTabClick={this.onTabChange}></Dialog>)}
+        {dialogModalStatus &&
+          (<Dialog onCancel={this.hideDialogModal} subscribe_data={subscribe_data} onTabClick={this.onTabChange}></Dialog>)}
       </div>
     );
   }
