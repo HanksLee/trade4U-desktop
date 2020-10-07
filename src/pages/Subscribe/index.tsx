@@ -203,7 +203,7 @@ export default class Subscribe extends React.Component {
       let draw_result_date = this.dateFormat(newstock_data.draw_result_date);
       let public_date = item.public_date && moment(item.public_date).format('YYYY-MM-DD') || '上市日未公佈';
       let real_lots_text = item.real_lots === 0 ? '未中籤' : '已中籤';
-      let buttonText = item.status === '4' ? real_lots_text : '已申购';
+      let buttonText = newstock_data.status === '4' ? real_lots_text : '已申购';
 
       let data = {
         key: item.id
