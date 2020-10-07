@@ -253,6 +253,23 @@ $side-width: 368px;
       .symbol-order-table-row {
         cursor: pointer;
       }
+
+      .sell,
+      .buy {
+        display: inline-block;
+        padding: 0 10px;
+        font-size: 10px;
+        color:#21212b;
+        border-radius: 4px;
+      }
+
+      .sell {
+        background-color: #FA6400;
+      }
+
+      .buy {
+        background-color: #0091ff;
+      }
     }
 
     .symbol-order-favorite {

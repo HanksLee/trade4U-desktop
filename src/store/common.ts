@@ -7,6 +7,17 @@ class CommonStore extends BaseStore {
 
   @observable
   systemConfig = []
+  @computed get configMap() {
+    try {
+      return this.systemConfig.reduce((obj, curr) => {
+        const { key, value } = curr;
+        obj[key] = value;
+        return obj;
+      }, {});
+    } catch (err) {
+      return {};
+    }
+  }
 
   @action
   getSystemConfig = async (params) => {
@@ -17,13 +28,25 @@ class CommonStore extends BaseStore {
   setSystemConfig = (systemConfig) => {
     this.systemConfig = systemConfig;
   }
+  @action
+  setQuoteColor = () => {
+    const colorMode = localStorage.getItem("trade4U_PC_color_mode");
+    const root = document.documentElement;
+    if (colorMode === "hk_style") {
+      root.style.setProperty('--up-color', `#e94a39`)
+      root.style.setProperty('--down-color', `#44d7b6`)
+    } else {
+      root.style.setProperty('--up-color', `#44d7b6`)
+      root.style.setProperty('--down-color', `#e94a39`)
+    }
+  }
 
   @action
   getKeyConfig(key) {
-    if(this.systemConfig.length === 0)
+    if (this.systemConfig.length === 0)
       return null;
-     
-    return this.systemConfig.filter((item, i)=>{
+
+    return this.systemConfig.filter((item, i) => {
       return item.key === key;
     })[0].value;
   }
@@ -40,8 +63,8 @@ class CommonStore extends BaseStore {
   get getHighPriceClass() {
     const key = "up";
     return {
-      color:STOCK_COLOR_MAP[this.stockColorMode][key],
-      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }
 
@@ -49,8 +72,8 @@ class CommonStore extends BaseStore {
   get getNormalPriceClass() {
     const key = "balance";
     return {
-      color:STOCK_COLOR_MAP[this.stockColorMode][key],
-      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }
 
@@ -59,8 +82,8 @@ class CommonStore extends BaseStore {
   get getLowPriceClass() {
     const key = "down";
     return {
-      color:STOCK_COLOR_MAP[this.stockColorMode][key],
-      gif:STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }
 
@@ -70,14 +93,14 @@ class CommonStore extends BaseStore {
       getNormalPriceClass,
       getLowPriceClass,
     } = this;
-    return sign === 1 ? 
-      getHighPriceClass : 
-      sign  === -1 ? 
-        getLowPriceClass : 
+    return sign === 1 ?
+      getHighPriceClass :
+      sign === -1 ?
+        getLowPriceClass :
         getNormalPriceClass;
   };
 
-  
+
   @observable
   paginationConfig = {
     defaultCurrent: 1,
@@ -181,7 +204,7 @@ class CommonStore extends BaseStore {
   }
 
   @observable
-  message={
+  message = {
     cmd: null,
     data: null,
   }

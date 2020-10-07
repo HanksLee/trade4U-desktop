@@ -4,7 +4,7 @@ import { Table } from "antd";
 
 import moment from "moment";
 import utils from "utils";
-
+import { tradeActionMap } from 'constant';
 import { observer, inject } from "mobx-react";
 
 import order from "store/order";
@@ -32,20 +32,25 @@ export default class OrderTable extends BaseReact<{}, {}> {
       dataIndex: "action",
       width: 70,
       render: text => {
-        switch (text) {
-          case "0":
-            return "做多";
-          case "1":
-            return "做空";
-          case "2":
-            return "限价买";
-          case "3":
-            return "限价卖";
-          case "4":
-            return "突破买";
-          case "5":
-            return "突破卖";
-        }
+        const action = Number(text);
+        const bgColor = action % 2 === 0 ? "buy" : "sell";
+        // switch (text) {
+        //   case "0":
+        //     return "做多";
+        //   case "1":
+        //     return "做空";
+        //   case "2":
+        //     return "限价买";
+        //   case "3":
+        //     return "限价卖";
+        //   case "4":
+        //     return "突破买";
+        //   case "5":
+        //     return "突破卖";
+        // }
+        return (
+          <span className={bgColor}>{tradeActionMap[text]}</span>
+        )
       },
     },
     {
@@ -57,6 +62,11 @@ export default class OrderTable extends BaseReact<{}, {}> {
       title: "交易手数",
       dataIndex: "lots",
       width: 100,
+    },
+    {
+      title: "订单号",
+      dataIndex: "order_number",
+      width: 220,
     },
     {
       title: "止盈/止损",
@@ -83,12 +93,12 @@ export default class OrderTable extends BaseReact<{}, {}> {
     {
       title: "手续费",
       dataIndex: "fee",
-      width: 150,
+      width: 120,
     },
     {
       title: "盈亏",
       dataIndex: "profit",
-      width: 150,
+      width: 120,
       render: (text, record) => {
         const sign = Math.sign(text);
         const priceCls = this.props.common.getPriceTmp(sign);
@@ -102,15 +112,10 @@ export default class OrderTable extends BaseReact<{}, {}> {
     {
       title: "开仓时间",
       dataIndex: "create_time",
-      width: 220,
+      width: 120,
       render: (text, record) =>
         moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
     },
-    {
-      title: "订单号",
-      dataIndex: "order_number",
-      width: 220,
-    }
   ];
 
   order = null;
@@ -145,8 +150,8 @@ export default class OrderTable extends BaseReact<{}, {}> {
           loading={isLoading}
           pagination={pagination}
           columns={columns}
-          dataSource={result}        
-          rowKey={(record)=>(record.order_number)}
+          dataSource={result}
+          rowKey={(record) => (record.order_number)}
         />
       </div>
     );
@@ -154,7 +159,7 @@ export default class OrderTable extends BaseReact<{}, {}> {
 
   getOnRowSetting = record => {
     return {
-      onDoubleClick: async evt => {},
+      onDoubleClick: async evt => { },
     };
   };
 }

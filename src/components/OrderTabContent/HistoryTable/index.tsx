@@ -4,7 +4,7 @@ import { Table } from "antd";
 
 import moment from "moment";
 import utils from "utils";
-
+import { tradeActionMap } from 'constant';
 import { observer, inject } from "mobx-react";
 
 import order from "store/order";
@@ -13,7 +13,7 @@ import order from "store/order";
 @observer
 export default class HistoryTable extends BaseReact<{}, {}> {
   state = {
-    search:null,
+    search: null,
   };
   columns = [
     {
@@ -26,26 +26,32 @@ export default class HistoryTable extends BaseReact<{}, {}> {
       title: "品种代码",
       dataIndex: "product_code",
       width: 100,
+      fixed: "left",
     },
     {
       title: "方向",
       dataIndex: "action",
       width: 70,
       render: text => {
-        switch (text) {
-          case "0":
-            return "做多";
-          case "1":
-            return "做空";
-          case "2":
-            return "限价买";
-          case "3":
-            return "限价卖";
-          case "4":
-            return "突破买";
-          case "5":
-            return "突破卖";
-        }
+        const action = Number(text);
+        const bgColor = action % 2 === 0 ? "buy" : "sell";
+        // switch (text) {
+        //   case "0":
+        //     return "做多";
+        //   case "1":
+        //     return "做空";
+        //   case "2":
+        //     return "限价买";
+        //   case "3":
+        //     return "限价卖";
+        //   case "4":
+        //     return "突破买";
+        //   case "5":
+        //     return "突破卖";
+        // }
+        return (
+          <span className={bgColor}>{tradeActionMap[text]}</span>
+        )
       },
     },
     {
@@ -64,13 +70,18 @@ export default class HistoryTable extends BaseReact<{}, {}> {
       width: 100,
     },
     {
+      title: "订单号",
+      dataIndex: "order_number",
+      width: 220,
+    },
+    {
       title: "止盈/止损",
       width: 100,
       render: (text, record) => {
         return (
           <div>
-            <p className={"p-up"}>{record.take_profit}</p>
-            <p className={"p-down"}>{record.stop_loss}</p>
+            <p>{record?.take_profit || "-"}</p>
+            <p>{record?.stop_loss || "-"}</p>
           </div>
         );
       },
@@ -88,12 +99,12 @@ export default class HistoryTable extends BaseReact<{}, {}> {
     {
       title: "手续费",
       dataIndex: "fee",
-      width: 150,
+      width: 120,
     },
     {
       title: "盈亏",
       dataIndex: "profit",
-      width: 150,
+      width: 120,
       render: (text, record) => {
         const sign = Math.sign(text);
         const priceCls = this.props.common.getPriceTmp(sign);
@@ -105,26 +116,21 @@ export default class HistoryTable extends BaseReact<{}, {}> {
     {
       title: "开仓时间",
       dataIndex: "create_time",
-      width: 220,
+      width: 120,
       render: (text, record) =>
         moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
     },
     {
       title: "平仓时间",
       dataIndex: "close_time",
-      width: 220,
+      width: 120,
       // fixed: "right",
       render: (text, record) =>
         moment(text * 1000).format("YYYY.MM.DD HH:mm:ss"),
     },
-    {
-      title: "订单号",
-      dataIndex: "order_number",
-      width: 220,
-    }
   ];
   PAGE_SIZE = 5;
-  columnsWidth =0;
+  columnsWidth = 0;
   order = null;
   constructor(props) {
     super(props);
@@ -169,7 +175,7 @@ export default class HistoryTable extends BaseReact<{}, {}> {
             y: 'calc(22vh - 56px)',
           }}
           dataSource={results}
-          rowKey={(record)=>(record.order_number)}
+          rowKey={(record) => (record.order_number)}
         ></Table>
       </div>
     );
@@ -177,7 +183,7 @@ export default class HistoryTable extends BaseReact<{}, {}> {
 
   getOnRowSetting = record => {
     return {
-      onDoubleClick: async evt => {},
+      onDoubleClick: async evt => { },
     };
   };
 }

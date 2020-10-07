@@ -78,7 +78,7 @@ ISettingsModalState
     verifyPass: false,
     inputDisabled: false,
   };
-
+  colorMode = "";
   formRef = React.createRef<HTMLInputElement>();
 
   componentDidMount() {
@@ -224,6 +224,14 @@ ISettingsModalState
     }
   };
 
+  changeColorPrefer = () => {
+    if (utils.isEmpty(this.colorMode) ||
+      localStorage.getItem("trade4U_PC_color_mode") === this.colorMode) return;
+
+    localStorage.setItem("trade4U_PC_color_mode", this.colorMode);
+    this.props.common.setQuoteColor();
+  }
+
   sendSMS = async () => {
     let payload = {
       type: "reset_pwd_sms",
@@ -308,20 +316,20 @@ ISettingsModalState
         )}
         {(userInfo["inspect_status"] === 2 ||
           userInfo["inspect_status"] === 3) && (
-          <div className="info-status">
-            <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
-              {"信息审核中"}
-            </p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={successIcon} alt="success-icon" />
+              <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
+                {"信息审核中"}
+              </p>
+            </div>
+          )}
         {(userInfo["inspect_status"] === 0 ||
           userInfo["inspect_status"] === 1) && (
-          <div className="info-status">
-            <img src={unfinishedIcon} alt="unfinished-icon" />
-            <p className="ant-upload-text">{"信息待审核"}</p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={unfinishedIcon} alt="unfinished-icon" />
+              <p className="ant-upload-text">{"信息待审核"}</p>
+            </div>
+          )}
         {userInfo["inspect_status"] === 2 && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
@@ -350,8 +358,8 @@ ISettingsModalState
         {this.renderStatus()}
         {!utils.isEmpty(userInfo["reason"]) &&
           userInfo["inspect_status"] === 3 && (
-          <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
-        )}
+            <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
+          )}
         <Form
           name="basic"
           {...layout}
@@ -410,13 +418,13 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证正面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证正面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
             <Upload
               accept="image/*"
@@ -434,13 +442,13 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证反面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证反面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
           </div>
 
@@ -510,8 +518,8 @@ ISettingsModalState
             <Form.Item className="submit-container">
               {(userInfo["inspect_status"] === 0 ||
                 userInfo["inspect_status"] === 3) && (
-                <Button htmlType="submit">{"送出"}</Button>
-              )}
+                  <Button htmlType="submit">{"送出"}</Button>
+                )}
               {userInfo["inspect_status"] === 1 && (
                 <Button htmlType="submit" style={{ cursor: "default", }}>
                   {"审核中"}
@@ -554,9 +562,12 @@ ISettingsModalState
             <div className="settings-item">
               <span className="settings-title">涨跌偏好</span>
               <span className="setting-option">
-                <Select 
-                  defaultValue={this.props.common.getKeyConfig('color_mode')}
-                // onChange={this.}
+                <Select
+                  id="color_prefer_select"
+                  defaultValue={
+                    localStorage.getItem("trade4U_PC_color_mode") || this.props.common.getKeyConfig('color_mode')
+                  }
+                  onChange={(val) => { this.colorMode = val }}
                   placeholder="选择偏好"
                 >
                   <Option value={"standard"}>
@@ -567,7 +578,7 @@ ISettingsModalState
                   </Option>
                 </Select>
               </span>
-              <span className="settings-edit">修改</span>
+              <span className="settings-edit" onClick={this.changeColorPrefer}>修改</span>
             </div>
           </div>
         )}
@@ -605,51 +616,51 @@ ISettingsModalState
               </div>
             </Form>
           ) : (
-            <Form onFinish={this.handleResetPwdSubmit}>
-              <div className="pwd-container">
-                <div>
-                  <Form.Item
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "新密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "新密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="请输入新的密码" />
-                  </Form.Item>
-                </div>
-                <div>
-                  <Form.Item
-                    name="check-password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "确认密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "确认密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="再次确认新的密码" />
-                  </Form.Item>
-                </div>
+              <Form onFinish={this.handleResetPwdSubmit}>
+                <div className="pwd-container">
+                  <div>
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "新密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "新密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="请输入新的密码" />
+                    </Form.Item>
+                  </div>
+                  <div>
+                    <Form.Item
+                      name="check-password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "确认密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "确认密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="再次确认新的密码" />
+                    </Form.Item>
+                  </div>
 
-                <Form.Item>
-                  <Button htmlType="submit" style={{ cursor: "default", }}>
-                    {"确认"}
-                  </Button>
-                </Form.Item>
-              </div>
-            </Form>
-          ))}
+                  <Form.Item>
+                    <Button htmlType="submit" style={{ cursor: "default", }}>
+                      {"确认"}
+                    </Button>
+                  </Form.Item>
+                </div>
+              </Form>
+            ))}
       </>
     );
   };
@@ -681,8 +692,8 @@ ISettingsModalState
                   {currentTab !== "account" ? (
                     <img src={accountIcon} alt="account-icon" />
                   ) : (
-                    <img src={accountActiveIcon} alt="account-icon" />
-                  )}
+                      <img src={accountActiveIcon} alt="account-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "account" ? "" : "active"}>
@@ -699,8 +710,8 @@ ISettingsModalState
                   {currentTab !== "settings" ? (
                     <img src={settingsIcon} alt="settings-icon" />
                   ) : (
-                    <img src={settingsActiveIcon} alt="settings-icon" />
-                  )}
+                      <img src={settingsActiveIcon} alt="settings-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "settings" ? "" : "active"}>

@@ -174,11 +174,13 @@ img.emoji {
 }
 
 .p-up {
-  color: $up;
+  // color: $up;
+  color: var(--up-color);
 }
 
 .p-down {
-  color: $down;
+  // color: $down;
+  color: var(--down-color);
 }
 
 .p-grey {
@@ -186,11 +188,13 @@ img.emoji {
 }
 
 .stock-green {
-  color: $up;
+  // color: $up;
+  color: var(--up-color);
 }
 
 .stock-red {
-  color: $down;
+  // color: $down;
+  color: var(--down-color);
 }
 
 .stock-green-gif {
@@ -210,11 +214,13 @@ img.emoji {
 }
 
 .bg-up {
-  background-color: $up;
+  // background-color: $up;
+  color: var(--up-color);
 }
 
 .bg-down {
-  background-color: $down;
+  // background-color: $down;
+  color: var(--down-color);
 }
 
 .bg-orange {
