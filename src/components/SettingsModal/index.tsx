@@ -1,7 +1,7 @@
 import * as React from "react";
 import utils from "utils";
 import { BaseReact } from "components/@shared/BaseReact";
-import { Modal, Form, Input, Button, DatePicker, Upload, Cascader } from "antd";
+import { Modal, Form, Input, Button, DatePicker, Upload, Cascader, Select } from "antd";
 import moment from "moment";
 import { RcFile } from "antd/lib/upload";
 //import { inject, observer } from "mobx-react";
@@ -21,6 +21,7 @@ import cameraIcon from "assets/img/camera-icon.svg";
 // import stopIcon from "assets/img/stop-icon.svg";
 import "./index.scss";
 import { stringify } from "querystring";
+import { inject, observer } from "mobx-react";
 
 interface ISettingsModalProps {
   onCancel: () => void;
@@ -55,8 +56,11 @@ const layout = {
   labelCol: { span: 8, },
   wrapperCol: { span: 16, },
 };
-// @ts-ignore
 
+const Option=Select.Option;
+// @ts-ignore
+@inject("common")
+@observer
 export default class EditSettingsModal extends BaseReact<
 ISettingsModalProps,
 ISettingsModalState
@@ -304,20 +308,20 @@ ISettingsModalState
         )}
         {(userInfo["inspect_status"] === 2 ||
           userInfo["inspect_status"] === 3) && (
-          <div className="info-status">
-            <img src={successIcon} alt="success-icon" />
-            <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
-              {"信息审核中"}
-            </p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={successIcon} alt="success-icon" />
+              <p className="ant-upload-text" style={{ color: "#4a93f4", }}>
+                {"信息审核中"}
+              </p>
+            </div>
+          )}
         {(userInfo["inspect_status"] === 0 ||
           userInfo["inspect_status"] === 1) && (
-          <div className="info-status">
-            <img src={unfinishedIcon} alt="unfinished-icon" />
-            <p className="ant-upload-text">{"信息待审核"}</p>
-          </div>
-        )}
+            <div className="info-status">
+              <img src={unfinishedIcon} alt="unfinished-icon" />
+              <p className="ant-upload-text">{"信息待审核"}</p>
+            </div>
+          )}
         {userInfo["inspect_status"] === 2 && (
           <div className="info-status">
             <img src={successIcon} alt="success-icon" />
@@ -346,8 +350,8 @@ ISettingsModalState
         {this.renderStatus()}
         {!utils.isEmpty(userInfo["reason"]) &&
           userInfo["inspect_status"] === 3 && (
-          <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
-        )}
+            <div className="error-msg">{`未通过信息：${userInfo["reason"]}`}</div>
+          )}
         <Form
           name="basic"
           {...layout}
@@ -406,13 +410,13 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证正面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证正面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
             <Upload
               accept="image/*"
@@ -430,13 +434,13 @@ ISettingsModalState
                   />
                 </div>
               ) : (
-                <div className="upload-image-preview">
-                  <div>
-                    <img src={cameraIcon} alt="camera-icon" />
-                    <p className="ant-upload-text">{"上传身分证反面"}</p>
+                  <div className="upload-image-preview">
+                    <div>
+                      <img src={cameraIcon} alt="camera-icon" />
+                      <p className="ant-upload-text">{"上传身分证反面"}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </Upload>
           </div>
 
@@ -506,8 +510,8 @@ ISettingsModalState
             <Form.Item className="submit-container">
               {(userInfo["inspect_status"] === 0 ||
                 userInfo["inspect_status"] === 3) && (
-                <Button htmlType="submit">{"送出"}</Button>
-              )}
+                  <Button htmlType="submit">{"送出"}</Button>
+                )}
               {userInfo["inspect_status"] === 1 && (
                 <Button htmlType="submit" style={{ cursor: "default", }}>
                   {"审核中"}
@@ -527,25 +531,43 @@ ISettingsModalState
         {!currentItem && (
           <div className="items-container">
             <div className="settings-item">
-              <span>语言</span>
-              <span>中文</span>
-              <span>修改</span>
+              <span className="settings-title">语言</span>
+              <span className="settings-input">中文</span>
+              <span className="settings-edit">修改</span>
             </div>
             <div className="settings-item">
-              <span>图表</span>
-              <span>柱状图</span>
-              <span>修改</span>
+              <span className="settings-title">图表</span>
+              <span className="settings-input">柱状图</span>
+              <span className="settings-edit">修改</span>
             </div>
             <div className="settings-item">
-              <span>登入密码</span>
-              <span>******</span>
-              <span
+              <span className="settings-title">登入密码</span>
+              <span className="settings-input">******</span>
+              <span className="settings-edit"
                 onClick={() => {
                   this.switchItem("reset-pwd");
                 }}
               >
                 修改
               </span>
+            </div>
+            <div className="settings-item">
+              <span className="settings-title">涨跌偏好</span>
+              <span className="setting-option">
+              <Select 
+                defaultValue={this.props.common.getKeyConfig('color_mode')}
+                // onChange={this.}
+                placeholder="选择偏好"
+              >
+                <Option value={"standard"}>
+                  <span>绿涨红跌</span>
+                </Option>
+                <Option value={"hk_style"}>
+                  <span>红涨绿跌</span>
+                </Option>
+              </Select>
+              </span>
+              <span className="settings-edit">修改</span>
             </div>
           </div>
         )}
@@ -583,51 +605,51 @@ ISettingsModalState
               </div>
             </Form>
           ) : (
-            <Form onFinish={this.handleResetPwdSubmit}>
-              <div className="pwd-container">
-                <div>
-                  <Form.Item
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "新密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "新密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="请输入新的密码" />
-                  </Form.Item>
-                </div>
-                <div>
-                  <Form.Item
-                    name="check-password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "确认密码不得为空",
-                      },
-                      {
-                        whitespace: true,
-                        message: "确认密码不得为空",
-                      }
-                    ]}
-                  >
-                    <Input.Password placeholder="再次确认新的密码" />
-                  </Form.Item>
-                </div>
+              <Form onFinish={this.handleResetPwdSubmit}>
+                <div className="pwd-container">
+                  <div>
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "新密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "新密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="请输入新的密码" />
+                    </Form.Item>
+                  </div>
+                  <div>
+                    <Form.Item
+                      name="check-password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "确认密码不得为空",
+                        },
+                        {
+                          whitespace: true,
+                          message: "确认密码不得为空",
+                        }
+                      ]}
+                    >
+                      <Input.Password placeholder="再次确认新的密码" />
+                    </Form.Item>
+                  </div>
 
-                <Form.Item>
-                  <Button htmlType="submit" style={{ cursor: "default", }}>
-                    {"确认"}
-                  </Button>
-                </Form.Item>
-              </div>
-            </Form>
-          ))}
+                  <Form.Item>
+                    <Button htmlType="submit" style={{ cursor: "default", }}>
+                      {"确认"}
+                    </Button>
+                  </Form.Item>
+                </div>
+              </Form>
+            ))}
       </>
     );
   };
@@ -659,8 +681,8 @@ ISettingsModalState
                   {currentTab !== "account" ? (
                     <img src={accountIcon} alt="account-icon" />
                   ) : (
-                    <img src={accountActiveIcon} alt="account-icon" />
-                  )}
+                      <img src={accountActiveIcon} alt="account-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "account" ? "" : "active"}>
@@ -677,8 +699,8 @@ ISettingsModalState
                   {currentTab !== "settings" ? (
                     <img src={settingsIcon} alt="settings-icon" />
                   ) : (
-                    <img src={settingsActiveIcon} alt="settings-icon" />
-                  )}
+                      <img src={settingsActiveIcon} alt="settings-icon" />
+                    )}
                 </p>
 
                 <p className={currentTab !== "settings" ? "" : "active"}>
