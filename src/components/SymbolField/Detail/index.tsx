@@ -14,15 +14,12 @@ import utils from "utils";
 import api from "services";
 
 import classNames from "classnames/bind";
-import globalCss from "app.module.scss";
-import { inject, observer } from 'mobx-react';
-import { reaction, toJS } from 'mobx';
-
-const globalCx = classNames.bind(globalCss);
+import { inject, observer } from "mobx-react";
+import { reaction, toJS } from "mobx";
 
 @inject("other", "common", "symbol")
 @observer
-export default class  extends React.PureComponent<{}, {}> {
+export default class extends React.PureComponent<{}, {}> {
   state = {};
   other = null;
   symbol = null;
@@ -42,28 +39,26 @@ export default class  extends React.PureComponent<{}, {}> {
         <ContractDetail {...toJS(contractInfo)} />
         <div className="detail-btn-container">
           <Button
-            className={globalCx("btn-yellow", "symbol-tool-buy")}
+            className="t4u-button-primary"
             onClick={() => {
               this.onOrderBuyClick();
             }}
           >
-          下單
+            下單
           </Button>
         </div>
       </div>
     );
   }
-  
 
   componentDidMount() {}
 
   componentDidUpdate() {}
 
   //function
-  
-  onOrderBuyClick = ()=>{
+
+  onOrderBuyClick = () => {
     const { currentSymbol, } = this.symbol;
     this.symbol.setCurrentTransactionSymbol(toJS(currentSymbol));
-  }
-} 
-
+  };
+}
