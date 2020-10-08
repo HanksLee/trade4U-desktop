@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import produce from "immer";
 import { Button, Input, InputNumber } from "antd";
 import { NewOrderRule } from "./NewOrderRule";
+import { InputButtonSet } from "./InputButtonSet";
 import utils from "utils";
 import api from "services";
 
@@ -14,10 +15,32 @@ const cx = classNames.bind(styles);
 
 export interface OnePriceNewOrderFormProps {}
 
-export interface OnePriceNewOrderFormState {}
-const toFixedNumber = (input, digits) => {
-  return Number(Number(input).toFixed(digits));
+export interface OnePriceNewOrderFormState {
+  form: {
+    positionType: string;
+    direction: string;
+    marginValue: number;
+    leverage: string | null;
+    takeProfit: string | null;
+    stopLoss: string | null;
+  };
+  validation: {
+    minStopLossStep: number | null;
+    minTakeProfitStep: number | null;
+    takeProfitTargetPriceMap: object;
+    stopLossTargetPriceMap: object;
+    minMarginValue: number | null;
+    maxMarginValue: number | null;
+    marginValueStep: number;
+    sellStep: number;
+  };
+  currentSymbol: object;
+}
+
+const preciseNumber = (input, digits = 10) => {
+  return String(Number(Number(input).toFixed(digits)));
 };
+
 const directionOptionMap = {
   "1": { "zh-cn": "作多", },
   "-1": { "zh-cn": "作空", },
@@ -35,8 +58,8 @@ OnePriceNewOrderFormState
       direction: "1",
       marginValue: 0,
       leverage: null,
-      takeProfit: null,
-      stopLoss: null,
+      takeProfit: "",
+      stopLoss: "",
     },
     validation: {
       minStopLossStep: null,
@@ -47,6 +70,7 @@ OnePriceNewOrderFormState
       maxMarginValue: null,
       marginValueStep: 100,
       sellStep: 0.01,
+      sellDigits: Math.log10(1 / 0.01),
     },
     currentSymbol: {},
   };
@@ -70,8 +94,8 @@ OnePriceNewOrderFormState
     this.setState(
       produce(draft => {
         draft.form.marginValue = Number(min_margin_value);
-        draft.form.stopLoss = null;
-        draft.form.takeProfit = null;
+        draft.form.stopLoss = "";
+        draft.form.takeProfit = "";
         draft.form.direction = "1";
       })
     );
@@ -156,33 +180,33 @@ OnePriceNewOrderFormState
   handleTakeProfitChange = val => {
     this.setState(
       produce(draft => {
-        draft.form.takeProfit = toFixedNumber(val, 2);
-      })
-    );
-  };
-  handleTakeProfitAdjust = (sign = 1) => {
-    const { sellStep, } = this.state.validation;
-    this.setState(
-      produce(draft => {
-        const val = Number(draft.form.takeProfit) + Number(sellStep) * sign;
-        draft.form.takeProfit = toFixedNumber(val, 2);
+        draft.form.takeProfit = val;
       })
     );
   };
   handleStopLossChange = val => {
     this.setState(
       produce(draft => {
-        draft.form.stopLoss = toFixedNumber(val, 2);
+        draft.form.stopLoss = val;
       })
     );
   };
 
-  handleStopLossAdjust = (sign = 1) => {
-    const { sellStep, } = this.state.validation;
+  handleTakeProfitAdjust = amount => {
+    const { sellDigits = 2, } = this.state.validation;
     this.setState(
       produce(draft => {
-        const val = Number(draft.form.stopLoss) + Number(sellStep) * sign;
-        draft.form.stopLoss = toFixedNumber(val, 2);
+        const val = Number(draft.form.takeProfit) + amount;
+        draft.form.takeProfit = val.toFixed(sellDigits);
+      })
+    );
+  };
+  handleStopLossAdjust = amount => {
+    const { sellDigits = 2, } = this.state.validation;
+    this.setState(
+      produce(draft => {
+        const val = Number(draft.form.stopLoss) + amount;
+        draft.form.stopLoss = val.toFixed(sellDigits);
       })
     );
   };
@@ -236,6 +260,7 @@ OnePriceNewOrderFormState
       symbol_display = {},
       product_details = {},
     } = this.state.currentSymbol;
+    const { sellStep, } = this.state.validation;
     const { leverage: symbol_display_leverage, position_type, } = symbol_display;
     // console.log("this.state.form :>> ", this.state.form);
     // console.log("symbol_display_leverage :>> ", symbol_display_leverage);
@@ -331,8 +356,8 @@ OnePriceNewOrderFormState
           <div className={cx("label")}>止盈价</div>
           <div className={cx("control")}>
             <InputButtonSet
-              onIncrement={() => this.handleTakeProfitAdjust(1)}
-              onDecrement={() => this.handleTakeProfitAdjust(-1)}
+              onIncrement={() => this.handleTakeProfitAdjust(+sellStep)}
+              onDecrement={() => this.handleTakeProfitAdjust(-sellStep)}
             >
               <Input
                 type="number"
@@ -347,8 +372,8 @@ OnePriceNewOrderFormState
           <div className={cx("label")}>止损价</div>
           <div className={cx("control")}>
             <InputButtonSet
-              onIncrement={() => this.handleStopLossAdjust(1)}
-              onDecrement={() => this.handleStopLossAdjust(-1)}
+              onIncrement={() => this.handleStopLossAdjust(+sellStep)}
+              onDecrement={() => this.handleStopLossAdjust(-sellStep)}
             >
               <Input
                 type="number"
@@ -383,27 +408,6 @@ function OptionButton(props) {
   return (
     <div className={mergedClassName} onClick={onClick} {...restProps}>
       {children}
-    </div>
-  );
-}
-
-function InputButtonSet(props) {
-  const { onIncrement, onDecrement, children, ...restProps } = props;
-  return (
-    <div className={cx("input-button-set")} {...restProps}>
-      <button
-        onClick={onDecrement}
-        className={cx("input-button", "input-button-left")}
-      >
-        -
-      </button>
-      {children}
-      <button
-        onClick={onIncrement}
-        className={cx("input-button", "input-button-right")}
-      >
-        +
-      </button>
     </div>
   );
 }

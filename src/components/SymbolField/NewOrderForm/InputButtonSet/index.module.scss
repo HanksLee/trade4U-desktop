@@ -1,0 +1,33 @@
+//
+.input-button-set {
+  --color: #838d9e;
+  display: flex;
+  border-radius: 4px;
+  margin: 5px;
+  width: 100%;
+  height: 40px;
+  .input-button {
+    flex-basis: 20%;
+    background-color: #303b49;
+    outline: none;
+    border: 1px solid var(--color);
+    cursor: pointer;
+
+    &-right {
+      border-radius: 0 4px 4px 0;
+    }
+    &-left {
+      border-radius: 4px 0 0 4px;
+    }
+  }
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
