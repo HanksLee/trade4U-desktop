@@ -39,8 +39,10 @@ OnePriceNewOrderFormState
       stopLoss: null,
     },
     validation: {
+      minStopLossStep: null,
+      minTakeProfitStep: null,
       takeProfitTargetPriceMap: {},
-      stopLossTargetMap: {},
+      stopLossTargetPriceMap: {},
       minMarginValue: null,
       maxMarginValue: null,
       marginValueStep: 100,
@@ -50,9 +52,6 @@ OnePriceNewOrderFormState
   };
   componentDidMount() {
     this.fetchCurrentSymbol(37061);
-  }
-  componentDidUpdate() {
-    // console.log("update :>> ", this.state);
   }
   fetchCurrentSymbol = async id => {
     const res = await api.market.getCurrentSymbol(id);
@@ -70,9 +69,9 @@ OnePriceNewOrderFormState
 
     this.setState(
       produce(draft => {
-        draft.form.stopLoss = Number(sell);
-        draft.form.takeProfit = Number(sell);
         draft.form.marginValue = Number(min_margin_value);
+        draft.form.stopLoss = null;
+        draft.form.takeProfit = null;
         draft.form.direction = "1";
       })
     );
@@ -103,6 +102,8 @@ OnePriceNewOrderFormState
     };
     this.setState(
       produce(draft => {
+        draft.validation.minStopLossStep = minStopLossStep;
+        draft.validation.minTakeProfitStep = minTakeProfitStep;
         draft.validation.stopLossTargetPriceMap = stopLossTargetPriceMap;
         draft.validation.takeProfitTargetPriceMap = takeProfitTargetPriceMap;
         draft.validation.minMarginValue = min_margin_value;
@@ -152,44 +153,82 @@ OnePriceNewOrderFormState
       })
     );
   };
-  handleTakeProfitIncrement = () => {
-    const { sellStep, } = this.state.validation;
+  handleTakeProfitChange = val => {
     this.setState(
       produce(draft => {
-        draft.form.takeProfit += sellStep;
+        draft.form.takeProfit = toFixedNumber(val, 2);
       })
     );
   };
-  handleTakeProfitDecrement = () => {
+  handleTakeProfitAdjust = (sign = 1) => {
     const { sellStep, } = this.state.validation;
     this.setState(
       produce(draft => {
-        draft.form.takeProfit -= sellStep;
+        const val = Number(draft.form.takeProfit) + Number(sellStep) * sign;
+        draft.form.takeProfit = toFixedNumber(val, 2);
       })
     );
   };
-  handleStopLossIncrement = () => {
+  handleStopLossChange = val => {
+    this.setState(
+      produce(draft => {
+        draft.form.stopLoss = toFixedNumber(val, 2);
+      })
+    );
+  };
+
+  handleStopLossAdjust = (sign = 1) => {
     const { sellStep, } = this.state.validation;
     this.setState(
       produce(draft => {
-        draft.form.stopLoss += sellStep;
+        const val = Number(draft.form.stopLoss) + Number(sellStep) * sign;
+        draft.form.stopLoss = toFixedNumber(val, 2);
       })
     );
   };
-  handleStopLossDecrement = () => {
-    const { sellStep, } = this.state.validation;
-    this.setState(
-      produce(draft => {
-        draft.form.stopLoss -= sellStep;
-      })
-    );
-  };
+
   handleLeverageChange = (e, value) => {
     this.setState(
       produce(draft => {
         draft.form.leverage = value;
       })
     );
+  };
+  validateTakeProfit = (takeProfit, minTakeProfitStep, sell, direction) => {
+    if (direction === "1" && takeProfit < sell + minTakeProfitStep) {
+      throw new Error("作多止盈价不合法");
+    } else if (direction === "-1" && takeProfit > sell - minTakeProfitStep) {
+      throw new Error("作空止盈价不合法");
+    }
+  };
+  validateStopLoss = (stopLoss, minStopLossStep, sell, direction) => {
+    if (direction === "1" && stopLoss > sell - minStopLossStep) {
+      throw new Error("作多止损价不合法");
+    } else if (direction === "-1" && stopLoss < sell + minStopLossStep) {
+      throw new Error("作空止损价不合法");
+    }
+  };
+  handleSubmit = () => {
+    console.log("this.state.form :>> ", this.state.form);
+    console.log("this.state.validation :>> ", this.state.validation);
+    const {
+      symbol_display = {},
+      product_details = {},
+    } = this.state.currentSymbol;
+    const { direction, stopLoss, takeProfit, } = this.state.form;
+    const { sell, } = product_details;
+    const { minStopLossStep, minTakeProfitStep, } = this.state.validation;
+
+    try {
+      if (takeProfit) {
+        this.validateTakeProfit(takeProfit, minTakeProfitStep, sell, direction);
+      }
+      if (stopLoss) {
+        this.validateStopLoss(stopLoss, minStopLossStep, sell, direction);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   };
   render() {
     // console.log("this.state.currentSymbol :>> ", this.state.currentSymbol);
@@ -292,11 +331,14 @@ OnePriceNewOrderFormState
           <div className={cx("label")}>止盈价</div>
           <div className={cx("control")}>
             <InputButtonSet
-              onIncrement={this.handleTakeProfitIncrement}
-              onDecrement={this.handleTakeProfitDecrement}
+              onIncrement={() => this.handleTakeProfitAdjust(1)}
+              onDecrement={() => this.handleTakeProfitAdjust(-1)}
             >
-              <InputNumber
-                value={toFixedNumber(this.state.form.takeProfit, 2)}
+              <Input
+                type="number"
+                placeholder="未设置"
+                value={this.state.form.takeProfit}
+                onChange={e => this.handleTakeProfitChange(e.target.value)}
               />
             </InputButtonSet>
           </div>
@@ -305,16 +347,23 @@ OnePriceNewOrderFormState
           <div className={cx("label")}>止损价</div>
           <div className={cx("control")}>
             <InputButtonSet
-              onIncrement={this.handleStopLossIncrement}
-              onDecrement={this.handleStopLossDecrement}
+              onIncrement={() => this.handleStopLossAdjust(1)}
+              onDecrement={() => this.handleStopLossAdjust(-1)}
             >
-              <InputNumber value={toFixedNumber(this.state.form.stopLoss, 2)} />
+              <Input
+                type="number"
+                placeholder="未设置"
+                value={this.state.form.stopLoss}
+                onChange={e => this.handleStopLossChange(e.target.value)}
+              />
             </InputButtonSet>
           </div>
         </div>
         <div className={cx("form-item")} data-name="stop-loss">
           <div className={cx("submit-button-wrap")}>
-            <Button className="t4u-button-primary"> 下单 </Button>
+            <Button className="t4u-button-primary" onClick={this.handleSubmit}>
+              下单
+            </Button>
           </div>
         </div>
         <NewOrderRule />

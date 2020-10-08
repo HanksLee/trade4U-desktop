@@ -54,9 +54,11 @@
   justify-content: center;
   align-items: center;
 }
+
 .option-button {
-  border: 1px solid var(--text-color);
-  color: var(--text-color);
+  --color: #838d9e;
+  border: 1px solid var(--color);
+  color: var(--color);
   margin: 5px;
   height: 40px;
   border-radius: 4px;
@@ -81,7 +83,7 @@
     flex-basis: 20%;
     background-color: #303b49;
     outline: none;
-    border: 1px solid var(--text-color);
+    border: 1px solid var(--color);
     cursor: pointer;
 
     &-right {
@@ -90,5 +92,15 @@
     &-left {
       border-radius: 4px 0 0 4px;
     }
+  }
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }
