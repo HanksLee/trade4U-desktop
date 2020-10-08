@@ -16,20 +16,20 @@ class ProductStore extends BaseStore {
     this.isInit = true;
   };
 
-  // 目前选中的 symbolId
-  @observable
-  currentSymbolId = null;
-
+  // 使用者目前选中的 symbol
   @observable
   currentSymbol = {};
+  
   @action
-  fetchCurrentSymbol = async () => {
-    const symbolId = this.currentSymbolId;
+  fetchCurrentSymbol = async symbolId => {
+    console.log("this.currentSymbolId :>> ", symbolId);
     const res = await api.market.getCurrentSymbol(symbolId);
     if (res.status === 200) {
       this.setCurrentSymbol(res.data);
     }
   };
+
+  @action
   setCurrentSymbol = data => {
     this.currentSymbol = data;
   };

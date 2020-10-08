@@ -34,7 +34,6 @@ export interface OnePriceNewOrderFormState {
     marginValueStep: number;
     sellStep: number;
   };
-  currentSymbol: object;
 }
 
 const preciseNumber = (input, digits = 10) => {
@@ -46,7 +45,7 @@ const directionOptionMap = {
   "-1": { "zh-cn": "作空", },
 };
 
-@inject("other", "common", "symbol")
+@inject("other", "common", "product")
 @observer
 export class OnePriceNewOrderForm extends React.Component<
 OnePriceNewOrderFormProps,
@@ -72,25 +71,29 @@ OnePriceNewOrderFormState
       sellStep: 0.01, // TODO: 套 api 给的值
       sellDigits: Math.log10(1 / 0.01),
     },
-    currentSymbol: {},
   };
-  componentDidMount() {
-    // TODO: this.state.currentSymbol 改接 store 的 currentSymbol
-    const { currentSymbol, } = this.props.symbol;
-    console.log("currentSymbol :>> ", toJS(currentSymbol));
-    this.fetchCurrentSymbol(37061);
+  async componentDidMount() {
+    // TODO: this.props.product.currentSymbol 改接 store 的 currentSymbol
+
+    reaction(
+      () => this.props.product.currentSymbol,
+      () => {
+        this.initValidationState();
+        this.initFormState();
+      }
+    );
   }
-  fetchCurrentSymbol = async id => {
-    const res = await api.market.getCurrentSymbol(id);
-    this.setState({ currentSymbol: res.data, });
-    this.initValidationState();
-    this.initFormState();
-  };
+  // fetchCurrentSymbol = async id => {
+  //   const res = await api.market.getCurrentSymbol(id);
+  //   this.setState({ currentSymbol: res.data, });
+  //   this.initValidationState();
+  //   this.initFormState();
+  // };
   initFormState = () => {
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { sell, } = product_details;
     const { min_margin_value, } = symbol_display;
 
@@ -100,6 +103,7 @@ OnePriceNewOrderFormState
         draft.form.stopLoss = "";
         draft.form.takeProfit = "";
         draft.form.direction = "1";
+        draft.form.leverage = null;
       })
     );
   };
@@ -107,7 +111,7 @@ OnePriceNewOrderFormState
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { sell, } = product_details;
     const {
       min_margin_value,
@@ -244,7 +248,7 @@ OnePriceNewOrderFormState
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { marginValue, leverage, } = this.state.form;
     const { sell, } = product_details;
     const { contract_size, } = symbol_display;
@@ -262,7 +266,7 @@ OnePriceNewOrderFormState
       symbol_display = {},
       product_details = {},
       id,
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const {
       marginValue,
       positionType,
@@ -306,11 +310,14 @@ OnePriceNewOrderFormState
     }
   };
   render() {
-    // console.log("this.state.currentSymbol :>> ", this.state.currentSymbol);
+    console.log(
+      "this.props.product.currentSymbol :>> ",
+      toJS(this.props.product.currentSymbol)
+    );
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { sellStep, } = this.state.validation;
     const { leverage: symbol_display_leverage, position_type, } = symbol_display;
     // console.log("this.state.form :>> ", this.state.form);
@@ -327,7 +334,7 @@ OnePriceNewOrderFormState
     const orderLots = this.calculateOrderLots();
 
     return (
-      <div className={cx("form")} >
+      <div className={cx("form")}>
         <div className={cx("form-item")} data-name="position-type">
           <div className={cx("label")}>持仓类型</div>
           <div className={cx("control")}>
