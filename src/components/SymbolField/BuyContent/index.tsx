@@ -36,9 +36,11 @@ export default class extends React.PureComponent<{}, {}> {
 
   render() {
     const { showCls, } = this.state;
+
     return (
       <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
         <ToolHeader />
+   
         <OnePriceNewOrderForm />
       </div>
     );
