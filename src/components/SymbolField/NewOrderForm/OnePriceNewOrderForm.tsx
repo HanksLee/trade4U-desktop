@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { reaction, toJS } from "mobx";
 import { useState, useEffect } from "react";
 import produce from "immer";
-import { Button, Input, InputNumber } from "antd";
+import { Button, Input, InputNumber, Message } from "antd";
 import { NewOrderRule } from "./NewOrderRule";
 import { InputButtonSet } from "./InputButtonSet";
 import utils from "utils";
@@ -18,7 +18,7 @@ export interface OnePriceNewOrderFormProps {}
 export interface OnePriceNewOrderFormState {
   form: {
     positionType: string;
-    direction: string;
+    direction: "-1" | "1";
     marginValue: number;
     leverage: string | null;
     takeProfit: string | null;
@@ -69,12 +69,15 @@ OnePriceNewOrderFormState
       minMarginValue: null,
       maxMarginValue: null,
       marginValueStep: 100,
-      sellStep: 0.01,
+      sellStep: 0.01, // TODO: 套 api 给的值
       sellDigits: Math.log10(1 / 0.01),
     },
     currentSymbol: {},
   };
   componentDidMount() {
+    // TODO: this.state.currentSymbol 改接 store 的 currentSymbol
+    const { currentSymbol, } = this.props.symbol;
+    console.log("currentSymbol :>> ", toJS(currentSymbol));
     this.fetchCurrentSymbol(37061);
   }
   fetchCurrentSymbol = async id => {
@@ -232,26 +235,74 @@ OnePriceNewOrderFormState
       throw new Error("作空止损价不合法");
     }
   };
-  handleSubmit = () => {
-    console.log("this.state.form :>> ", this.state.form);
-    console.log("this.state.validation :>> ", this.state.validation);
+  calculateOrderAmount = () => {
+    const { marginValue, leverage, } = this.state.form;
+    const totalAmount = Number(leverage) * Number(marginValue);
+    return totalAmount;
+  };
+  calculateOrderLots = () => {
     const {
       symbol_display = {},
       product_details = {},
     } = this.state.currentSymbol;
-    const { direction, stopLoss, takeProfit, } = this.state.form;
+    const { marginValue, leverage, } = this.state.form;
+    const { sell, } = product_details;
+    const { contract_size, } = symbol_display;
+    const amountPerLot = Number(sell) * Number(contract_size);
+    const lots = Math.floor(
+      (Number(marginValue) * Number(leverage)) / Number(amountPerLot)
+    );
+    return lots;
+  };
+
+  handleSubmit = async () => {
+    // console.log("this.state.form :>> ", this.state.form);
+    // console.log("this.state.validation :>> ", this.state.validation);
+    const {
+      symbol_display = {},
+      product_details = {},
+      id,
+    } = this.state.currentSymbol;
+    const {
+      marginValue,
+      positionType,
+      leverage,
+      direction,
+      stopLoss,
+      takeProfit,
+    } = this.state.form;
     const { sell, } = product_details;
     const { minStopLossStep, minTakeProfitStep, } = this.state.validation;
 
     try {
+      if (!direction || !leverage) throw new Error("请正确填写下单资料");
       if (takeProfit) {
         this.validateTakeProfit(takeProfit, minTakeProfitStep, sell, direction);
       }
       if (stopLoss) {
         this.validateStopLoss(stopLoss, minStopLossStep, sell, direction);
       }
+
+      const orderAction =
+        direction === "1" ? "0" : direction === "-1" ? "1" : null;
+      const lots = this.calculateOrderLots();
+      const payload = {
+        symbol: id,
+        open_price: sell,
+        position_type: positionType,
+        margin_value: marginValue,
+        lots,
+        trading_volume: lots,
+        leverage,
+        action: orderAction,
+        stopLoss,
+        takeProfit,
+      };
+      const res = await api.market.createOrder(payload);
+      // console.log("res :>> ", res);
     } catch (err) {
-      console.warn(err);
+      const content = err.message;
+      Message.error(content);
     }
   };
   render() {
@@ -272,10 +323,11 @@ OnePriceNewOrderFormState
       ? symbol_display_leverage.split(",")
       : [];
     // console.log("leverageOption :>> ", leverageOption);
-    const { marginValue, leverage, } = this.state.form;
-    const totalAmount = Number(leverage) * Number(marginValue);
+    const orderAmount = this.calculateOrderAmount();
+    const orderLots = this.calculateOrderLots();
+
     return (
-      <form className={cx("form")}>
+      <div className={cx("form")} >
         <div className={cx("form-item")} data-name="position-type">
           <div className={cx("label")}>持仓类型</div>
           <div className={cx("control")}>
@@ -346,11 +398,11 @@ OnePriceNewOrderFormState
         </div>
         <div className={cx("form-item")}>
           <div className={cx("label")}>操盘资金</div>
-          <div className={cx("control")}>{totalAmount || "-"}</div>
+          <div className={cx("control")}>{orderAmount}</div>
         </div>
         <div className={cx("form-item")}>
           <div className={cx("label")}>买入数量</div>
-          <div className={cx("control")}>{"-"}</div>
+          <div className={cx("control")}>{orderLots}</div>
         </div>
         <div className={cx("form-item")} data-name="take-profit">
           <div className={cx("label")}>止盈价</div>
@@ -392,7 +444,7 @@ OnePriceNewOrderFormState
           </div>
         </div>
         <NewOrderRule />
-      </form>
+      </div>
     );
   }
 }

@@ -7,15 +7,34 @@ import {
   IPriceInfo,
   ISymbolItem
 } from "pages/Symbol/config/interface";
+import { current } from "immer";
 const PAGE_SIZE = 20;
 
 class ProductStore extends BaseStore {
   isInit = false;
-
   setInit = () => {
     this.isInit = true;
   };
 
+  // 目前选中的 symbolId
+  @observable
+  currentSymbolId = null;
+
+  @observable
+  currentSymbol = {};
+  @action
+  fetchCurrentSymbol = async () => {
+    const symbolId = this.currentSymbolId;
+    const res = await api.market.getCurrentSymbol(symbolId);
+    if (res.status === 200) {
+      this.setCurrentSymbol(res.data);
+    }
+  };
+  setCurrentSymbol = data => {
+    this.currentSymbol = data;
+  };
+
+  //
   @observable
   symbolTypeList = [
     {
@@ -62,8 +81,6 @@ class ProductStore extends BaseStore {
       ...type,
     };
   };
-
-
 
   createSymbolList(list: any, symbol_type_code: string): ISymbolItem[] {
     return list.map((item, i) => {
@@ -129,7 +146,8 @@ class ProductStore extends BaseStore {
   };
 
   getSymbolNextPage = (count, current_page, page_size) => {
-    const nextPage =  count - current_page * page_size > 0 ? current_page + 1 : -1;
+    const nextPage =
+      count - current_page * page_size > 0 ? current_page + 1 : -1;
     return nextPage;
   };
 
@@ -143,8 +161,8 @@ class ProductStore extends BaseStore {
 
   @observable
   currentSymbolList = {
-    page:-1,
-    nexPage:-1,
+    page: -1,
+    nexPage: -1,
     results: [],
   };
 
@@ -158,8 +176,8 @@ class ProductStore extends BaseStore {
   @action
   clearCurrentSymbolList = () => {
     this.currentSymbolList = {
-      page:-1,
-      nexPage:-1,
+      page: -1,
+      nexPage: -1,
       results: [],
     };
   };
@@ -186,7 +204,7 @@ class ProductStore extends BaseStore {
     this.setCurrentSymbolList({
       page,
       nextPage,
-      results:symbolList,
+      results: symbolList,
     });
   };
 
