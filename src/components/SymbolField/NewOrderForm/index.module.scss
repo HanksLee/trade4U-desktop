@@ -1,0 +1,94 @@
+.form {
+  --text-color: #838d9e;
+  padding: 10px;
+  .form-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    .label {
+      color: var(--text-color);
+      flex-basis: 20%;
+    }
+
+    .control {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      padding: 0 10px;
+      flex-grow: 1;
+      flex-wrap: wrap;
+      :global(.ant-input-number) {
+        width: 100%;
+        height: 100%;
+        :global(.ant-input-number-input-wrap) {
+          height: 100%;
+          :global(.ant-input-number-input) {
+            text-align: center;
+            height: 100%;
+            border: none;
+          }
+        }
+      }
+      :global(.ant-input-number-handler-wrap) {
+        display: none;
+      }
+    }
+  }
+}
+
+.rule-description {
+  display: flex;
+  padding: 0 10px;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  color: var(--text-color);
+}
+.submit-button-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+//
+.option-button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.option-button {
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  margin: 5px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &--active {
+    --color: #f2e205;
+  }
+}
+//
+.input-button-set {
+  --color: #838d9e;
+  display: flex;
+  border-radius: 4px;
+  margin: 5px;
+  width: 100%;
+  height: 40px;
+  .input-button {
+    flex-basis: 20%;
+    background-color: #303b49;
+    outline: none;
+    border: 1px solid var(--text-color);
+    cursor: pointer;
+
+    &-right {
+      border-radius: 0 4px 4px 0;
+    }
+    &-left {
+      border-radius: 4px 0 0 4px;
+    }
+  }
+}
