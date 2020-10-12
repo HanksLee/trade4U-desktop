@@ -138,6 +138,9 @@ export default class ProductList extends BasePureReact {
     const selectedItem = itemTmp.length === 0 ? null : itemTmp[0];
 
     this.props.symbol.setCurrentSymbol(selectedItem);
+   
+    // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
+    this.props.product.fetchCurrentSymbol(symbolId); 
   };
 
   //buffer

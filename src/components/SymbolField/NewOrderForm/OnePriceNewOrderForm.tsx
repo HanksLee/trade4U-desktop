@@ -1,9 +1,9 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { reaction, toJS } from "mobx";
+import { reaction, toJS, autorun, IReactionDisposer } from "mobx";
 import { useState, useEffect } from "react";
 import produce from "immer";
-import { Button, Input, InputNumber, Message } from "antd";
+import { Button, Input, InputNumber, message } from "antd";
 import { NewOrderRule } from "./NewOrderRule";
 import { InputButtonSet } from "./InputButtonSet";
 import utils from "utils";
@@ -20,33 +20,30 @@ export interface OnePriceNewOrderFormState {
     positionType: string;
     direction: "-1" | "1";
     marginValue: number;
-    leverage: string | null;
-    takeProfit: string | null;
-    stopLoss: string | null;
+    leverage: string | "";
+    takeProfit: string | "";
+    stopLoss: string | "";
   };
   validation: {
     minStopLossStep: number | null;
     minTakeProfitStep: number | null;
-    takeProfitTargetPriceMap: object;
-    stopLossTargetPriceMap: object;
     minMarginValue: number | null;
     maxMarginValue: number | null;
     marginValueStep: number;
     sellStep: number;
   };
-  currentSymbol: object;
+  effectDisposer: Set<IReactionDisposer>;
 }
 
-const preciseNumber = (input, digits = 10) => {
-  return String(Number(Number(input).toFixed(digits)));
+const preciseNumber = input => {
+  return Number(input.toPrecision(15));
 };
 
 const directionOptionMap = {
   "1": { "zh-cn": "作多", },
   "-1": { "zh-cn": "作空", },
 };
-
-@inject("other", "common", "symbol")
+@inject("product")
 @observer
 export class OnePriceNewOrderForm extends React.Component<
 OnePriceNewOrderFormProps,
@@ -57,49 +54,49 @@ OnePriceNewOrderFormState
       positionType: "T+0",
       direction: "1",
       marginValue: 0,
-      leverage: null,
+      leverage: "",
       takeProfit: "",
       stopLoss: "",
     },
     validation: {
       minStopLossStep: null,
       minTakeProfitStep: null,
-      takeProfitTargetPriceMap: {},
-      stopLossTargetPriceMap: {},
       minMarginValue: null,
       maxMarginValue: null,
       marginValueStep: 100,
-      sellStep: 0.01, // TODO: 套 api 给的值
+      sellStep: 0.01,
       sellDigits: Math.log10(1 / 0.01),
     },
-    currentSymbol: {},
+    effectDisposers: new Set(),
   };
   componentDidMount() {
-    // TODO: this.state.currentSymbol 改接 store 的 currentSymbol
-    const { currentSymbol, } = this.props.symbol;
-    console.log("currentSymbol :>> ", toJS(currentSymbol));
-    this.fetchCurrentSymbol(37061);
+    const effectDisposer = autorun(() => {
+      const currentSymbol = this.props.product.currentSymbol;
+      this.initValidationState();
+      this.initFormState();
+    });
+    this.state.effectDisposers.add(effectDisposer);
   }
-  fetchCurrentSymbol = async id => {
-    const res = await api.market.getCurrentSymbol(id);
-    this.setState({ currentSymbol: res.data, });
-    this.initValidationState();
-    this.initFormState();
-  };
+  componentWillUnmount() {
+    this.state.effectDisposers.forEach((disposer: IReactionDisposer) =>
+      disposer()
+    );
+  }
   initFormState = () => {
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
-    const { sell, } = product_details;
+    } = this.props.product.currentSymbol;
     const { min_margin_value, } = symbol_display;
 
     this.setState(
       produce(draft => {
+        draft.form.positionType = "T+0";
+        draft.form.direction = "1";
         draft.form.marginValue = Number(min_margin_value);
+        draft.form.leverage = "";
         draft.form.stopLoss = "";
         draft.form.takeProfit = "";
-        draft.form.direction = "1";
       })
     );
   };
@@ -107,7 +104,7 @@ OnePriceNewOrderFormState
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { sell, } = product_details;
     const {
       min_margin_value,
@@ -117,29 +114,17 @@ OnePriceNewOrderFormState
     } = symbol_display;
     const minStopLossStep = Number(stop_loss_point / 100) * Number(sell);
     const minTakeProfitStep = Number(take_profit_point / 100) * Number(sell);
-    // 1: 作多的止盈目标价，-1: 作空的止盈目标
-    const takeProfitTargetPriceMap = {
-      1: Number(sell) + minTakeProfitStep,
-      "-1": Number(sell) - minTakeProfitStep,
-    };
-    // 1: 作多的止损目标价，-1: 作空的止损目标价
-    const stopLossTargetPriceMap = {
-      1: Number(sell) - minStopLossStep,
-      "-1": Number(sell) + minStopLossStep,
-    };
     this.setState(
       produce(draft => {
         draft.validation.minStopLossStep = minStopLossStep;
         draft.validation.minTakeProfitStep = minTakeProfitStep;
-        draft.validation.stopLossTargetPriceMap = stopLossTargetPriceMap;
-        draft.validation.takeProfitTargetPriceMap = takeProfitTargetPriceMap;
         draft.validation.minMarginValue = min_margin_value;
         draft.validation.maxMarginValue = max_margin_value;
       })
     );
   };
   handlePositionTypeChange = (e, value) => {
-    this.initFormState();
+    this.initFormState(); // 持仓类型改变时要重置表单
     this.setState(
       produce(draft => {
         draft.form.positionType = value;
@@ -196,20 +181,20 @@ OnePriceNewOrderFormState
   };
 
   handleTakeProfitAdjust = amount => {
-    const { sellDigits = 2, } = this.state.validation;
     this.setState(
       produce(draft => {
-        const val = Number(draft.form.takeProfit) + amount;
-        draft.form.takeProfit = val.toFixed(sellDigits);
+        const val = preciseNumber(
+          Number(draft.form.takeProfit) + Number(amount)
+        );
+        draft.form.takeProfit = String(val);
       })
     );
   };
   handleStopLossAdjust = amount => {
-    const { sellDigits = 2, } = this.state.validation;
     this.setState(
       produce(draft => {
-        const val = Number(draft.form.stopLoss) + amount;
-        draft.form.stopLoss = val.toFixed(sellDigits);
+        const val = preciseNumber(Number(draft.form.stopLoss) + Number(amount));
+        draft.form.stopLoss = String(val);
       })
     );
   };
@@ -244,7 +229,7 @@ OnePriceNewOrderFormState
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { marginValue, leverage, } = this.state.form;
     const { sell, } = product_details;
     const { contract_size, } = symbol_display;
@@ -256,13 +241,12 @@ OnePriceNewOrderFormState
   };
 
   handleSubmit = async () => {
-    // console.log("this.state.form :>> ", this.state.form);
-    // console.log("this.state.validation :>> ", this.state.validation);
     const {
       symbol_display = {},
       product_details = {},
       id,
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
+    const { sell, } = product_details;
     const {
       marginValue,
       positionType,
@@ -271,7 +255,6 @@ OnePriceNewOrderFormState
       stopLoss,
       takeProfit,
     } = this.state.form;
-    const { sell, } = product_details;
     const { minStopLossStep, minTakeProfitStep, } = this.state.validation;
 
     try {
@@ -286,6 +269,7 @@ OnePriceNewOrderFormState
       const orderAction =
         direction === "1" ? "0" : direction === "-1" ? "1" : null;
       const lots = this.calculateOrderLots();
+      // TODO: 港股没有 lots 与 trading_volume，但 api 会验证
       const payload = {
         symbol: id,
         open_price: sell,
@@ -299,35 +283,30 @@ OnePriceNewOrderFormState
         takeProfit,
       };
       const res = await api.market.createOrder(payload);
-      // console.log("res :>> ", res);
+      message.success("下单成功");
     } catch (err) {
       const content = err.message;
-      Message.error(content);
+      message.error(content);
     }
   };
   render() {
-    // console.log("this.state.currentSymbol :>> ", this.state.currentSymbol);
     const {
       symbol_display = {},
       product_details = {},
-    } = this.state.currentSymbol;
+    } = this.props.product.currentSymbol;
     const { sellStep, } = this.state.validation;
     const { leverage: symbol_display_leverage, position_type, } = symbol_display;
-    // console.log("this.state.form :>> ", this.state.form);
-    // console.log("symbol_display_leverage :>> ", symbol_display_leverage);
-    // const positionTypeOption = position_type ? position_type : [];
-    const positionTypeOption = ["T+0", "T+1"];
+    const positionTypeOption = position_type ? position_type : [];
     const directionOption =
       this.state.form.positionType === "T+0" ? ["-1", "1"] : ["1"];
     const leverageOption = symbol_display_leverage
       ? symbol_display_leverage.split(",")
       : [];
-    // console.log("leverageOption :>> ", leverageOption);
     const orderAmount = this.calculateOrderAmount();
     const orderLots = this.calculateOrderLots();
 
     return (
-      <div className={cx("form")} >
+      <div className={cx("form")}>
         <div className={cx("form-item")} data-name="position-type">
           <div className={cx("label")}>持仓类型</div>
           <div className={cx("control")}>
@@ -436,7 +415,7 @@ OnePriceNewOrderFormState
             </InputButtonSet>
           </div>
         </div>
-        <div className={cx("form-item")} data-name="stop-loss">
+        <div className={cx("form-item")}>
           <div className={cx("submit-button-wrap")}>
             <Button className="t4u-button-primary" onClick={this.handleSubmit}>
               下单

@@ -1,12 +1,12 @@
 .form {
   --text-color: #838d9e;
   padding: 10px;
+  color: var(--text-color);
   .form-item {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     .label {
-      color: var(--text-color);
       flex-basis: 20%;
     }
 
@@ -28,14 +28,12 @@
           :global(.ant-input-number-input) {
             text-align: center;
             height: 100%;
-            border: none;
           }
         }
       }
       :global(.ant-input) {
         text-align: center;
         height: 100%;
-        border: none;
       }
     }
   }
