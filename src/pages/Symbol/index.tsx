@@ -13,6 +13,7 @@ import Center from './Center';
 
 import "./index.scss";
 
+import OrderWSControl from './WS/Order';
 
 /* eslint new-cap: "off" */
 @WithRoute("/dashboard/symbol")
@@ -31,7 +32,7 @@ export default class extends BaseReact {
   render() {
     return (
       <div className={"symbol-page"}>
-  
+        <OrderWSControl />
         <Left  />
         <Center/>
   

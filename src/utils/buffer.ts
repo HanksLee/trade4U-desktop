@@ -1,6 +1,13 @@
 import moment from "moment";
+export interface IBuffer{
+  BUFFER_MAXCOUNT: number;
+  BUFFER_TIME: number;
+  timeId: number;
+  lastCheckUpdateTime: number;
+  register: any;
+} 
 
-const buffer = {
+const buffer: IBuffer = {
   BUFFER_MAXCOUNT: 50,
   BUFFER_TIME: 2000,
   timeId: 0,
@@ -39,7 +46,7 @@ export const checkBuffer = (
 };
 
 export const mergeRegisterData = (reg, msg) => {
-  const { type, data } = msg;
+  const { type, data, } = msg;
   if (Array.isArray(reg)) {
     const d = Array.isArray(data) ? data : [data];
     return [...reg, ...d];
@@ -74,17 +81,17 @@ export const getRegisterCount = (reg) => {
   return total;
 };
 export const checkRegisterHasValue = (reg)=>{
-  if(Array.isArray(reg)){
+  if(Array.isArray(reg)) {
     return reg.length !== 0;
   }
 
   let count = 0;
-  for(value of reg){
+  for(value of reg) {
     count += value.length;
   }
 
   return count !== o;
-}
+};
 
 const createRegister = (typeList) => {
   const reg = {};

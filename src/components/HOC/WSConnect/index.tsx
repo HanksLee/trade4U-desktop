@@ -4,6 +4,7 @@ import WebSocketControl, {
   WebSocketStatus,
   WebSocketCloseCode
 } from "utils/WebSocketControl";
+import { IChannelConfig } from './config/interface';
 
 import {
   initBuffer,
@@ -26,11 +27,11 @@ const {
 } = WebSocketStatus;
 const { AUTO, NORMAL, } = WebSocketCloseCode;
 
-export default function WSConnect(channelConfig, Comp) {
-  if(!channelConfig || channelConfig.length === 0) return Comp; 
-  const defaultChannl = channelConfig[0] || {};
+export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
+  if(!channelConfigList || channelConfigList.length === 0) return Comp; 
+  const defaultChannel: IChannelConfig = channelConfigList[0] || null;
 
-  if(!defaultChannl) return null;
+  if(!defaultChannel) return Comp;
 
   const {
     path,
@@ -39,7 +40,7 @@ export default function WSConnect(channelConfig, Comp) {
     connectDistanceTime,
     tryConnectMax,
     disconnectMax,
-  } = defaultChannl;
+  } = defaultChannel;
 
   const wsControl = new WebSocketControl({
     path: path,
@@ -64,7 +65,7 @@ export default function WSConnect(channelConfig, Comp) {
 
   return class extends BaseReact {
     state = {
-      selectedChannel: defaultChannl,
+      selectedChannel: defaultChannel,
       refreshChannel: false,
     };
     disconnetCount = 0;
@@ -94,23 +95,23 @@ export default function WSConnect(channelConfig, Comp) {
         getProgress,
         replaceUrl,
         sendMsg,
-        setReceviceMsgLinter,
+        setReceiveMsgLinter,
         setStatusChangeListener,
       } = this;
-      const wsContronl = {
+      const wsControl = {
         startWS,
         closeWS,
         reconnectWS,
         getProgress,
         replaceUrl,
         sendMsg,
-        setReceviceMsgLinter,
+        setReceiveMsgLinter,
         setStatusChangeListener,
       };
       return (
         <Comp
           {...this.props}
-          wsContronl={wsContronl}
+          wsControl={wsControl}
         />
       );
     }
@@ -166,11 +167,7 @@ export default function WSConnect(channelConfig, Comp) {
     };
 
     createBuffer = () => {
-      const { limitTime, maxCount, regType, } = bufferInfo || {
-        limitTime: null,
-        maxCount: null,
-        reg: null,
-      };
+      const { limitTime = null, maxCount = null, regType = null, } = bufferInfo || {} ;
       return initBuffer(limitTime, maxCount, regType);
     };
 
@@ -181,8 +178,8 @@ export default function WSConnect(channelConfig, Comp) {
       });
       wsc.setReceviceMsg((wsc, msg) => {
         // console.log("ReceviceMsg:" ,msg);
-        if (!bufferInfo && this.receviceMsgLinter) {
-          this.receviceMsgLinter(msg);
+        if (!bufferInfo && this.receiveMsgLinter) {
+          this.receiveMsgLinter(msg);
           return;
         }
         const { buffer, } = this;
@@ -192,7 +189,7 @@ export default function WSConnect(channelConfig, Comp) {
           BUFFER_MAXCOUNT,
           lastCheckUpdateTime,
         } = buffer;
-        const receviceTime = moment().valueOf();
+        const receiveTime = moment().valueOf();
         buffer.register = mergeRegisterData(buffer.register, msg);
 
         const maxCount = getRegisterCount(buffer.register);
@@ -202,12 +199,12 @@ export default function WSConnect(channelConfig, Comp) {
             BUFFER_MAXCOUNT,
             maxCount,
             lastCheckUpdateTime,
-            receviceTime
+            receiveTime
           )
         ) {
           return;
         }
-        if (this.receviceMsgLinter) this.receviceMsgLinter(buffer.register);
+        if (this.receiveMsgLinter) this.receiveMsgLinter(buffer.register);
         this.buffer = this.createBuffer();
       });
 
@@ -218,10 +215,10 @@ export default function WSConnect(channelConfig, Comp) {
       wsc.setStatusEvent(CONNECTING, (wsc, count) => {
         // console.log("CONNECTING:",count);
         if (
-          this.receviceMsgLinter &&
+          this.receiveMsgLinter &&
           checkRegisterHasValue(this.buffer.register)
         ) {
-          this.receviceMsgLinter(this.buffer.register);
+          this.receiveMsgLinter(this.buffer.register);
         }
 
         if (count === tryConnectMax) {
@@ -250,9 +247,9 @@ export default function WSConnect(channelConfig, Comp) {
       });
     };
 
-    receviceMsgLinter = null;
-    setReceviceMsgLinter = fn => {
-      this.receviceMsgLinter = fn;
+    receiveMsgLinter = null;
+    setReceiveMsgLinter = fn => {
+      this.receiveMsgLinter = fn;
     };
     statusChangListener = null;
     setStatusChangeListener = fn => {
