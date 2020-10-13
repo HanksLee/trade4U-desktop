@@ -63,7 +63,7 @@ class CommonStore extends BaseStore {
   get getHighPriceClass() {
     const key = "up";
     return {
-      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[key],
       gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }
@@ -72,7 +72,7 @@ class CommonStore extends BaseStore {
   get getNormalPriceClass() {
     const key = "balance";
     return {
-      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[key],
       gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }
@@ -82,7 +82,7 @@ class CommonStore extends BaseStore {
   get getLowPriceClass() {
     const key = "down";
     return {
-      color: STOCK_COLOR_MAP[this.stockColorMode][key],
+      color: STOCK_COLOR_MAP[key],
       gif: STOCK_COLOR_GIF_MAP[this.stockColorMode][key],
     };
   }

@@ -102,7 +102,7 @@ export default class Market extends BaseReact<any, MarketState> {
         {currentSymbolTypeCode === "HK" && (
           <>
             <div className="trend-graph-panel" ref={this.container}>
-   
+
             </div>
             <RankTable symbolTypeCode={currentSymbolTypeCode} />
           </>

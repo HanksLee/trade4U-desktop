@@ -12,17 +12,12 @@ import newsActiveSVG from 'assets/img/news-active.svg';
 export const FORMAT_TIME = 'YYYY.MM.DD HH:mm:ss';
 
 export const STOCK_COLOR_MAP = {
-  // 绿涨红跌
-  1: {
-    up: 'stock-green',
-    down: 'stock-red',
-    balance: 'stock-white',
-  },
-  2: {
-    up: 'stock-red',
-    down: 'stock-green',
-    balance: 'stock-white',
-  },
+  // 涨跌className設置
+
+  up: 'p-up',
+  down: 'p-down',
+  balance: 'stock-white',
+
 };
 
 export const STOCK_COLOR_GIF_MAP = {
@@ -43,7 +38,7 @@ export const PAGE_ROUTES = [
   {
     title: '产品',
     path: '/dashboard/symbol',
-    isShow:'',
+    isShow: '',
     icon: symbolSVG,
     activeIcon: symbolActiveSVG,
   },
@@ -56,21 +51,21 @@ export const PAGE_ROUTES = [
   {
     title: '资金',
     path: '/dashboard/captial',
-    isShow:'',
+    isShow: '',
     icon: capitalSVG,
     activeIcon: capitalActiveSVG,
   },
   {
     title: '申購',
     path: '/dashboard/subscribe',
-    isShow:'function_ipo',
+    isShow: 'function_ipo',
     icon: subscribeSVG,
     activeIcon: subscribeActiveSVG,
   },
   {
     title: '新聞',
     path: '/dashboard/news',
-    isShow:'function_news',
+    isShow: 'function_news',
     icon: newsSVG,
     activeIcon: newsActiveSVG,
   }
