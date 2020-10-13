@@ -1,7 +1,7 @@
 import * as React from "react";
 import utils from "utils";
 import { BaseReact } from "components/@shared/BaseReact";
-import { Modal, Form, Input, Button, DatePicker, Upload, Cascader } from "antd";
+import { Modal, Form, Input, Button, DatePicker, Upload, Cascader, Select } from "antd";
 import moment from "moment";
 import { RcFile } from "antd/lib/upload";
 //import { inject, observer } from "mobx-react";
@@ -21,6 +21,7 @@ import cameraIcon from "assets/img/camera-icon.svg";
 // import stopIcon from "assets/img/stop-icon.svg";
 import "./index.scss";
 import { stringify } from "querystring";
+import { inject, observer } from "mobx-react";
 
 interface ISettingsModalProps {
   onCancel: () => void;
@@ -55,8 +56,11 @@ const layout = {
   labelCol: { span: 8, },
   wrapperCol: { span: 16, },
 };
-// @ts-ignore
 
+const Option = Select.Option;
+// @ts-ignore
+@inject("common")
+@observer
 export default class EditSettingsModal extends BaseReact<
 ISettingsModalProps,
 ISettingsModalState
@@ -74,7 +78,7 @@ ISettingsModalState
     verifyPass: false,
     inputDisabled: false,
   };
-
+  colorMode = "";
   formRef = React.createRef<HTMLInputElement>();
 
   componentDidMount() {
@@ -219,6 +223,14 @@ ISettingsModalState
       this.getList();
     }
   };
+
+  changeColorPrefer = () => {
+    if (utils.isEmpty(this.colorMode) ||
+      localStorage.getItem("trade4U_PC_color_mode") === this.colorMode) return;
+
+    localStorage.setItem("trade4U_PC_color_mode", this.colorMode);
+    this.props.common.setQuoteColor();
+  }
 
   sendSMS = async () => {
     let payload = {
@@ -527,25 +539,46 @@ ISettingsModalState
         {!currentItem && (
           <div className="items-container">
             <div className="settings-item">
-              <span>语言</span>
-              <span>中文</span>
-              <span>修改</span>
+              <span className="settings-title">语言</span>
+              <span className="settings-input">中文</span>
+              <span className="settings-edit">修改</span>
             </div>
             <div className="settings-item">
-              <span>图表</span>
-              <span>柱状图</span>
-              <span>修改</span>
+              <span className="settings-title">图表</span>
+              <span className="settings-input">柱状图</span>
+              <span className="settings-edit">修改</span>
             </div>
             <div className="settings-item">
-              <span>登入密码</span>
-              <span>******</span>
-              <span
+              <span className="settings-title">登入密码</span>
+              <span className="settings-input">******</span>
+              <span className="settings-edit"
                 onClick={() => {
                   this.switchItem("reset-pwd");
                 }}
               >
                 修改
               </span>
+            </div>
+            <div className="settings-item">
+              <span className="settings-title">涨跌偏好</span>
+              <span className="setting-option">
+                <Select
+                  id="color_prefer_select"
+                  defaultValue={
+                    localStorage.getItem("trade4U_PC_color_mode") || this.props.common.getKeyConfig('color_mode')
+                  }
+                  onChange={(val) => { this.colorMode = val; }}
+                  placeholder="选择偏好"
+                >
+                  <Option value={"standard"}>
+                    <span>绿涨红跌</span>
+                  </Option>
+                  <Option value={"hk_style"}>
+                    <span>红涨绿跌</span>
+                  </Option>
+                </Select>
+              </span>
+              <span className="settings-edit" onClick={this.changeColorPrefer}>修改</span>
             </div>
           </div>
         )}

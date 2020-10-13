@@ -76,7 +76,7 @@ function exactFromSidebarPath(pathlist) {
 /* eslint new-cap: "off" */
 // @ts-ignore
 @withRouter
-@inject("common")
+@inject("common", "symbol")
 @observer
 export default class Index extends BaseReact<IIndexProps, IIndexState> {
   wsConnect = null;
@@ -125,9 +125,20 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
 
   async componentDidMount() {
     this.props.history.push("/dashboard/symbol");
-    this.props.common.getSystemConfig();
-    this.props.common.getUserInfo();
-    this.connectWebsocket();
+    await this.props.common.getSystemConfig();
+    await this.props.common.getUserInfo();
+    this.getQuoteColor();
+    // this.connectWebsocket();
+  }
+
+  getQuoteColor = () => {
+    const { configMap, } = this.props.common;
+
+    if (!localStorage.getItem("trade4U_PC_color_mode")) {
+      const colorMode = configMap["color_mode"];
+      localStorage.setItem("trade4U_PC_color_mode", colorMode);
+    }
+    this.props.common.setQuoteColor();
   }
 
   connectWebsocket = () => {
@@ -263,7 +274,8 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               }
             }, 500)}
             onChange={(value, elem) => {
-              this.props.market.getCurrentSymbol(value);
+              this.props.symbol.setCurrentSymbol({ symbolId: value, name: elem.children, });
+              // this.props.market.getCurrentSymbol(value);
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");
                 // this.setState({

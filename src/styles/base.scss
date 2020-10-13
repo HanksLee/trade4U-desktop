@@ -1,3 +1,5 @@
+@import "./vars";
+
 .html,
 .body {
   font-size: 14px;
@@ -8,4 +10,11 @@
   height: 100vh;
   background: #1d1f23;
   //overflow-y: scroll;
+}
+
+:root {
+  --up-color: $up;
+  --down-color: $down;
+  // --up-color-rgb: 68, 215, 182;
+  // --down-color-rgb: 233, 74, 57;
 }

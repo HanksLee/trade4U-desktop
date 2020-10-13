@@ -66,14 +66,14 @@ export default class extends React.Component<any, any> {
             <span className={`symbol-chart-title-status ${trader_status}`}>
               {status}
             </span>
-            <span className={`symbol-right-btn ${btnCss}`} onClick={()=>this.onRightBtnClick(rightSide)}></span>
+            <span className={`symbol-right-btn ${btnCss}`} onClick={() => this.onRightBtnClick(rightSide)}></span>
           </div>
         </Col>
       </Row>
     );
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate() { }
 
   //function
   setSignStirng(number) {
@@ -89,7 +89,7 @@ export default class extends React.Component<any, any> {
 
 
   //event
-  onRightBtnClick = (status)=>{
+  onRightBtnClick = (status) => {
     const rightSide = status === FULL ? ZOOMOUT : FULL;
     this.props.trend.setRightBtnOpenClick(rightSide);
   }

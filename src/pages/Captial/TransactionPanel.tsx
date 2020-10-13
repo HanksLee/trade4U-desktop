@@ -35,14 +35,14 @@ export default class TransactionPanel extends BaseReact {
         title: '时间',
         dataIndex: 'create_time',
         key: 'create_time',
-        align: 'center',
+        align: 'left',
         render: (text, record) => moment(text * 1000).format('YYYY.MM.DD HH:mm:ss'),
       },
       {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        align: 'center',
+        align: 'right',
         // render: (text) => {
         //   switch (text) {
         //     case 'recharge_success':
@@ -62,7 +62,8 @@ export default class TransactionPanel extends BaseReact {
         title: '金额',
         dataIndex: 'amount',
         key: 'amount',
-        align: 'center',
+        align: 'right',
+        width: 300,
         render: (text, record) => {
           return text == 0
             ? 0
@@ -75,7 +76,8 @@ export default class TransactionPanel extends BaseReact {
         title: '备注',
         dataIndex: 'remarks',
         key: 'remarks',
-        align: 'center',
+        align: 'right',
+        width: 400,
       }
     ];
   }
@@ -108,10 +110,12 @@ export default class TransactionPanel extends BaseReact {
             <span>{totalData.balance || 0}</span>
           </div>
         </div>
-        <Table
-          dataSource={transactionList}
-          columns={this.getColumns()}
-        />
+        <div className="transaction-detail">
+          <Table
+            dataSource={transactionList}
+            columns={this.getColumns()}
+          />
+        </div>
       </div>
     );
   }

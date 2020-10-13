@@ -63,7 +63,8 @@
 
   .ant-btn:hover, .ant-btn:focus {
     color: white;
-    background-color: $down;
+    // background-color: $down;
+    color: var(--down-color);
     border: none;
     //border: 1px solid $down !important;
   }
