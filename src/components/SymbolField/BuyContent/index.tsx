@@ -14,11 +14,9 @@ import utils from "utils";
 import api from "services";
 
 import classNames from "classnames/bind";
-import globalCss from "app.module.scss";
 import { inject, observer } from "mobx-react";
 import { reaction, toJS } from "mobx";
-
-const globalCx = classNames.bind(globalCss);
+import { OnePriceNewOrderForm } from "../NewOrderForm";
 
 @inject("other", "common", "symbol")
 @observer
@@ -38,9 +36,12 @@ export default class extends React.PureComponent<{}, {}> {
 
   render() {
     const { showCls, } = this.state;
+
     return (
       <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
         <ToolHeader />
+   
+        <OnePriceNewOrderForm />
       </div>
     );
   }

@@ -1,3 +1,23 @@
+// 全局样式
+:root {
+  --color-rgb-primary: 242, 226, 5;
+}
+
+.t4u-button-primary {
+  width: 160px;
+  height: 40px;
+  padding: 5px;
+  color: #232c37;
+  background: rgba(var(--color-rgb-primary), 1);
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    background: rgba(var(--color-rgb-primary), 1);
+  }
+}
+
+//
 .panel {
   padding: 16px 32px;
   background-color: #fff;
@@ -198,13 +218,13 @@ img.emoji {
 }
 
 .stock-green-gif {
-  @include bg('img/stock-green.gif');
+  @include bg("img/stock-green.gif");
 
   background-size: 100% 100%;
 }
 
 .stock-red-gif {
-  @include bg('img/stock-red.gif');
+  @include bg("img/stock-red.gif");
 
   background-size: 100% 100%;
 }
