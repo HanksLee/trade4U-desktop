@@ -313,6 +313,12 @@ $side-width: 368px;
             margin-left: 6px;
           }
         }
+
+        .symbol-header-tool{
+          position: absolute;
+          top:0px;
+          right: 10px;
+        }
       }
       
       &.symbol-detail {
@@ -329,6 +335,13 @@ $side-width: 368px;
       &.symbol-buy-content {
         top: 110%;
         position: absolute;
+      }
+      .symbol-buy-content-tool{
+        margin: 13px 10px 0 0;
+        font-size: 17px;
+        color: #838D9E;
+        cursor: pointer;
+
       }
 
     }

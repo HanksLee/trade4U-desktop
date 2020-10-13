@@ -7,7 +7,7 @@ import InfiniteScroll from "react-infinite-scroller";
 
 import ProductItem from "./ProductItem";
 import { SELF } from "pages/Symbol/config/symbolTypeCategory";
-import { PAGE_SIZE } from 'constant';
+import { PAGE_SIZE } from "constant";
 
 @inject("common", "product", "symbol")
 @observer
@@ -21,7 +21,7 @@ export default class ProductList extends BasePureReact {
   subscribList = [];
   scrollRef = null;
   scrollInfo = {
-    isLoading:false,
+    isLoading: false,
     timeId: 0,
     itemCount: 0,
     MAXCOUNT: 5,
@@ -41,9 +41,8 @@ export default class ProductList extends BasePureReact {
     };
   }
 
-
   render() {
-    const { currentSymbolList, } = this.props.product;
+    const { currentSymbolList, } = this.props.symbol;
     const { results, nextPage, } = currentSymbolList;
     const { getPriceTmp, } = this.props.common;
     const hasMore = nextPage !== -1 || results.length === 0;
@@ -79,10 +78,10 @@ export default class ProductList extends BasePureReact {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { currentSymbolList, } = this.props.product;
+    const { currentSymbolList, } = this.props.symbol;
     const { page, results, } = currentSymbolList;
     const pageTotal = page * PAGE_SIZE;
-    if(pageTotal === results.length) {
+    if (pageTotal === results.length) {
       this.scrollInfo.isLoading = false;
     }
   }
@@ -99,14 +98,14 @@ export default class ProductList extends BasePureReact {
         } = item;
         const sign = Math.sign(change);
         const priceTypeObj = getPriceTmpFn(sign);
-        const { currentSymbol, } = this.props.symbol;
+        const { currentSymbolInfo, } = this.props.symbol;
 
         return (
           <ProductItem
             key={symbolKey}
             {...item}
             priceType={priceTypeObj}
-            isActive={currentSymbol?.symbolId === symbolId}
+            isActive={currentSymbolInfo.symbolId === symbolId}
             symbolId={symbolId}
             name={name}
             setOpenItem={this.setOpenItem}
@@ -130,17 +129,9 @@ export default class ProductList extends BasePureReact {
   };
 
   setOpenItem = symbolId => {
-    const { currentSymbolList, } = this.props.product;
-    const { results, } = currentSymbolList;
-    const itemTmp = results.filter(item => {
-      return item.symbolId === symbolId;
-    });
-    const selectedItem = itemTmp.length === 0 ? null : itemTmp[0];
-
-    this.props.symbol.setCurrentSymbol(selectedItem);
-   
+    this.props.symbol.setCurrentSymbolInfo(symbolId);
     // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
-    this.props.product.fetchCurrentSymbol(symbolId); 
+    this.props.product.fetchCurrentSymbol(symbolId);
   };
 
   //buffer
@@ -198,17 +189,16 @@ export default class ProductList extends BasePureReact {
   productScroll = e => {
     window.clearTimeout(this.scrollInfo.timeId);
     this.scrollInfo.timeId = window.setTimeout(() => {
-      const { nextPage, page, results, } = this.props.product.currentSymbolList;
+      const { nextPage, page, results, } = this.props.symbol.currentSymbolList;
       const { itemCount, MAXCOUNT, isLoading, } = this.scrollInfo;
       if (results.length === 0 || nextPage === -1 || isLoading) return;
 
-      const { currentSymbolType, } = this.props.symbol;
+      const { currentSymbolTypeItem, } = this.props.product;
       const {
         symbol_type_code,
         symbol_type_name,
         category,
-      } = currentSymbolType;
-
+      } = currentSymbolTypeItem;
 
       const {
         offsetHeight,
@@ -249,7 +239,7 @@ export default class ProductList extends BasePureReact {
       if (scrollingHeight < scrollHeight || pageCount === page) {
         return;
       }
-      this.props.product.addCurrentSymbolList(
+      this.props.symbol.addCurrentSymbolList(
         nextPage,
         symbol_type_name,
         symbol_type_code,

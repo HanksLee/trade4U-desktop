@@ -310,10 +310,10 @@ OnePriceNewOrderFormState
     }
   };
   render() {
-    console.log(
-      "this.props.product.currentSymbol :>> ",
-      toJS(this.props.product.currentSymbol)
-    );
+    // console.log(
+    //   "this.props.product.currentSymbol :>> ",
+    //   toJS(this.props.product.currentSymbol)
+    // );
     const {
       symbol_display = {},
       product_details = {},

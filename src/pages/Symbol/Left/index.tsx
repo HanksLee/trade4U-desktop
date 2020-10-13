@@ -24,7 +24,7 @@ const BarClass = {
   marginBottom: "0px",
 };
 
-@inject("symbol", "product", "common")
+@inject("product", "common", "symbol")
 @observer
 export default class Left extends BaseReact<{}, {}> {
   state = {};
@@ -33,15 +33,12 @@ export default class Left extends BaseReact<{}, {}> {
   priceTmp = {};
   product = null;
   symbol = null;
+  reactionList = [];
 
   constructor(props) {
     super(props);
     this.product = this.props.product;
     this.symbol = this.props.symbol;
-    this.setOnSymbolTypeListChange();
-    // this.setOnSymbolDataLoadingChange();
-    this.setOnSymbolTypeChange();
-    this.setFavorListener();
   }
   //lift cycle
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -56,10 +53,8 @@ export default class Left extends BaseReact<{}, {}> {
   }
 
   render() {
-    const { symbolTypeList, symbolListStatus, } = this.product;
-    const currentSymbolType = this.symbol.currentSymbolType || { id: -1, };
-    const { dataLoading, nextPage, } = symbolListStatus;
-    const hasMore = dataLoading || nextPage !== -1;
+    const { symbolTypeList, } = this.product;
+    const currentSymbolType = this.product.currentSymbolTypeItem;
     return (
       <div className={"symbol-left"}>
         <Tabs tabBarStyle={BarClass} defaultActiveKey={"1"}>
@@ -82,35 +77,46 @@ export default class Left extends BaseReact<{}, {}> {
   }
 
   componentDidMount() {
+    this.reactionList = [
+      this.setOnSymbolTypeListChange(),
+      this.setOnSymbolTypeChange(),
+      this.setFavorListener()
+    ];
+    
     this.product.loadSymbolTypeList();
   }
 
   componentDidUpdate() {}
+  componentWillUnmount() {
+    for(let cancelReaction of this.reactionList) {
+      cancelReaction();
+    }
+  }
   // function
 
   //tracker listener
   setOnSymbolTypeListChange = () => {
-    reaction(
+    return reaction(
       () => this.props.product.symbolTypeList,
       symbolTypeList => {
         if (!symbolTypeList || symbolTypeList.length === 1) return;
         const firstCurrentSymbolType = toJS(symbolTypeList[0]);
-        this.symbol.setCurrentSymbolType(firstCurrentSymbolType);
+        this.product.setCurrentSymbolTypeItem(firstCurrentSymbolType.id);
       }
     );
   };
 
   setOnSymbolTypeChange = () => {
-    reaction(
-      () => this.props.symbol.currentSymbolType,
-      currentSymbolType => {
-        if (!currentSymbolType) return;
+    return reaction(
+      () => this.props.product.currentSymbolTypeItem,
+      currentSymbolTypeItem => {
+        if (!currentSymbolTypeItem) return;
 
         const {
           symbol_type_name,
           symbol_type_code,
           category,
-        } = currentSymbolType;
+        } = currentSymbolTypeItem;
         this.refreshCurrentSymbolList(
           symbol_type_name,
           symbol_type_code,
@@ -120,37 +126,8 @@ export default class Left extends BaseReact<{}, {}> {
     );
   };
 
-  setOnSymbolDataLoadingChange = () => {
-    reaction(
-      () => this.props.product.symbolListStatus,
-      symbolListStatus => {
-        if (!symbolListStatus) return;
-        const { dataLoading, page, } = symbolListStatus;
-
-        if (!dataLoading) return;
-
-        const {
-          symbol_type_name,
-          symbol_type_code,
-          category,
-        } = this.symbol.currentSymbolType;
-
-        if (page === 1) {
-          this.product.clearCurrentSymbolList();
-        }
-
-        this.product.addCurrentSymbolList(
-          page,
-          symbol_type_name,
-          symbol_type_code,
-          category
-        );
-      }
-    );
-  };
-
   setFavorListener = () => {
-    reaction(
+    return reaction(
       () => this.props.product.toastMsg,
       toastMsg => {
         if (!toastMsg) return;
@@ -190,21 +167,14 @@ export default class Left extends BaseReact<{}, {}> {
 
   //event listener
   onFilterChange = (id, symbol_type_name) => {
-    const { currentSymbolType, } = this.symbol;
-    if (currentSymbolType.symbol_type_name === symbol_type_name) return;
-    const { symbolTypeList, } = this.product;
-    const nowSymbolTypeList = symbolTypeList.filter(type => {
-      return type.id === id;
-    });
-
-    if (nowSymbolTypeList.length === 0) return;
-    const nowSymbolType = nowSymbolTypeList[0];
-    this.symbol.setCurrentSymbolType(nowSymbolType);
+    const { currentSymbolTypeItem, } = this.product;
+    if (currentSymbolTypeItem.symbol_type_name === symbol_type_name) return;
+    this.product.setCurrentSymbolTypeItem(id);
   };
 
   refreshCurrentSymbolList = (symbol_type_name, symbol_type_code, category) => {
-    this.product.clearCurrentSymbolList();
-    this.product.addCurrentSymbolList(
+    this.symbol.clearCurrentSymbolList();
+    this.symbol.addCurrentSymbolList(
       1,
       symbol_type_name,
       symbol_type_code,

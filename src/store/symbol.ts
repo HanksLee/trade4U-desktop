@@ -1,30 +1,147 @@
+import api from 'services';
 import { action, observable, computed, toJS } from "mobx";
 import BaseStore from "store/base";
 import { SELF } from "pages/Symbol/config/symbolTypeCategory";
 import {
   ISymbolItem,
-  IContractInfo,
   IPriceInfo
 } from "pages/Symbol/config/interface";
+import { PAGE_SIZE } from 'constant';
 
 class SymbolStore extends BaseStore {
+
+
   @observable
-  currentSymbolType = {
-    id: -1,
-    category: "",
-    symbol_type_code: "",
-    symbol_type_name: "",
+  currentSymbolInfo: ISymbolItem = this.initCurrentSymbolInfo();
+
+  @action
+  setCurrentSymbolInfo = symbolId => {
+    const tmp = this.currentSymbolList.results.filter(item => {
+      return item.symbolId === symbolId;
+    });
+
+    const current = tmp.length === 0 ? this.initCurrentSymbolInfo() : tmp[0];
+
+    this.currentSymbolInfo = current;
+  };
+
+  @observable
+  currentSymbolList = {
+    page: -1,
+    nexPage: -1,
+    results: [],
   };
 
   @action
-  setCurrentSymbolType = d => {
-    const s = JSON.stringify(d);
-    const o = JSON.parse(s);
-    this.currentSymbolType = {
-      ...o,
+  setCurrentSymbolList(d) {
+    this.currentSymbolList = {
+      ...this.currentSymbolList,
+      ...d,
+    };
+  }
+  @action
+  clearCurrentSymbolList = () => {
+    this.currentSymbolList = {
+      page: -1,
+      nexPage: -1,
+      results: [],
     };
   };
-  creatNULLSymbol = (): ISymbolItem => {
+
+  @action
+  addCurrentSymbolList = async (
+    page,
+    category,
+    symbol_type_code,
+    symbol_type_name
+  ) => {
+    const now = await this.fetchNowSymbolList(
+      page,
+      PAGE_SIZE,
+      category,
+      symbol_type_name
+    );
+
+    const { count, results, } = now;
+    const nextPage = this.getSymbolNextPage(count, page, PAGE_SIZE);
+    const newList = this.createSymbolList(results, symbol_type_code);
+    const oldSymbolList = toJS(this.currentSymbolList.results);
+    const symbolList = [...oldSymbolList, ...newList];
+    this.setCurrentSymbolList({
+      page,
+      nextPage,
+      results: symbolList,
+    });
+  };
+
+  getSymbolNextPage = (count, current_page, page_size) => {
+    const nextPage =
+      count - current_page * page_size > 0 ? current_page + 1 : -1;
+    return nextPage;
+  };
+
+  @action
+  fetchNowSymbolList = async (
+    page: number,
+    page_size: number,
+    symbol_type_name: string,
+    category: string
+  ) => {
+    let ret = null;
+    switch (category) {
+      case SELF:
+        ret = await this.fetchSelfSelectSymbolList(page, page_size);
+        break;
+      default:
+        ret = await this.fetchSymbolList(page, page_size, symbol_type_name);
+        break;
+    }
+
+    return ret;
+  };
+
+  @action
+  async fetchSelfSelectSymbolList(
+    page: number,
+    page_size: number,
+    type_name: string = ""
+  ) {
+    const res = await api.market.getSelfSelectSymbolList({
+      page,
+      page_size,
+      type_name,
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    }
+  }
+
+  @action
+  async fetchSymbolList(
+    page: number,
+    page_size: number,
+    type__name: string = ""
+  ) {
+    const d = {
+      params: {
+        type__name: type__name,
+        exclude_self_select: true,
+      },
+      page,
+      page_size,
+    };
+    const res = await api.market.getSymbolList(d);
+
+    if (res.status === 200) {
+      return res.data;
+    }
+  }
+
+
+  initCurrentSymbolInfo (symbol_type_code = "", item = {}) {
+    const { trader_status = "", product_details, symbol_display = {}, symbol = -1, id = -1, } = item;
+    const { name = "-----", } = symbol_display;
     const priceInfo: IPriceInfo = {
       symbol: "-----",
       sell: 0,
@@ -40,65 +157,26 @@ class SymbolStore extends BaseStore {
       amplitude: 0,
       timestamp: 0,
     };
-    const contractInfo: IContractInfo = {
-      purchase_fee: 0,
-      selling_fee: 0,
-      contract_size: 0,
-      profit_currency_display: 0,
-      margin_currency_display: 0,
-      min_lots: 0,
-      max_lots: 0,
-    };
 
+    const symbolCode = product_details ? product_details.symbol : "------";
+    const symbolId = symbol_type_code === SELF ? symbol : id;
+    const symbolKey = `${symbolId}-${name}`;
     return {
-      symbolCode: "-----",
-      symbolId: -1,
-      symbolKey: "-----",
-      symbol_type_code: "",
-      name: "-----",
-      trader_status: "closed",
-      priceInfo,
-      contractInfo,
-    };
-  };
-  
-  @observable
-  currentSymbol = this.creatNULLSymbol();
-
-  @action
-  setCurrentSymbol = d => {
-    let info = d === null ? this.creatNULLSymbol() : d;
-    this.currentSymbol = {
-      ...info,
-    };
-  };
-
-  
-
-  @computed
-  get getTrendInfo() {
-    const { name, trader_status, priceInfo, symbolId, } = this.currentSymbol;
-    const { chg, change, sell, } = priceInfo;
-    return {
+      symbol_type_code,
+      symbolKey,
+      symbolCode,
       symbolId,
       name,
       trader_status,
-      chg,
-      change,
-      sell,
-    };
-  }
-  
-  @observable
-  currentTransactionSymbol: ISymbolItem =  this.creatNULLSymbol();
-
-  @action
-  setCurrentTransactionSymbol = d => {
-    this.currentTransactionSymbol = {
-      ...this.currentTransactionSymbol,
-      ...d,
+      priceInfo,
     };
   };
+
+  createSymbolList(list: any, symbol_type_code: string): ISymbolItem[] {
+    return list.map((item, i) => {
+      return this.initCurrentSymbolInfo(symbol_type_code, item);
+    });
+  }
 }
 
 export default new SymbolStore();

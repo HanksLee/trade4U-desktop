@@ -13,7 +13,7 @@ const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
 });
 
-@inject("common", "trend")
+@inject("common", "trend", "symbol")
 @observer
 export default class extends React.Component<any, any> {
   state = {
@@ -22,9 +22,11 @@ export default class extends React.Component<any, any> {
     btnOpen: false,
   };
   trend = null;
+  symbol = null;
   constructor(props) {
     super(props);
     this.trend = this.props.trend;
+    this.symbol = this.props.symbol;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -35,15 +37,18 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name, trader_status, sell, chg, change, } = this.trend.trendInfo;
-    const { rightSide, } = this.trend.containerStatus;
+    const { name, trader_status, priceInfo, symbolId, } = this.symbol.currentSymbolInfo;
+    const { sell, chg, change, } = priceInfo;
+    
+ 
     const status = traderStatusMap[trader_status];
 
     const sign = Math.sign(change);
     const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
 
-    const btnCss = rightSide !== FULL ? "close" : "open";
+    const { rightSide, } = this.trend.containerStatus;
+    const btnCss = rightSide !== FULL && symbolId !== -1 ? "close" : "open";
     return (
       <Row
         className={"symbol-chart-info"}
@@ -66,7 +71,7 @@ export default class extends React.Component<any, any> {
             <span className={`symbol-chart-title-status ${trader_status}`}>
               {status}
             </span>
-            <span className={`symbol-right-btn ${btnCss}`} onClick={()=>this.onRightBtnClick(rightSide)}></span>
+            <span className={`symbol-right-btn ${btnCss}`} onClick={()=>this.onRightBtnClick(rightSide, symbolId)}></span>
           </div>
         </Col>
       </Row>
@@ -89,8 +94,8 @@ export default class extends React.Component<any, any> {
 
 
   //event
-  onRightBtnClick = (status)=>{
-    const rightSide = status === FULL ? ZOOMOUT : FULL;
+  onRightBtnClick = (status, symbolId)=>{
+    const rightSide = status === FULL && symbolId !== -1 ? ZOOMOUT : FULL;
     this.props.trend.setRightBtnOpenClick(rightSide);
   }
 }
