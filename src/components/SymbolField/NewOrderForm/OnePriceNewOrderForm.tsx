@@ -18,11 +18,11 @@ export interface OnePriceNewOrderFormProps {}
 export interface OnePriceNewOrderFormState {
   form: {
     positionType: string;
-    direction: "-1" | "1";
+    direction: string;
     marginValue: number;
-    leverage: string | "";
-    takeProfit: string | "";
-    stopLoss: string | "";
+    leverage: string;
+    takeProfit: string;
+    stopLoss: string;
   };
   validation: {
     minStopLossStep: number | null;
@@ -32,7 +32,7 @@ export interface OnePriceNewOrderFormState {
     marginValueStep: number;
     sellStep: number;
   };
-  effectDisposer: Set<IReactionDisposer>;
+  effectDisposers: Set<IReactionDisposer>;
 }
 
 const preciseNumber = input => {
@@ -67,7 +67,7 @@ OnePriceNewOrderFormState
       sellStep: 0.01,
       sellDigits: Math.log10(1 / 0.01),
     },
-    effectDisposers: new Set(),
+    effectDisposers: new Set<IReactionDisposer>(),
   };
   componentDidMount() {
     const effectDisposer = autorun(() => {
