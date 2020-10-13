@@ -19,16 +19,15 @@ export default class Center extends BaseReact<{}, {}> {
   state = {
     isProductSelected: false,
   };
+  reactionList = [];
   trend = null;
-  symbol = null;
   order = null;
+  symbol = null;
   constructor(props) {
     super(props);
-    this.setOnCurrentSymbolChange();
-    this.setOnOrderTabBtnClick();
     this.trend = props.trend;
-    this.symbol = props.symbol;
     this.order = props.order;
+    this.symbol = props.symbol;
   }
 
   render() {
@@ -54,56 +53,52 @@ export default class Center extends BaseReact<{}, {}> {
     );
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.reactionList = [
+      this.setOnCurrentSymbolChange(),
+      this.setOnOrderTabBtnClick()
+    ];
+  }
 
   componentDidUpdate() {}
 
+  componentWillUnmount() {
+    for(let cancelFn of this.reactionList) {
+      cancelFn();
+    }
+  }
+
   //function
   onRightTransitionEnd = e => {
-    const { currentTarget, } = e;
-    const option = {
-      width: currentTarget.clientWidth - 50,
-    };
-    this.trend.setTrendChartOption(option);
+    this.trend.refreshTrendChartInfo();
     // console.log("onRightTransitionEnd", option);
     e.stopPropagation();
     e.preventDefault();
   };
   onBottomTransitionEnd = e => {
-    const { currentTarget, } = e;
-    const option = {
-      height: currentTarget.clientHeight - 150,
-    };
-
-    this.trend.setTrendChartOption(option);
+    this.trend.refreshTrendChartInfo();
     // console.log("onBottomTransitionEnd", option);
     e.stopPropagation();
     e.preventDefault();
   };
+
+
+
+  //reaction
   setOnCurrentSymbolChange = () => {
-    reaction(
-      () => this.props.symbol.currentSymbol,
-      (currentSymbol: ISymbolItem) => {
-        const { symbolId, } = currentSymbol;
-        const { trendInfo, } = this.trend;
-
-        const { getTrendInfo, } = this.symbol;
-        const info = {
-          ...getTrendInfo,
-        };
-        this.trend.setTrendInfo(info);
-
-        if (trendInfo.symbolId !== symbolId) {
-          const isSelected = symbolId !== -1 ? ZOOMOUT : FULL;
-          this.trend.setRightBtnOpenClick(isSelected);
-          this.trend.fetchCurrentTrendList(symbolId, "1m");
-        }
+    return reaction(
+      () => this.props.symbol.currentSymbolInfo,
+      (currentSymbolInfo: ISymbolItem) => {
+        const { symbolId, } = currentSymbolInfo;
+        const selectedType = symbolId !== -1 ? ZOOMOUT : FULL;
+        this.trend.setRightBtnOpenClick(selectedType);
+        this.trend.fetchCurrentTrendList(symbolId, "1m");
       }
     );
   };
 
   setOnOrderTabBtnClick = () => {
-    reaction(
+    return reaction(
       () => this.props.order.foldTabs,
       foldTabs => {
         const isSelected = foldTabs ? ZOOMOUT : FULL;

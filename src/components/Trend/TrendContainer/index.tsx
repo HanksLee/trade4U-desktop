@@ -20,7 +20,6 @@ export default class extends BaseReact<{}, {}> {
 
     this.trend = props.trend;
     this.chartRef = React.createRef();
-    this.setOnContainerChange();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -32,13 +31,13 @@ export default class extends BaseReact<{}, {}> {
 
   render() {
     const { trendChartInfo, } = this.trend;
-    const { option, symbolId, list, } = trendChartInfo;
+    const { symbolId, list, } = trendChartInfo;
     return (
       <div
         ref={ref => (this.chartRef = ref)}
         className="symbol-chart-container"
       >
-        <BasicChart chartOption={option}>
+        <BasicChart  autoSize >
           <AreaSeries symbol={symbolId} initList={list} />
         </BasicChart>
       </div>
@@ -51,19 +50,5 @@ export default class extends BaseReact<{}, {}> {
   }
 
   //function
-
-  setOnContainerChange = () => {
-    reaction(
-      () => this.props.trend.containerStatus,
-      containerStatus => {
-        const option = {
-          width: this.chartRef.clientWidth,
-          height: this.chartRef.clientHeight - 50,
-        };
-        // console.log(option);
-        this.trend.setTrendChartOption(option);
-      }
-    );
-  };
 
 }

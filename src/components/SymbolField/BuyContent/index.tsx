@@ -17,20 +17,24 @@ import classNames from "classnames/bind";
 import { inject, observer } from "mobx-react";
 import { reaction, toJS } from "mobx";
 import { OnePriceNewOrderForm } from "../NewOrderForm";
-
-@inject("other", "common", "symbol")
+import { CloseOutlined } from '@ant-design/icons';
+const closeStyle = {
+  width:"17px",
+  height:"17px",
+};
+@inject("other", "common", "product")
 @observer
 export default class extends React.PureComponent<{}, {}> {
   state = {
     showCls: "",
   };
   other = null;
-  symbol = null;
+  product = null;
   constructor(props) {
     super(props);
 
     this.other = props.other;
-    this.symbol = props.symbol;
+    this.product = props.product;
     this.setOnCurrentTransactionSymbolChange();
   }
 
@@ -39,7 +43,9 @@ export default class extends React.PureComponent<{}, {}> {
 
     return (
       <div className={`symbol-tool-item symbol-buy-content ${showCls}`}>
-        <ToolHeader />
+        <ToolHeader  >
+          <CloseOutlined className="symbol-buy-content-tool" onClick={this.onCloseButtonClick}/>
+        </ToolHeader>
    
         <OnePriceNewOrderForm />
       </div>
@@ -51,13 +57,15 @@ export default class extends React.PureComponent<{}, {}> {
   componentDidUpdate() {}
 
   //function
+  onCloseButtonClick = ()=>{
+    this.props.product.setCloseNewOrderForm();
+  }
   setOnCurrentTransactionSymbolChange = () => {
     reaction(
-      () => this.props.symbol.currentTransactionSymbol,
-      currentTransactionSymbol => {
-        const { symbolId, } = currentTransactionSymbol;
-        const showCls = symbolId === -1 ? "" : "show";
-
+      () => this.props.product.isOpenNewOrderForm,
+      isOpenNewOrderForm => {
+        const showCls = isOpenNewOrderForm ? "show" : "";
+        
         this.setState({ showCls, });
       }
     );

@@ -10,10 +10,6 @@ class TrendStore extends BaseStore {
   trendChartInfo = {
     symbolId: -1,
     unit: "1m",
-    option: {
-      width: 0,
-      height: 500,
-    },
     list: [],
   };
   @action
@@ -23,7 +19,7 @@ class TrendStore extends BaseStore {
         unit: unit,
       },
     });
-    const list = res.status === 200 ? this.converTrendList(res.data.trend, 0, 1) : [];
+    const list = res.status === 200 ? this.convertTrendList(res.data.trend, 0, 1) : [];
 
     this.setTrendChartInfo({
       symbolId,
@@ -41,19 +37,13 @@ class TrendStore extends BaseStore {
   };
 
   @action
-  setTrendChartOption = d => {
-    const { option, } =     this.trendChartInfo ;
-    const newOption = {
-      ...option,
-      ...d,
-    };
-    // console.log("setTrendChartOption", toJS(newOption), d);
+  refreshTrendChartInfo = ()=>{
     this.trendChartInfo = {
       ...this.trendChartInfo,
-      option:newOption,
     };
-  };
-  converTrendList = (list, key1, key2) => {
+  }
+
+  convertTrendList = (list, key1, key2) => {
     return list.map(item => {
       const date = item[key1];
       const sell = item[key2];
@@ -65,29 +55,10 @@ class TrendStore extends BaseStore {
   };
 
   @observable
-  trendInfo = {
-    symbolId: -1,
-    name: "----",
-    trader_status: "",
-    chg: 0,
-    change: 0,
-    sell: 0,
-  };
-
-  @action
-  setTrendInfo = d => {
-    this.trendInfo = {
-      ...this.trendInfo,
-      ...d,
-    };
-  };
-
-  @observable
   containerStatus = {
     rightSide: FULL,
     bottomSide: FULL,
   };
-  btnRgithOpen = false;
 
   @action
   setRightBtnOpenClick = rightSide => {

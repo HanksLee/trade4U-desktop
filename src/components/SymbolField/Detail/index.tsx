@@ -17,26 +17,25 @@ import classNames from "classnames/bind";
 import { inject, observer } from "mobx-react";
 import { reaction, toJS } from "mobx";
 
-@inject("other", "common", "symbol")
+@inject("other", "common", "product")
 @observer
 export default class extends React.PureComponent<{}, {}> {
   state = {};
   other = null;
-  symbol = null;
+  product = null;
   constructor(props) {
     super(props);
 
     this.other = props.other;
-    this.symbol = props.symbol;
+    this.product = props.product;
   }
 
   render() {
-    const { contractInfo, } = this.other;
     return (
       <div className={`symbol-tool-item symbol-detail`}>
         <ToolHeader />
         <MainDetail />
-        <ContractDetail {...toJS(contractInfo)} />
+        <ContractDetail/>
         <div className="detail-btn-container">
           <Button
             className="t4u-button-primary"
@@ -58,7 +57,6 @@ export default class extends React.PureComponent<{}, {}> {
   //function
 
   onOrderBuyClick = () => {
-    const { currentSymbol, } = this.symbol;
-    this.symbol.setCurrentTransactionSymbol(toJS(currentSymbol));
+    this.product.setOpenNewOrderForm();
   };
 }

@@ -93,7 +93,16 @@ export default class BasicChart extends React.Component {
       chart,
     });
   }
+
   componentDidUpdate(prevProps, prevState) {
+    if(this.props.autoSize) {
+      this.state.chart.applyOptions({
+        width:this.containerRef.clientWidth,
+        height:this.containerRef.clientHeight,
+      });
+      return;
+    }
+
     const { chartOption, } = this.state;
     const prevChartOption = prevState.chartOption;
     if (
