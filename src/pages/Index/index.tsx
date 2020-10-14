@@ -267,12 +267,12 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                 },
               });
 
-              let searchResult = []
+              let searchResult = [];
               res.data.map(item => {
                 if (!utils.isEmpty(item.data)) {
-                  return searchResult.push(item)
+                  return searchResult.push(item);
                 }
-              })
+              });
 
               if (res.status == 200) {
                 this.setState({
@@ -385,7 +385,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                     key={item.path}
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                      }`}
+                    }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
