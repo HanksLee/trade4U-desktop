@@ -32,7 +32,6 @@ export interface ISymbolItem {
   name: string;
   trader_status: string;
   priceInfo: IPriceInfo;
-  contractInfo: IContractInfo;
 }
 
 

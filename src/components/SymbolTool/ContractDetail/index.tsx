@@ -14,7 +14,7 @@ import utils from "utils";
 
 const cx = classNames.bind(css);
 
-@inject("other")
+@inject("product")
 @observer
 export default class extends React.Component<any, any> {
   state = {
@@ -26,10 +26,10 @@ export default class extends React.Component<any, any> {
     min_lots: 0,
     max_lots: 0,
   };
-  other = null;
+  product = null;
   constructor(props) {
     super(props);
-    this.other = this.props.other;
+    this.product = this.props.product;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -52,7 +52,8 @@ export default class extends React.Component<any, any> {
       margin_currency_display,
       min_lots,
       max_lots,
-    } = this.state;
+    } = this.product.currentSymbolContractInfo;
+
     return (
       <div className={cx("symbol-descript")}>
         <h2>合约资讯</h2>
@@ -115,4 +116,6 @@ export default class extends React.Component<any, any> {
   componentDidUpdate() {}
 
   //function
+
+
 }

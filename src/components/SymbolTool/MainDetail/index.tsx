@@ -14,16 +14,16 @@ import utils from "utils";
 
 const cx = classNames.bind(css);
 
-@inject("other")
+@inject("symbol")
 @observer
 export default class extends React.Component<any, any> {
   state = {
     name: "----",
   };
-  other = null;
+  symbol = null;
   constructor(props) {
     super(props);
-    this.other = this.props.other;
+    this.symbol = this.props.symbol;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -38,8 +38,8 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { high, low, close, open, volume, amount, } = this.other.mainInfo;
-
+    const { priceInfo, } = this.symbol.currentSymbolInfo;
+    const { high, low, close, open, volume, amount, amplitude, } = priceInfo;
     return (
       <div className={cx("symbol-descript")}>
         <h2>主要指标</h2>
@@ -80,7 +80,7 @@ export default class extends React.Component<any, any> {
           <Row className={cx("symbol-descript-row")}>
             <Col span={12}>
               <span className={cx("symbol-descript-title")}>振幅</span>
-              <span className={cx("symbol-descript-value")}>1</span>
+              <span className={cx("symbol-descript-value")}>{amplitude}</span>
             </Col>
             <Col span={12}></Col>
           </Row>

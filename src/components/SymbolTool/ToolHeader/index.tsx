@@ -3,23 +3,21 @@ import React from "react";
 import { observer, inject } from "mobx-react";
 import { createFromIconfontCN } from "@ant-design/icons";
 
-
 import utils from "utils";
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
 });
 
-
-@inject("common", "other")
+@inject("common", "symbol")
 @observer
 export default class extends React.Component<any, any> {
   state = {
     name: "----",
   };
-  other = null;
+  symbol = null;
   constructor(props) {
     super(props);
-    this.other = props.other;
+    this.symbol = props.symbol;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -34,15 +32,16 @@ export default class extends React.Component<any, any> {
   }
 
   render() {
-    const { name, change, chg, sell, } = this.other.headerInfo;
-
+    const { children, } = this.props;
+    const { name, priceInfo, } = this.symbol.currentSymbolInfo;
+    const { change, chg, sell, } = priceInfo;
     const sign = Math.sign(change);
     const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
     return (
       <div className={`symbol-tool-header`}>
         <h2>{name}</h2>
-        <div className="symbol-header-price" >
+        <div className="symbol-header-price">
           <span className={`${priceCss} symbol-header-price-main`}>
             {sell} {this.getPriceIcon(sign)}{" "}
           </span>
@@ -52,6 +51,11 @@ export default class extends React.Component<any, any> {
           <span className={`${priceCss}  symbol-header-price-item`}>
             {utils.setSignString(chg)}%
           </span>
+        </div>
+        <div className="symbol-header-tool">
+          {React.Children.map(children, child => {
+            return React.cloneElement(child);
+          })}
         </div>
       </div>
     );
