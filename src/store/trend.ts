@@ -11,9 +11,19 @@ class TrendStore extends BaseStore {
     symbolId: -1,
     unit: "1m",
     list: [],
+    updateTime:0,
   };
   @action
   fetchCurrentTrendList = async (symbolId, unit) => {
+    if(symbolId === -1) {
+      this.trendChartInfo = {
+        symbolId: -1,
+        unit: "1m",
+        list: [],
+        updateTime:0,
+      };
+      return;
+    }
     const res = await api.market.getProductTrend(symbolId, {
       params: {
         unit: unit,
@@ -25,6 +35,7 @@ class TrendStore extends BaseStore {
       symbolId,
       unit,
       list,
+      updateTime:moment().valueOf(),
     });
   };
 

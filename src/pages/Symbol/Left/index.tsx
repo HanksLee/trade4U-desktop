@@ -81,7 +81,8 @@ export default class Left extends BaseReact<{}, {}> {
       this.setOnSymbolTypeListChange(),
       this.setOnSymbolTypeChange(),
       this.setFavorListener(),
-      this.setOnCurrentSymbolInfoChange()
+      this.setOnCurrentSymbolInfoChange(),
+      this.setOnCurrentSymbolListChange()
     ];
 
     this.product.loadSymbolTypeList();
@@ -107,6 +108,20 @@ export default class Left extends BaseReact<{}, {}> {
       }
     );
   };
+
+  setOnCurrentSymbolListChange = () => {
+    return reaction(
+      () => this.props.symbol.currentSymbolList,
+      currentSymbolList => {
+        const { subscribeSymbolList, currentSymbolIDList, } = this.symbol;
+        const { page, } = currentSymbolList;
+        if (page !== 1) return;
+        this.symbol.setUnSubscribeSymbolList(subscribeSymbolList);
+        this.symbol.setSubscribeSymbolList(currentSymbolIDList);
+      }
+    );
+  };
+
   setOnSymbolTypeListChange = () => {
     return reaction(
       () => this.props.product.symbolTypeList,

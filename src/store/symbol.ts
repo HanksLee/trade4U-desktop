@@ -40,6 +40,12 @@ class SymbolStore extends BaseStore {
     results: [],
   };
 
+  @computed
+  get currentSymbolIDList() {
+    return this.currentSymbolList.results.map((item)=>{
+      return item.symbolId;
+    });
+  }
   @action
   setCurrentSymbolList(d) {
     this.currentSymbolList = {
@@ -230,6 +236,38 @@ class SymbolStore extends BaseStore {
       return this.initCurrentSymbolInfo(symbol_type_code, item);
     });
   }
+
+
+
+  // ws control
+  @observable
+  subscribeSymbolList = [];
+
+  @observable
+  unSubscribeSymbolList = [];
+
+  @action
+  setSubscribeSymbolList = (list) => {
+    this.subscribeSymbolList = list;
+  };
+
+  @action
+  setUnSubscribeSymbolList = (list) => {
+    this.unSubscribeSymbolList = list;
+  };
+
+  @observable
+  symbolWSAction = {
+    cmd: "",
+  };
+
+  @action
+  setSymbolWSAction = (d) => {
+    this.symbolWSAction = {
+      ...d,
+    };
+  };
+
 }
 
 export default new SymbolStore();

@@ -16,7 +16,7 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
   }
-  areaSeris = null;
+  areaSeries = null;
 
   lastSymbolDate = null;
   nowProcess = STANDBY;
@@ -68,19 +68,20 @@ export default class extends React.Component {
   //function
   initSeries = () => {
     const { chart, seriesOption, } = this.state;
-    if (!chart && this.areaSeris) return;
+    if (!chart && this.areaSeries) return;
     const nowOption = this.createOption(defaultSeriesOption, seriesOption);
-    this.areaSeris = chart.addAreaSeries(nowOption);
+    this.areaSeries = chart.addAreaSeries(nowOption);
     this.nowProcess = INIT;
   };
 
   refreshSeries = () => {
     const { initList, } = this.state;
+    this.areaSeries.setData([]);
     if (initList.length === 0) return;
 
-    this.areaSeris.setData([]);
+
     window.setTimeout(()=>{
-      this.areaSeris.setData([...initList]);
+      this.areaSeries.setData([...initList]);
       this.lastSymbolDate = initList[initList.length - 1].time;
       this.nowProcess = REFRESH;
       this.totalCount = initList.length;  
@@ -105,7 +106,7 @@ export default class extends React.Component {
   insertSeries = (d) => {
     return new Promise((resovle, reject) => {
       window.setTimeout(() => {
-        this.areaSeris.update(d);
+        this.areaSeries.update(d);
         this.lastSymbolDate = d.time;
         resovle(true);
       }, 50);

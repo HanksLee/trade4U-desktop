@@ -19,17 +19,18 @@ import { SELF } from 'pages/Symbol/config/symbolTypeCategory';
 const SUBSCRIBE = "subscribe";
 const UNSUBSCRIBE = "unsubscribe";
 @observer
-@inject("common")
+@inject("symbol" , "product")
 class Symbol extends React.Component {
   state = {
     chart: null,
     chartOption: null,
   };
   reactionList = [];
+  wsControl = null;
   constructor(props) {
     super(props);
 
-   
+   this.wsControl = props.wsControl;
   }
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -46,9 +47,10 @@ class Symbol extends React.Component {
       this.setSubscribeListener(),
       this.setUnsubscribeListener(),
       this.setWSActionListener(),
-      this.setCurrentSymbolTypeInfoListener()
+      this.setCurrentSymbolTypeInfoListener(),
+      this.setCurrentSymbolInfoListener()
     ];
-    this.props.setReceiveMsgLinter(this.receiveMsgLinter);
+    this.wsControl.setReceiveMsgLinter(this.receiveMsgLinter);
   }
 
   componentWillUnmount(){
@@ -80,56 +82,47 @@ class Symbol extends React.Component {
   };
 
   //ws
-  // setCurrentSymbolInfoListener = () => {
-  //   return reaction(
-  //     () => this.props.symbol.currentSymbolInfo,
-  //     (currentSymbolInfo) => {
-  //       const {
-  //         subscribeSymbol,
-  //         selectedSymbolTypeInfo,
-  //         setSelectedSymbolInfo,
-  //       } = this.props.common;
+  setCurrentSymbolInfoListener = () => {
+    return reaction(
+      () => this.props.symbol.currentSymbolInfo,
+      (currentSymbolInfo) => {
 
-  //       const { symbol_type_code } = currentSymbolInfo;
-
-  //       if (code === SELF) {
-  //         return;
-  //       }
-
-  //       const symbolTypeCode = selectedSymbolTypeInfo.code;
-  //       const nowProgress = this.props.getProgress();
-  //       if (nowProgress === DISCONNECTED) {
-  //         this.replaceWSUrl(code);
-  //       }
-  //     }
-  //   );
-  // };
+      },
+      {
+        equals:(prev, now)=>{
+        
+          this.trackSymbol([prev.symbolId], UNSUBSCRIBE);
+          this.trackSymbol([now.symbolId], SUBSCRIBE);
+          return false
+        }
+      }
+    );
+  };
 
   setSubscribeListener = () => {
     return reaction(
-      () => this.props.symbol.subscribeSymbol,
-      (subscribeSymbol) => {
-        const { list } = subscribeSymbol;
-        this.trackSymbol(list, SUBSCRIBE);
+      () => this.props.symbol.subscribeSymbolList,
+      (subscribeSymbolList) => {
+        this.trackSymbol(subscribeSymbolList, SUBSCRIBE);
       }
     );
   };
 
   setUnsubscribeListener = () => {
     return reaction(
-      () => this.props.symbol.unSubscribeSymbol,
-      (unSubscribeSymbol) => {
-        const { list } = unSubscribeSymbol;
-        this.trackSymbol(list, UNSUBSCRIBE);
+      () => this.props.symbol.unSubscribeSymbolList,
+      (unSubscribeSymbolList) => {
+        this.trackSymbol(unSubscribeSymbolList, UNSUBSCRIBE);
       }
     );
   };
 
   setCurrentSymbolTypeInfoListener = () => {
     return reaction(
-      () => this.props.symbol.currentSymbolInfo.symbol_type_code,
-      (symbol_type_code) => {
-        this.replaceWSUrl(symbol_type_code);
+      () => this.props.product.currentSymbolTypeItem,
+      (currentSymbolTypeItem) => {
+
+        this.replaceWSUrl(currentSymbolTypeItem.symbol_type_code);
       }
     );
   };
@@ -164,20 +157,20 @@ class Symbol extends React.Component {
       },
     };
 
-    this.props.sendMsg(o);
+    this.wsControl.sendMsg(o);
   };
 
   replaceWSUrl = (code) => {
     let tarUrl = "";
     switch (code) {
-      case "self":
+      case SELF:
         tarUrl = "self-select-symbol";
         break;
       default:
         tarUrl = `${code}/symbol`;
         break;
     }
-    this.props.replaceUrl(tarUrl);
+    this.wsControl.replaceUrl(tarUrl);
   };
 
   checkIdExist = (list, id) => {
@@ -231,4 +224,4 @@ class Symbol extends React.Component {
 
 }
 
-export default WSConnect(channelConfig[0], channelConfig, Symbol);
+export default WSConnect(channelConfig, Symbol);

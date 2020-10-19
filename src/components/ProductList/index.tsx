@@ -27,10 +27,8 @@ export default class ProductList extends BasePureReact {
     MAXCOUNT: 5,
   };
 
-  buffer = {};
   constructor(props) {
     super(props);
-    this.buffer = this.initBuffer();
     this.scrollRef = React.createRef();
   }
 
@@ -137,53 +135,8 @@ export default class ProductList extends BasePureReact {
 
     this.props.symbol.setCurrentSymbolInfo(symbolInfoItem);
     // // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
-    // this.props.product.fetchCurrentSymbol(symbolId);
+    // // this.props.product.fetchCurrentSymbol(symbolId);
   };
-
-  //buffer
-  filterBufferlList(list) {
-    return list.filter((item, i, all) => {
-      return (
-        all.findIndex(fItem => {
-          return fItem.symbol === item.symbol;
-        }) === i
-      );
-    });
-  }
-
-  sortList = list => {
-    const tmp = Object.assign([], list);
-
-    tmp.sort((a, b) => {
-      if (a.symbol !== b.symbol) {
-        return -1;
-      }
-
-      if (a.timestamp > b.timestamp) {
-        return -1;
-      }
-
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-
-      if (a.timestamp === b.timestamp) {
-        return 0;
-      }
-    });
-
-    return tmp;
-  };
-
-  initBuffer() {
-    return {
-      BUFFER_MAXCOUNT: 50,
-      BUFFER_TIME: 2000,
-      timeId: 0,
-      lastCheckUpdateTime: moment().valueOf(),
-      list: [],
-    };
-  }
 
   loadMore = () => {};
   setContentScrollEvent = elRef => {
@@ -216,26 +169,28 @@ export default class ProductList extends BasePureReact {
       const item = e.target.querySelectorAll(
         ".ant-row.ant-row-space-between.custom-table-item"
       );
-      const nowItemCount = -1; //this.checkScrollingItemCount(
-      //   item,
-      //   symbol_type_code,
-      //   scrollTop,
-      //   itemCount,
-      //   MAXCOUNT
-      // );
+      const nowItemCount = this.checkScrollingItemCount(
+        item,
+        symbol_type_code,
+        scrollTop,
+        itemCount,
+        MAXCOUNT
+      );
 
       if (nowItemCount !== -1) {
         // console.log("trackSymbol");
         this.scrollInfo.itemCount = nowItemCount;
 
+        const { subscribeSymbolList, } = this.props.symbol;
+        this.props.symbol.setUnSubscribeSymbolList(subscribeSymbolList);
         // this.trackSymbol(this.subscribList, "unsubscribe");
 
-        // this.subscribList = this.createSubscribeList(
-        //   nowItemCount,
-        //   page_size,
-        //   MAXCOUNT
-        // );
-
+        const newSubscribeList = this.createSubscribeList(
+          nowItemCount,
+          PAGE_SIZE,
+          MAXCOUNT
+        );
+        this.props.symbol.setSubscribeSymbolList(newSubscribeList);
         // this.trackSymbol(this.subscribList, "subscribe");
       }
 
@@ -275,13 +230,13 @@ export default class ProductList extends BasePureReact {
   };
 
   createSubscribeList = (nowItemCount = 0, length = -1, count = 0) => {
-    const { allProductListId, } = this.props.product;
-    length = length === -1 ? allProductListId.length : length;
+    const { currentSymbolIDList, } = this.props.symbol;
+    length = length === -1 ? currentSymbolIDList.length : length;
 
     const start = nowItemCount - count;
     const end = (start > 0 ? start : 0) + length + count;
 
-    return allProductListId.filter((id, i) => {
+    return currentSymbolIDList.filter((id, i) => {
       return i >= start && i <= end;
     });
   };
