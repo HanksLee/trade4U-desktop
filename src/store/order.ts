@@ -27,7 +27,7 @@ class OrderStore extends BaseStore {
   setInit = () => {
     this.isInit = true;
   };
-  
+
   @observable
   foldTabs = false;
   @action
@@ -35,10 +35,10 @@ class OrderStore extends BaseStore {
     this.foldTabs = foldTabs;
   }
 
-  @action 
-  setFoldTabsClick = ()=>{
+  @action
+  setFoldTabsClick = () => {
     this.foldTabs = !this.foldTabs;
-  }
+  };
 
   @observable
   info = {
@@ -85,6 +85,21 @@ class OrderStore extends BaseStore {
     this.tradeInfo.result = d.result || this.tradeInfo.result;
   };
 
+  @action
+  setTardeInfoMeta = d => {
+    const { tradeInfo, tradeList, } = this;
+    const transList = toJS(tradeList[IN_TRANSACTION]);
+    const newMeta = {
+      ...tradeInfo.result,
+      ...d,
+    };
+    const newMetaResults = this.calcTradeInfo(newMeta, transList);
+
+    this.setTradeInfo({
+      result: newMetaResults,
+    });
+  };
+
   @observable
   tradeList = {
     isLoading: true,
@@ -113,6 +128,33 @@ class OrderStore extends BaseStore {
       ...this.tradeList,
       ...d,
     };
+  };
+
+  @action
+  setPendingList = list => {
+    const { tradeList, } = this;
+    const pendingList = toJS(tradeList[PENDING]);
+
+    this.removeTradeList(pendingList, list);
+    this.setTradeList({
+      [PENDING]: pendingList,
+    });
+  };
+
+  @action
+  setInTransactionList = (type, list) => {
+    const { tradeList, } = this;
+    const transList = toJS(tradeList[IN_TRANSACTION]);
+
+    if (type === ORDER_CLOSE) {
+      this.removeTradeList(transList, list);
+    } else {
+      this.addTradeList(transList, list);
+    }
+
+    this.setTradeList({
+      [IN_TRANSACTION]: transList,
+    });
   };
 
   @computed
@@ -184,21 +226,23 @@ class OrderStore extends BaseStore {
     const orderProfitList = buffer[ORDER_PROFIT];
     this.addTradeList(transList, orderProfitList);
 
-    let newMeta = {
+    const newMeta = {
       ...tradeInfo.result,
       ...buffer[META_FUND],
     };
 
-    newMeta = this.calcTradeInfo(newMeta, transList);
+    const newMetaTotal = this.calcTradeInfo(newMeta, transList);
 
     this.setTradeInfo({
-      result: newMeta,
+      result: newMetaTotal,
     });
+
     this.setTradeList({
       [PENDING]: pendingList,
       [IN_TRANSACTION]: transList,
     });
   };
+
   calcTradeInfo = (meta, list) => {
     const { balance, margin, } = meta;
     const profit = list.reduce((acc, cur) => acc + cur.profit, 0);
@@ -218,7 +262,7 @@ class OrderStore extends BaseStore {
     addList.map(aItem => {
       const { order_number, timestamp, } = aItem;
       const i = originlist.findIndex(oItem => {
-        return (oItem.order_number === order_number);
+        return oItem.order_number === order_number;
       });
 
       const originTimestamp = originlist[i].timestamp;
@@ -243,7 +287,7 @@ class OrderStore extends BaseStore {
   cancelTrade = autorun(() => {
     const { foldTabs, orderTabKey, search, } = this.info;
     const { page_size, close_start_time, close_end_time, } = search;
-  
+
     if (!this.isInit) return;
 
     if (foldTabs) return;
