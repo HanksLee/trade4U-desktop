@@ -14,14 +14,14 @@ import { SingalPriceHeader } from "components/ProductHeader";
 import ProductList from "components/ProductList";
 import { SELF } from "../config/symbolTypeCategory";
 
-const { TabPane, } = Tabs;
+const { TabPane } = Tabs;
 
 /* eslint new-cap: "off" */
 
 const BarClass = {
   padding: "0 10px",
   borderBottom: "1px solid rgba(46,59,85,1)",
-  marginBottom: "0px",
+  marginBottom: "0px"
 };
 
 @inject("product", "common", "symbol")
@@ -44,7 +44,7 @@ export default class Left extends BaseReact<{}, {}> {
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
       ...prevState,
-      ...nextProps,
+      ...nextProps
     };
   }
 
@@ -53,7 +53,7 @@ export default class Left extends BaseReact<{}, {}> {
   }
 
   render() {
-    const { symbolTypeList, } = this.product;
+    const { symbolTypeList } = this.product;
     const currentSymbolType = this.product.currentSymbolTypeItem;
     return (
       <div className={"symbol-left"}>
@@ -80,21 +80,33 @@ export default class Left extends BaseReact<{}, {}> {
     this.reactionList = [
       this.setOnSymbolTypeListChange(),
       this.setOnSymbolTypeChange(),
-      this.setFavorListener()
+      this.setFavorListener(),
+      this.setOnCurrentSymbolInfoChange()
     ];
-    
+
     this.product.loadSymbolTypeList();
   }
 
   componentDidUpdate() {}
   componentWillUnmount() {
-    for(let cancelReaction of this.reactionList) {
+    for (let cancelReaction of this.reactionList) {
       cancelReaction();
     }
   }
   // function
 
   //tracker listener
+  setOnCurrentSymbolInfoChange = () => {
+    return reaction(
+      () => this.props.symbol.currentSymbolInfo,
+      currentSymbolInfo => {
+        const { symbolId } = currentSymbolInfo;
+        if (symbolId === -1) return;
+        // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
+        this.props.product.fetchCurrentSymbol(symbolId);
+      }
+    );
+  };
   setOnSymbolTypeListChange = () => {
     return reaction(
       () => this.props.product.symbolTypeList,
@@ -115,7 +127,7 @@ export default class Left extends BaseReact<{}, {}> {
         const {
           symbol_type_name,
           symbol_type_code,
-          category,
+          category
         } = currentSymbolTypeItem;
         this.refreshCurrentSymbolList(
           symbol_type_name,
@@ -131,15 +143,15 @@ export default class Left extends BaseReact<{}, {}> {
       () => this.props.product.toastMsg,
       toastMsg => {
         if (!toastMsg) return;
-        const { isRefresh, text, } = toastMsg;
+        const { isRefresh, text } = toastMsg;
         this.$msg.success(text);
 
         if (!isRefresh) return;
-        const { currentSymbolType, } = this.symbol;
+        const { currentSymbolType } = this.symbol;
         const {
           symbol_type_name,
           symbol_type_code,
-          category,
+          category
         } = currentSymbolType;
         this.refreshCurrentSymbolList(
           symbol_type_name,
@@ -167,7 +179,7 @@ export default class Left extends BaseReact<{}, {}> {
 
   //event listener
   onFilterChange = (id, symbol_type_name) => {
-    const { currentSymbolTypeItem, } = this.product;
+    const { currentSymbolTypeItem } = this.product;
     if (currentSymbolTypeItem.symbol_type_name === symbol_type_name) return;
     this.product.setCurrentSymbolTypeItem(id);
   };

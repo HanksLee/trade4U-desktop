@@ -129,9 +129,15 @@ export default class ProductList extends BasePureReact {
   };
 
   setOpenItem = symbolId => {
-    this.props.symbol.setCurrentSymbolInfo(symbolId);
-    // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
-    this.props.product.fetchCurrentSymbol(symbolId);
+    const {currentSymbolList} = this.props.symbol;
+    const symbolInfoItems = currentSymbolList.results.filter((item)=>{
+      return item.symbolId === symbolId;
+    });
+    const symbolInfoItem = symbolInfoItems.length === 0 ? undefined : symbolInfoItems[0];
+
+    this.props.symbol.setCurrentSymbolInfo(symbolInfoItem);
+    // // * 依使用者选中的 id 抓取资料，更新 product store 的 currentSymbol
+    // this.props.product.fetchCurrentSymbol(symbolId);
   };
 
   //buffer

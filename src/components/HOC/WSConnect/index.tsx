@@ -181,8 +181,8 @@ export default function WSConnect(channelConfig, Comp) {
       });
       wsc.setReceviceMsg((wsc, msg) => {
         // console.log("ReceviceMsg:" ,msg);
-        if (!bufferInfo && this.receviceMsgLinter) {
-          this.receviceMsgLinter(msg);
+        if (!bufferInfo && this.receiveMsgLinter) {
+          this.receiveMsgLinter(msg);
           return;
         }
         const { buffer, } = this;
@@ -192,7 +192,7 @@ export default function WSConnect(channelConfig, Comp) {
           BUFFER_MAXCOUNT,
           lastCheckUpdateTime,
         } = buffer;
-        const receviceTime = moment().valueOf();
+        const receiveTime = moment().valueOf();
         buffer.register = mergeRegisterData(buffer.register, msg);
 
         const maxCount = getRegisterCount(buffer.register);
@@ -202,12 +202,12 @@ export default function WSConnect(channelConfig, Comp) {
             BUFFER_MAXCOUNT,
             maxCount,
             lastCheckUpdateTime,
-            receviceTime
+            receiveTime
           )
         ) {
           return;
         }
-        if (this.receviceMsgLinter) this.receviceMsgLinter(buffer.register);
+        if (this.receiveMsgLinter) this.receiveMsgLinter(buffer.register);
         this.buffer = this.createBuffer();
       });
 
@@ -218,10 +218,10 @@ export default function WSConnect(channelConfig, Comp) {
       wsc.setStatusEvent(CONNECTING, (wsc, count) => {
         // console.log("CONNECTING:",count);
         if (
-          this.receviceMsgLinter &&
+          this.receiveMsgLinter &&
           checkRegisterHasValue(this.buffer.register)
         ) {
-          this.receviceMsgLinter(this.buffer.register);
+          this.receiveMsgLinter(this.buffer.register);
         }
 
         if (count === tryConnectMax) {
@@ -250,9 +250,9 @@ export default function WSConnect(channelConfig, Comp) {
       });
     };
 
-    receviceMsgLinter = null;
+    receiveMsgLinter = null;
     setReceviceMsgLinter = fn => {
-      this.receviceMsgLinter = fn;
+      this.receiveMsgLinter = fn;
     };
     statusChangListener = null;
     setStatusChangeListener = fn => {

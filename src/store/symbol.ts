@@ -1,42 +1,50 @@
-import api from 'services';
+import api from "services";
 import { action, observable, computed, toJS } from "mobx";
 import BaseStore from "store/base";
-import { SELF } from "pages/Symbol/config/symbolTypeCategory";
-import {
-  ISymbolItem,
-  IPriceInfo
-} from "pages/Symbol/config/interface";
-import { PAGE_SIZE } from 'constant';
+import { SEARCH, SELF } from "pages/Symbol/config/symbolTypeCategory";
+import { ISymbolItem, IPriceInfo } from "pages/Symbol/config/interface";
+import { PAGE_SIZE } from "constant";
 
 class SymbolStore extends BaseStore {
-
-
   @observable
   currentSymbolInfo: ISymbolItem = this.initCurrentSymbolInfo();
 
   @action
-  setCurrentSymbolInfo = symbolId => {
+  setCurrentSymbolInfoById = (symbolId, name) => {
     const tmp = this.currentSymbolList.results.filter(item => {
       return item.symbolId === symbolId;
     });
 
-    const current = tmp.length === 0 ? this.initCurrentSymbolInfo() : tmp[0];
+    const current =
+      tmp.length === 0
+        ? this.initCurrentSymbolInfo(SEARCH, {
+            id: symbolId,
+            symbol_display: { name }
+          })
+        : tmp[0];
 
     this.currentSymbolInfo = current;
+  };
+
+  @action
+  setCurrentSymbolInfo = (
+    symbolInfoItem: ISymbolItem = this.initCurrentSymbolInfo()
+  ) => {
+    this.currentSymbolInfo = symbolInfoItem;
   };
 
   @observable
   currentSymbolList = {
     page: -1,
     nexPage: -1,
-    results: [],
+    results: []
   };
 
   @action
   setCurrentSymbolList(d) {
     this.currentSymbolList = {
       ...this.currentSymbolList,
-      ...d,
+      ...d
     };
   }
   @action
@@ -44,7 +52,7 @@ class SymbolStore extends BaseStore {
     this.currentSymbolList = {
       page: -1,
       nexPage: -1,
-      results: [],
+      results: []
     };
   };
 
@@ -62,7 +70,7 @@ class SymbolStore extends BaseStore {
       symbol_type_name
     );
 
-    const { count, results, } = now;
+    const { count, results } = now;
     const nextPage = this.getSymbolNextPage(count, page, PAGE_SIZE);
     const newList = this.createSymbolList(results, symbol_type_code);
     const oldSymbolList = toJS(this.currentSymbolList.results);
@@ -70,10 +78,50 @@ class SymbolStore extends BaseStore {
     this.setCurrentSymbolList({
       page,
       nextPage,
-      results: symbolList,
+      results: symbolList
     });
   };
 
+  @action
+  updateCurrentSymbolListFromSubscribeDate = updateList => {
+    updateList.forEach(update => {
+      const {
+        symbol,
+        sell,
+        buy,
+        change,
+        chg,
+        high,
+        low,
+        close,
+        open,
+        volume,
+        amount,
+        amplitude,
+        timestamp
+      } = update;
+      const { results } = this.currentSymbolList;
+      const updateTargets = results.filter((item: ISymbolItem) => {
+        return item.symbolCode === symbol;
+      });
+      if (updateTargets.length === 0) return;
+      updateTargets[0].priceInfo = {
+        symbol,
+        sell,
+        buy,
+        change,
+        chg,
+        high,
+        low,
+        close,
+        open,
+        volume,
+        amount,
+        amplitude,
+        timestamp
+      };
+    });
+  };
   getSymbolNextPage = (count, current_page, page_size) => {
     const nextPage =
       count - current_page * page_size > 0 ? current_page + 1 : -1;
@@ -109,7 +157,7 @@ class SymbolStore extends BaseStore {
     const res = await api.market.getSelfSelectSymbolList({
       page,
       page_size,
-      type_name,
+      type_name
     });
 
     if (res.status === 200) {
@@ -126,10 +174,10 @@ class SymbolStore extends BaseStore {
     const d = {
       params: {
         type__name: type__name,
-        exclude_self_select: true,
+        exclude_self_select: true
       },
       page,
-      page_size,
+      page_size
     };
     const res = await api.market.getSymbolList(d);
 
@@ -138,10 +186,15 @@ class SymbolStore extends BaseStore {
     }
   }
 
-
-  initCurrentSymbolInfo (symbol_type_code = "", item = {}) {
-    const { trader_status = "", product_details, symbol_display = {}, symbol = -1, id = -1, } = item;
-    const { name = "-----", } = symbol_display;
+  initCurrentSymbolInfo(symbol_type_code = "", item = {}) {
+    const {
+      trader_status = "",
+      product_details,
+      symbol_display = {},
+      symbol = -1,
+      id = -1
+    } = item;
+    const { name = "-----" } = symbol_display;
     const priceInfo: IPriceInfo = {
       symbol: "-----",
       sell: 0,
@@ -155,7 +208,7 @@ class SymbolStore extends BaseStore {
       volume: 0,
       amount: 0,
       amplitude: 0,
-      timestamp: 0,
+      timestamp: 0
     };
 
     const symbolCode = product_details ? product_details.symbol : "------";
@@ -168,9 +221,9 @@ class SymbolStore extends BaseStore {
       symbolId,
       name,
       trader_status,
-      priceInfo,
+      priceInfo
     };
-  };
+  }
 
   createSymbolList(list: any, symbol_type_code: string): ISymbolItem[] {
     return list.map((item, i) => {
