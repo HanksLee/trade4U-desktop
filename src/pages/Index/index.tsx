@@ -267,9 +267,16 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                 },
               });
 
+              let searchResult = [];
+              res.data.map(item => {
+                if (!utils.isEmpty(item.data)) {
+                  return searchResult.push(item);
+                }
+              });
+
               if (res.status == 200) {
                 this.setState({
-                  symbolOptions: res.data,
+                  symbolOptions: searchResult,
                 });
               }
             }, 500)}
