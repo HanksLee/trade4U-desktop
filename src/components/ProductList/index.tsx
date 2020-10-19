@@ -129,7 +129,7 @@ export default class ProductList extends BasePureReact {
   };
 
   setOpenItem = symbolId => {
-    const {currentSymbolList} = this.props.symbol;
+    const { currentSymbolList, } = this.props.symbol;
     const symbolInfoItems = currentSymbolList.results.filter((item)=>{
       return item.symbolId === symbolId;
     });

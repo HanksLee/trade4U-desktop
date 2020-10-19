@@ -274,7 +274,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
               }
             }, 500)}
             onChange={(value, elem) => {
-              this.props.symbol.setCurrentSymbolInfoById(value,elem.children);
+              this.props.symbol.setCurrentSymbolInfoById(value, elem.children);
               // this.props.market.getCurrentSymbol(value);
               if (this.props.history.pathname !== "/dashboard/symbol") {
                 this.props.history.push("/dashboard/symbol");

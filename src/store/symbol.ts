@@ -18,9 +18,9 @@ class SymbolStore extends BaseStore {
     const current =
       tmp.length === 0
         ? this.initCurrentSymbolInfo(SEARCH, {
-            id: symbolId,
-            symbol_display: { name }
-          })
+          id: symbolId,
+          symbol_display: { name, },
+        })
         : tmp[0];
 
     this.currentSymbolInfo = current;
@@ -37,14 +37,14 @@ class SymbolStore extends BaseStore {
   currentSymbolList = {
     page: -1,
     nexPage: -1,
-    results: []
+    results: [],
   };
 
   @action
   setCurrentSymbolList(d) {
     this.currentSymbolList = {
       ...this.currentSymbolList,
-      ...d
+      ...d,
     };
   }
   @action
@@ -52,7 +52,7 @@ class SymbolStore extends BaseStore {
     this.currentSymbolList = {
       page: -1,
       nexPage: -1,
-      results: []
+      results: [],
     };
   };
 
@@ -70,7 +70,7 @@ class SymbolStore extends BaseStore {
       symbol_type_name
     );
 
-    const { count, results } = now;
+    const { count, results, } = now;
     const nextPage = this.getSymbolNextPage(count, page, PAGE_SIZE);
     const newList = this.createSymbolList(results, symbol_type_code);
     const oldSymbolList = toJS(this.currentSymbolList.results);
@@ -78,7 +78,7 @@ class SymbolStore extends BaseStore {
     this.setCurrentSymbolList({
       page,
       nextPage,
-      results: symbolList
+      results: symbolList,
     });
   };
 
@@ -98,9 +98,9 @@ class SymbolStore extends BaseStore {
         volume,
         amount,
         amplitude,
-        timestamp
+        timestamp,
       } = update;
-      const { results } = this.currentSymbolList;
+      const { results, } = this.currentSymbolList;
       const updateTargets = results.filter((item: ISymbolItem) => {
         return item.symbolCode === symbol;
       });
@@ -118,7 +118,7 @@ class SymbolStore extends BaseStore {
         volume,
         amount,
         amplitude,
-        timestamp
+        timestamp,
       };
     });
   };
@@ -157,7 +157,7 @@ class SymbolStore extends BaseStore {
     const res = await api.market.getSelfSelectSymbolList({
       page,
       page_size,
-      type_name
+      type_name,
     });
 
     if (res.status === 200) {
@@ -174,10 +174,10 @@ class SymbolStore extends BaseStore {
     const d = {
       params: {
         type__name: type__name,
-        exclude_self_select: true
+        exclude_self_select: true,
       },
       page,
-      page_size
+      page_size,
     };
     const res = await api.market.getSymbolList(d);
 
@@ -192,9 +192,9 @@ class SymbolStore extends BaseStore {
       product_details,
       symbol_display = {},
       symbol = -1,
-      id = -1
+      id = -1,
     } = item;
-    const { name = "-----" } = symbol_display;
+    const { name = "-----", } = symbol_display;
     const priceInfo: IPriceInfo = {
       symbol: "-----",
       sell: 0,
@@ -208,7 +208,7 @@ class SymbolStore extends BaseStore {
       volume: 0,
       amount: 0,
       amplitude: 0,
-      timestamp: 0
+      timestamp: 0,
     };
 
     const symbolCode = product_details ? product_details.symbol : "------";
@@ -221,7 +221,7 @@ class SymbolStore extends BaseStore {
       symbolId,
       name,
       trader_status,
-      priceInfo
+      priceInfo,
     };
   }
 
