@@ -26,6 +26,42 @@ class SymbolStore extends BaseStore {
     this.currentSymbolInfo = current;
   };
 
+  @action 
+  updateCurrentSymbolInfo = (d)=>{
+    const {
+      symbol,
+      sell,
+      buy,
+      change,
+      chg,
+      high,
+      low,
+      close,
+      open,
+      volume,
+      amount,
+      amplitude,
+      timestamp,
+    } = d;
+    this.currentSymbolInfo = {
+      priceInfo:{
+        symbol,
+        sell,
+        buy,
+        change,
+        chg,
+        high,
+        low,
+        close,
+        open,
+        volume,
+        amount,
+        amplitude,
+        timestamp,
+      },
+      ...this.currentSymbolInfo,
+    };
+  };
   @action
   setCurrentSymbolInfo = (
     symbolInfoItem: ISymbolItem = this.initCurrentSymbolInfo()
@@ -91,41 +127,14 @@ class SymbolStore extends BaseStore {
   @action
   updateCurrentSymbolListFromSubscribeDate = updateList => {
     updateList.forEach(update => {
-      const {
-        symbol,
-        sell,
-        buy,
-        change,
-        chg,
-        high,
-        low,
-        close,
-        open,
-        volume,
-        amount,
-        amplitude,
-        timestamp,
-      } = update;
       const { results, } = this.currentSymbolList;
       const updateTargets = results.filter((item: ISymbolItem) => {
-        return item.symbolCode === symbol;
+        return item.symbolCode === update.symbol && 
+        item.priceInfo.timestamp < update.timestamp;
       });
       if (updateTargets.length === 0) return;
-      updateTargets[0].priceInfo = {
-        symbol,
-        sell,
-        buy,
-        change,
-        chg,
-        high,
-        low,
-        close,
-        open,
-        volume,
-        amount,
-        amplitude,
-        timestamp,
-      };
+
+      updateTargets[0] = this.initCurrentSymbolInfo(updateTargets[0].symbol_type_code, update);
     });
   };
   getSymbolNextPage = (count, current_page, page_size) => {

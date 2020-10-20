@@ -9,10 +9,7 @@ const channelConfig = [
     connectDistanceTime:2000,
     tryConnectMax:10,
     disconnectMax:10,
-    bufferInfo:{
-      limitTime:2000,
-      maxCount:50
-    }
+    bufferInfo:null
   },
   {
     channelCode:NONE,
@@ -21,10 +18,7 @@ const channelConfig = [
     connectDistanceTime:2000,
     tryConnectMax:10,  
     disconnectMax:10,
-    bufferInfo:{
-      limitTime:2000,
-      maxCount:50
-    }
+    bufferInfo:null
   }
 ];
 

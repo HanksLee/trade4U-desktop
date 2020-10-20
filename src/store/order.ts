@@ -258,18 +258,17 @@ class OrderStore extends BaseStore {
       margin_level,
     };
   };
-  addTradeList = (originlist, addList) => {
+  addTradeList = (originList, addList) => {
     addList.map(aItem => {
       const { order_number, timestamp, } = aItem;
-      const i = originlist.findIndex(oItem => {
+      const i = originList.findIndex(oItem => {
         return oItem.order_number === order_number;
       });
 
-      const originTimestamp = originlist[i].timestamp;
       if (i === -1) {
-        originlist.push(aItem);
-      } else if (originTimestamp < timestamp) {
-        originlist[i] = aItem;
+        originList.push(aItem);
+      } else if (originList[i].timestamp < timestamp) {
+        originList[i] = aItem;
       }
     });
   };

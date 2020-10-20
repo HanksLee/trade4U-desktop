@@ -115,6 +115,7 @@ export default class Left extends BaseReact<{}, {}> {
       currentSymbolList => {
         const { subscribeSymbolList, currentSymbolIDList, } = this.symbol;
         const { page, } = currentSymbolList;
+ 
         if (page !== 1) return;
         this.symbol.setUnSubscribeSymbolList(subscribeSymbolList);
         this.symbol.setSubscribeSymbolList(currentSymbolIDList);

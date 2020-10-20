@@ -61,11 +61,11 @@ class Symbol extends React.Component {
   //function
   receiveMsgLinter = (d) => {
     // update list
-    const sortList = Array.isArray(d)? [d] : this.sortList(d);
+    const sortList = !Array.isArray(d)? d.data : this.sortList(d);
     const filterList = this.filterBufferList(sortList);
     this.props.symbol.updateCurrentSymbolListFromSubscribeDate(filterList);
 
-    const {currentSymbolInfo , setCurrentSymbolInfo } = this.props.symbol;
+    const {currentSymbolInfo , updateCurrentSymbolInfo } = this.props.symbol;
     const { symbolId , symbolCode } = currentSymbolInfo;
 
     // update current symbol 
@@ -77,7 +77,7 @@ class Symbol extends React.Component {
 
       if (infoList.length === 0) return;
       const info = infoList[infoList.length - 1];
-      setCurrentSymbolInfo(info);
+      updateCurrentSymbolInfo(info);
     }
   };
 
