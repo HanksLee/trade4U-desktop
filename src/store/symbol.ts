@@ -26,39 +26,14 @@ class SymbolStore extends BaseStore {
     this.currentSymbolInfo = current;
   };
 
-  @action 
-  updateCurrentSymbolInfo = (d)=>{
-    const {
-      symbol,
-      sell,
-      buy,
-      change,
-      chg,
-      high,
-      low,
-      close,
-      open,
-      volume,
-      amount,
-      amplitude,
-      timestamp,
-    } = d;
+  @action
+  updateCurrentSymbolInfo = d => {
+    const beforeTimestamp = this.currentSymbolInfo.priceInfo.timestamp;
+
+    if (beforeTimestamp > d.timestamp) return;
+    const tmp = this.updatePriceInfo(d);
     this.currentSymbolInfo = {
-      priceInfo:{
-        symbol,
-        sell,
-        buy,
-        change,
-        chg,
-        high,
-        low,
-        close,
-        open,
-        volume,
-        amount,
-        amplitude,
-        timestamp,
-      },
+      priceInfo: tmp,
       ...this.currentSymbolInfo,
     };
   };
@@ -78,7 +53,7 @@ class SymbolStore extends BaseStore {
 
   @computed
   get currentSymbolIDList() {
-    return this.currentSymbolList.results.map((item)=>{
+    return this.currentSymbolList.results.map(item => {
       return item.symbolId;
     });
   }
@@ -129,12 +104,14 @@ class SymbolStore extends BaseStore {
     updateList.forEach(update => {
       const { results, } = this.currentSymbolList;
       const updateTargets = results.filter((item: ISymbolItem) => {
-        return item.symbolCode === update.symbol && 
-        item.priceInfo.timestamp < update.timestamp;
+        return (
+          item.symbolCode === update.symbol &&
+          item.priceInfo.timestamp < update.timestamp
+        );
       });
       if (updateTargets.length === 0) return;
-
-      updateTargets[0] = this.initCurrentSymbolInfo(updateTargets[0].symbol_type_code, update);
+      const tmp = this.updatePriceInfo(update);
+      updateTargets[0].priceInfo = tmp;
     });
   };
   getSymbolNextPage = (count, current_page, page_size) => {
@@ -240,13 +217,44 @@ class SymbolStore extends BaseStore {
     };
   }
 
+  updatePriceInfo = (update): IPriceInfo => {
+    const {
+      symbol = "-----",
+      sell = 0,
+      buy = 0,
+      change = 0,
+      chg = 0,
+      high = 0,
+      low = 0,
+      close = 0,
+      open = 0,
+      volume = 0,
+      amount = 0,
+      amplitude = 0,
+      timestamp = 0,
+    } = update;
+
+    return {
+      symbol,
+      sell,
+      buy,
+      change,
+      chg,
+      high,
+      low,
+      close,
+      open,
+      volume,
+      amount,
+      amplitude,
+      timestamp,
+    };
+  };
   createSymbolList(list: any, symbol_type_code: string): ISymbolItem[] {
     return list.map((item, i) => {
       return this.initCurrentSymbolInfo(symbol_type_code, item);
     });
   }
-
-
 
   // ws control
   @observable
@@ -256,12 +264,12 @@ class SymbolStore extends BaseStore {
   unSubscribeSymbolList = [];
 
   @action
-  setSubscribeSymbolList = (list) => {
+  setSubscribeSymbolList = list => {
     this.subscribeSymbolList = list;
   };
 
   @action
-  setUnSubscribeSymbolList = (list) => {
+  setUnSubscribeSymbolList = list => {
     this.unSubscribeSymbolList = list;
   };
 
@@ -271,12 +279,11 @@ class SymbolStore extends BaseStore {
   };
 
   @action
-  setSymbolWSAction = (d) => {
+  setSymbolWSAction = d => {
     this.symbolWSAction = {
       ...d,
     };
   };
-
 }
 
 export default new SymbolStore();

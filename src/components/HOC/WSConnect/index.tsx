@@ -4,7 +4,7 @@ import WebSocketControl, {
   WebSocketStatus,
   WebSocketCloseCode
 } from "utils/WebSocketControl";
-import { IChannelConfig } from './config/interface';
+import { IChannelConfig } from "./config/interface";
 
 import {
   initBuffer,
@@ -28,10 +28,10 @@ const {
 const { AUTO, NORMAL, } = WebSocketCloseCode;
 
 export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
-  if(!channelConfigList || channelConfigList.length === 0) return Comp; 
+  if (!channelConfigList || channelConfigList.length === 0) return Comp;
   const defaultChannel: IChannelConfig = channelConfigList[0] || null;
 
-  if(!defaultChannel) return Comp;
+  if (!defaultChannel) return Comp;
 
   const {
     path,
@@ -62,6 +62,31 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
     });
     connectQueue.splice(0, connectQueue.length);
   };
+
+  const createMessageQueue = () => {
+    const m = new Map();
+
+    return {
+      addMessage: (type, value) => {
+        m.set(type, value);
+      },
+      getAllMessage: cb => {
+        m.forEach(value => {
+          cb(value);
+        });
+        m.clear();
+      },
+      getMessage: type => {
+        const v = m.get(type);
+        m.delete(type);
+        return v;
+      },
+      hasMessage: ()=>{
+        return m.size !== 0;
+      },
+    };
+  };
+  const messageQueue = createMessageQueue();
 
   return class extends BaseReact {
     state = {
@@ -108,12 +133,7 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
         setReceiveMsgLinter,
         setStatusChangeListener,
       };
-      return (
-        <Comp
-          {...this.props}
-          wsControl={wsControl}
-        />
-      );
+      return <Comp {...this.props} wsControl={wsControl} />;
     }
 
     componentDidMount() {
@@ -133,9 +153,7 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
     componentDidUpdate(prevProps, PrevState) {
       // const { selectedChannel, refreshChannel } = this.state;
       // if (!refreshChannel) return;
-
       // const { path, pathKey, bufferInfo } = selectedChannel;
-
       // const newPath = this.getNewPath(path, pathKey);
       // if (wsControl._path === newPath) return;
       // this.buffer = this.createBuffer();
@@ -167,7 +185,8 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
     };
 
     createBuffer = () => {
-      const { limitTime = null, maxCount = null, regType = null, } = bufferInfo || {} ;
+      const { limitTime = null, maxCount = null, regType = null, } =
+        bufferInfo || {};
       return initBuffer(limitTime, maxCount, regType);
     };
 
@@ -175,6 +194,11 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
       wsc.setStatusChange((wsc, before, now) => {
         // console.log("StatusChange:" ,`${before}->${now}`);
         if (this.statusChangListener) this.statusChangListener(before, now);
+        if (now === CONNECTED && messageQueue.hasMessage()) {
+          messageQueue.getAllMessage((msg) => {
+            wsControl.sendMsg(msg);
+          });
+        }
       });
       wsc.setReceviceMsg((wsc, msg) => {
         // console.log("ReceviceMsg:" ,msg);
@@ -260,6 +284,10 @@ export default function WSConnect(channelConfigList: IChannelConfig[], Comp) {
       return wsControl.nowProgress;
     };
     sendMsg = o => {
+      if (wsControl.nowProgress !== CONNECTED) {
+        messageQueue.addMessage(o.type, o);
+        return;
+      }
       wsControl.sendMsg(o);
     };
     replaceUrl = newPath => {
