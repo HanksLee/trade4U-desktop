@@ -6,9 +6,9 @@ import PromiseFileReader from 'promise-file-reader';
 import commonAPI from 'services/common';
 import NProgress from 'nprogress';
 
-import { create, all } from 'mathjs'
+import { create, all } from 'mathjs';
 
-const config = { }
+const config = { };
 const math = create(all, config);
 
 function setRootFontSizeFromClient() {
@@ -210,8 +210,8 @@ function parseBool(input) {
   return Boolean(input);
 }
 
-function numberPrecisionFormat(v){
-  return math.format(v,  {notation: 'fixed', precision: 3})
+function numberPrecisionFormat(v) {
+  return math.format(v,  { notation: 'fixed', precision: 3, });
 }
 export default {
   setRootFontSizeFromClient,
@@ -233,5 +233,5 @@ export default {
   getStockChangeClass,
   setSignString,
   parseBool,
-  numberPrecisionFormat
+  numberPrecisionFormat,
 };

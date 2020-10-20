@@ -34,7 +34,7 @@ export default class ProductItem extends BaseReact {
       symbolCode,
       name,
     } = this.state;
-    const { sell, buy, chg } = priceInfo;
+    const { sell, buy, chg, } = priceInfo;
     const sellValue = utils.numberPrecisionFormat(sell);
     const activeCls = isActive
       ? "custom-table-item active"
