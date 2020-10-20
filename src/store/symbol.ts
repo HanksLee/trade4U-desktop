@@ -57,6 +57,7 @@ class SymbolStore extends BaseStore {
       return item.symbolId;
     });
   }
+  
   @action
   setCurrentSymbolList(d) {
     this.currentSymbolList = {

@@ -9,7 +9,7 @@ import utils from "utils";
 import moment from 'moment';
 import { ISymbolItem } from 'pages/Symbol/config/interface';
 
-const REFRESH_CHART_TIME = 6000;
+const REFRESH_CHART_TIME = 60000;
 @inject("trend")
 @observer
 export default class extends BaseReact<{}, {}> {

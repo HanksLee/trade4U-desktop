@@ -4,6 +4,8 @@ import { BaseReact } from "components/@shared/BaseReact";
 import { Row, Col } from "antd";
 import { StarFilled } from "@ant-design/icons";
 
+import utils from 'utils';
+
 export default class ProductItem extends BaseReact {
   state = {
     priceInfo: null,
@@ -32,7 +34,8 @@ export default class ProductItem extends BaseReact {
       symbolCode,
       name,
     } = this.state;
-    const { sell, buy, } = priceInfo;
+    const { sell, buy, chg } = priceInfo;
+    const sellValue = utils.numberPrecisionFormat(sell);
     const activeCls = isActive
       ? "custom-table-item active"
       : "custom-table-item";
@@ -80,10 +83,10 @@ export default class ProductItem extends BaseReact {
               </span>
             </Col>
             <Col span={5} className={"self-select-sell-container"}>
-              <span className={priceTypeClass}>{sell}</span>
+              <span className={priceTypeClass}>{sellValue}</span>
             </Col>
             <Col span={5} className={"self-select-buy-container"}>
-              <span className={priceTypeClass}>{buy}</span>
+              <span className={priceTypeClass}>{chg}%</span>
             </Col>
             <Col span={2}>
               <div className={"symbol-order-favorite"}>

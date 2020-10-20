@@ -8,6 +8,7 @@ import { StarFilled, createFromIconfontCN } from "@ant-design/icons";
 import { traderStatusMap } from "constant";
 import moment from "moment";
 import { FULL, ZOOMOUT } from 'pages/Symbol/Center/config/containerStatus';
+import utils from 'utils';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1795058_4vgdb4lgh5.js",
@@ -39,7 +40,7 @@ export default class extends React.Component<any, any> {
   render() {
     const { name, trader_status, priceInfo, symbolId, } = this.symbol.currentSymbolInfo;
     const { sell, chg, change, } = priceInfo;
-    
+    const sellValue = utils.numberPrecisionFormat(sell);
  
     const status = traderStatusMap[trader_status];
 
@@ -49,6 +50,7 @@ export default class extends React.Component<any, any> {
 
     const { rightSide, } = this.trend.containerStatus;
     const btnCss = rightSide !== FULL && symbolId !== -1 ? "close" : "open";
+    // console.log(chg);
     return (
       <Row
         className={"symbol-chart-info"}
@@ -60,13 +62,13 @@ export default class extends React.Component<any, any> {
           <div className={"symbol-chart-title"}>
             <span className="symbol-chart-main">{name}</span>
             <span className={`${priceCss} symbol-chart-main`}>
-              {sell} {this.getPriceIcon(sign)}{" "}
+              {sellValue} {this.getPriceIcon(sign)}{" "}
             </span>
             <span className={`${priceCss} symbol-chart-price `}>
-              {this.setSignStirng(change)}
+              {this.setSignString(change)}
             </span>
             <span className={`${priceCss} symbol-chart-price `}>
-              {this.setSignStirng(chg)}%
+              {this.setSignString(chg)}%
             </span>
             <span className={`symbol-chart-title-status ${trader_status}`}>
               {status}
@@ -81,7 +83,7 @@ export default class extends React.Component<any, any> {
   componentDidUpdate() { }
 
   //function
-  setSignStirng(number) {
+  setSignString(number) {
     const sign = Math.sign(number);
     return sign > 0 ? `+${number}` : number;
   }

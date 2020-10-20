@@ -35,6 +35,8 @@ export default class extends React.Component<any, any> {
     const { children, } = this.props;
     const { name, priceInfo, } = this.symbol.currentSymbolInfo;
     const { change, chg, sell, } = priceInfo;
+    const sellValue = utils.numberPrecisionFormat(sell);
+
     const sign = Math.sign(change);
     const priceObj = this.props.common.getPriceTmp(sign);
     const priceCss = priceObj ? `${priceObj.color}` : "";
@@ -43,7 +45,7 @@ export default class extends React.Component<any, any> {
         <h2>{name}</h2>
         <div className="symbol-header-price">
           <span className={`${priceCss} symbol-header-price-main`}>
-            {sell} {this.getPriceIcon(sign)}{" "}
+            {sellValue} {this.getPriceIcon(sign)}{" "}
           </span>
           <span className={`${priceCss} symbol-header-price-item`}>
             {utils.setSignString(change)}

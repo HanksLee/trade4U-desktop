@@ -2,6 +2,10 @@ import * as React from "react";
 import { Col, Row, Tabs } from "antd";
 import { StarFilled, createFromIconfontCN } from "@ant-design/icons";
 import utils from "utils";
+import { create, all } from 'mathjs'
+
+const config = { }
+const math = create(all, config);
 
 export default class ProductRow extends React.PureComponent {
   state = {
@@ -31,6 +35,7 @@ export default class ProductRow extends React.PureComponent {
       priceType,
       symbol_type_code,
       symbolId,
+      chg
     } = this.state;
     const priceTypeClass = `${priceType.color} ${priceType.gif} self-select-sell-block`;
     const favorIcon = symbol_type_code === "SELF" ? 
@@ -63,10 +68,10 @@ export default class ProductRow extends React.PureComponent {
             </span>
           </Col>
           <Col span={5} className={"self-select-sell-container"}>
-            <span className={priceTypeClass}>{sell}</span>
+            <span className={priceTypeClass}>{math.format(sell , 3)}</span>
           </Col>
           <Col span={5} className={"self-select-buy-container"}>
-            <span className={priceTypeClass}>{buy}</span>
+            <span className={priceTypeClass}>{chg}%</span>
           </Col>
           <Col span={2}>
             <div className={"symbol-order-favorite"}>
