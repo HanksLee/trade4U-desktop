@@ -1,0 +1,13 @@
+加入報價數字固定三位數
+# 請為您的變更輸入提交說明。以 '#' 開始的行將被忽略，而一個空的提交
+# 說明將會終止提交。
+#
+# 位於分支 master
+# 您的分支領先 'origin/master' 共 3 個提交。
+#   （使用 "git push" 來發布您的本機提交）
+#
+# 要提交的變更：
+#	修改：     src/components/ProductList/ProductItem/ProductRow/index.tsx
+#	修改：     src/components/ProductList/ProductItem/index.tsx
+#	修改：     src/utils/index.ts
+#
