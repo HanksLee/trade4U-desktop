@@ -134,8 +134,14 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
   getQuoteColor = () => {
     const { configMap, } = this.props.common;
 
+    if (localStorage.getItem("trade4U_PC_color_mode") &&
+      localStorage.getItem("trade4U_PC_color_mode") !== "hk_style" &&
+      localStorage.getItem("trade4U_PC_color_mode") !== "standard") {
+      localStorage.removeItem("trade4U_PC_color_mode")
+    }
+
     if (!localStorage.getItem("trade4U_PC_color_mode")) {
-      const colorMode = configMap["color_mode"];
+      const colorMode = configMap["color_mode"] ? configMap["color_mode"] : "standard";
       localStorage.setItem("trade4U_PC_color_mode", colorMode);
     }
     this.props.common.setQuoteColor();
@@ -385,7 +391,7 @@ export default class Index extends BaseReact<IIndexProps, IIndexState> {
                     key={item.path}
                     className={`sidebar-row ${
                       this.props.common.currentTab == item.title ? "active" : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       if (computedUserInfo?.user_status <= 2 && item.title == '资金') {
                         // 未入金
