@@ -26,7 +26,7 @@ export default class NewsNavBar extends BaseReact {
       newsType = [...newsType, ...res];
     }
 
-    this.setState({ symbolTypeList: newsType });
+    this.setState({ symbolTypeList: newsType, });
   };
 
 
