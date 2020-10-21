@@ -19,7 +19,7 @@ import { SELF } from 'pages/Symbol/config/symbolTypeCategory';
 const SUBSCRIBE = "subscribe";
 const UNSUBSCRIBE = "unsubscribe";
 @observer
-@inject("symbol" , "product")
+@inject("symbol", "product")
 class Symbol extends React.Component {
   state = {
     chart: null,
@@ -30,7 +30,7 @@ class Symbol extends React.Component {
   constructor(props) {
     super(props);
 
-   this.wsControl = props.wsControl;
+    this.wsControl = props.wsControl;
   }
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -53,20 +53,20 @@ class Symbol extends React.Component {
     this.wsControl.setReceiveMsgLinter(this.receiveMsgLinter);
   }
 
-  componentWillUnmount(){
-    for(let cancel of this.this.reactionList){
+  componentWillUnmount() {
+    for (let cancel of this.this.reactionList) {
       cancel();
     }
   }
   //function
   receiveMsgLinter = (d) => {
     // update list
-    const sortList = !Array.isArray(d)? d.data : this.sortList(d);
+    const sortList = !Array.isArray(d) ? d.data : this.sortList(d);
     const filterList = this.filterBufferList(sortList);
     this.props.symbol.updateCurrentSymbolListFromSubscribeDate(filterList);
 
-    const {currentSymbolInfo , updateCurrentSymbolInfo } = this.props.symbol;
-    const { symbolId , symbolCode } = currentSymbolInfo;
+    const { currentSymbolInfo, updateCurrentSymbolInfo } = this.props.symbol;
+    const { symbolId, symbolCode } = currentSymbolInfo;
 
     // update current symbol 
     if (symbolId === -1) return;
@@ -89,8 +89,8 @@ class Symbol extends React.Component {
 
       },
       {
-        equals:(prev, now)=>{
-        
+        equals: (prev, now) => {
+
           this.trackSymbol([prev.symbolId], UNSUBSCRIBE);
           this.trackSymbol([now.symbolId], SUBSCRIBE);
           return false
