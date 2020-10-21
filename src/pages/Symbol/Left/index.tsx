@@ -128,7 +128,7 @@ export default class Left extends BaseReact<{}, {}> {
       () => this.props.product.symbolTypeList,
       symbolTypeList => {
         if (!symbolTypeList || symbolTypeList.length === 1) return;
-        const firstCurrentSymbolType = toJS(symbolTypeList[0]);
+        const firstCurrentSymbolType = toJS(symbolTypeList[1]);
         this.product.setCurrentSymbolTypeItem(firstCurrentSymbolType.id);
       }
     );
