@@ -131,7 +131,7 @@ OnePriceNewOrderFormState
       })
     );
   };
-  handleDirectionOptionChange = (e, value) => {
+  handleDirectionChange = (e, value) => {
     this.setState(
       produce(draft => {
         draft.form.direction = value;
@@ -334,7 +334,7 @@ OnePriceNewOrderFormState
               return (
                 <OptionButton
                   isActive={isActive}
-                  onClick={e => this.handleDirectionOptionChange(e, each)}
+                  onClick={e => this.handleDirectionChange(e, each)}
                 >
                   {directionDisplayName}
                 </OptionButton>
