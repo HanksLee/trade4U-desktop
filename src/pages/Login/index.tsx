@@ -1,5 +1,6 @@
 import WithRoute from 'components/@shared/WithRoute';
-import logo from 'assets/img/Trade4U Logo.svg';
+// import logo from 'assets/img/Trade4U Logo.svg';
+import logo from 'assets/img/logo.png';
 import utils from 'utils';
 import * as React from 'react';
 import { BaseReact } from 'components/@shared/BaseReact';
@@ -81,7 +82,10 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
             }
           />
         </Form.Item>
-        <Button className="login-btn" htmlType="submit">登入</Button>
+        <div className="login-btn-container">
+          <Button className="login-btn" htmlType="submit">登入</Button>
+          <Button className="register-btn" onClick={this.gotoRegister}>注册</Button>
+        </div>
       </Form>
     );
   }
@@ -108,6 +112,10 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
     );
   }
 
+  gotoRegister = () => {
+    window.location.href = `${window.location.protocol}//register.sugargirls.live/`
+  }
+
   onLogin = async (values: any) => {
     const res = await this.$api.common.login({
       ...values,
@@ -120,17 +128,20 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
         isLogin: true,
         brokerList: res.data.results,
         searchResult: res.data.results,
+      }, () => {
+        this.chooseBroker(res.data.results[0].token)
       });
-      if (res.data.results.length > 0) {
-        this.formRef.current.setFieldsValue({
-          token: res.data.results[0].token,
-        });
-      }
+      // if (res.data.results.length > 0) {
+      //   this.formRef.current.setFieldsValue({
+      //     token: res.data.results[0].token,
+      //   });
+      // }
     }
   }
 
   chooseBroker = (values) => {
-    utils.setLStorage('MOON_DESKTOP_TOKEN', values.token);
+    // utils.setLStorage('MOON_DESKTOP_TOKEN', values.token);
+    utils.setLStorage('MOON_DESKTOP_TOKEN', values);
     this.props.history.push('/');
   }
 
@@ -142,9 +153,10 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
           <img src={logo} alt="logo" className="logoImg" />
           {/* <h1>Trade4U</h1> */}
           <div className='form'>
-            {
+            {/* {
               isLogin ? this.renderBrokerChoosePanel() : this.renderLoginPanel()
-            }
+            } */}
+            {this.renderLoginPanel()}
           </div>
         </div>
       </div>

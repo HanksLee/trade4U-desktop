@@ -40,10 +40,20 @@
         }
       }
 
-      .login-btn {
+      .login-btn-container {
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .login-btn,
+      .register-btn {
         margin-top: 36px;
         width: 90px;
         height: 40px;
+      }
+
+      .register-btn{
+
       }
 
       .ant-form-item-explain {
