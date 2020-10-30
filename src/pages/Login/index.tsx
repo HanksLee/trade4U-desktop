@@ -113,7 +113,7 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
   }
 
   gotoRegister = () => {
-    window.location.href = `${window.location.protocol}//register.sugargirls.live/`
+    window.location.href = `${window.location.protocol}//register.sugargirls.live/`;
   }
 
   onLogin = async (values: any) => {
@@ -129,7 +129,7 @@ export default class Login extends BaseReact<ILoginProps, ILoginState> {
         brokerList: res.data.results,
         searchResult: res.data.results,
       }, () => {
-        this.chooseBroker(res.data.results[0].token)
+        this.chooseBroker(res.data.results[0].token);
       });
       // if (res.data.results.length > 0) {
       //   this.formRef.current.setFieldsValue({
